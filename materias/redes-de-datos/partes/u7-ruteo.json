@@ -1,0 +1,1565 @@
+{
+  "conceptos": [
+    {
+      "id": "router",
+      "nombre": "Router",
+      "unidad": "u7-ruteo",
+      "definicion": "Dispositivo de capa de red que encamina paquetes IP hacia su destino, con una red IP distinta en cada interfaz.",
+      "definicion_extendida": "Opera en la capa de red, pero también implementa las capas 1 y 2 en cada interfaz para poder transmitir. Decide el próximo salto en base a la IP de destino del datagrama y su tabla de ruteo. A diferencia del switch, separa los dominios de broadcast: no reenvía broadcasts de capa 2 (MAC destino ff:ff:ff:ff:ff:ff) ni tráfico multicast. Se compone de interfaces de red, matriz de conmutación, CPU (Routing Processor) y memorias.",
+      "ejemplo": "Un router con Eth_0 en 192.168.1.1 (MAC_11) y Eth_1 en 192.168.2.1 (MAC_21) conecta la LAN 192.168.1.0/24 de PC 1 con la LAN 192.168.2.0/24 de PC 2.",
+      "por_que_importa": "Es el dispositivo que permite comunicarse fuera de la propia subred IP y que corta la propagación de los broadcasts entre redes.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Introducción: Dispositivos Router" }
+    },
+    {
+      "id": "tabla-de-ruteo",
+      "nombre": "Tabla de ruteo",
+      "unidad": "u7-ruteo",
+      "definicion": "Base de datos propia de cada router (o host) que indica cómo encaminar los paquetes IP según su destino.",
+      "definicion_extendida": "Cada entrada tiene red y máscara de destino, el próximo salto y/o la interfaz de salida, y suele indicar el tipo (conectada, estática, RIP, OSPF, default) y la métrica. El look-up se hace con la IP de destino del paquete y devuelve la IP del próximo salto y/o la interfaz. Se organiza en niveles jerárquicos para acelerar la búsqueda y se actualiza ante cambios en la topología.",
+      "ejemplo": "Entrada RIP con métrica 3 hops: red 192.168.3.0, máscara 255.255.255.0, próximo salto 192.168.1.1; entrada estática por defecto 0.0.0.0/0.0.0.0 → 192.168.2.1.",
+      "por_que_importa": "Sin una entrada que coincida con el destino, el paquete se descarta; es la pieza central de toda decisión de ruteo.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Tabla de ruteo" }
+    },
+    {
+      "id": "longest-prefix-match",
+      "nombre": "Longest Prefix Match",
+      "unidad": "u7-ruteo",
+      "definicion": "Algoritmo de búsqueda que elige, entre las rutas que coinciden con el destino, la más específica (la de máscara más larga).",
+      "definicion_extendida": "Para cada entrada se hace un AND bit a bit entre la IP de destino y la máscara de la entrada, y el resultado se compara con la dirección de red. Si coincide, el paquete va a la interfaz o próximo salto indicado; si no, se pasa a la siguiente entrada. La ruta por defecto (máscara 0.0.0.0) coincide siempre, por eso es la menos específica y se ubica al final.",
+      "ejemplo": "192.168.1.1 AND 255.255.255.128 = 192.168.1.0 → coincide con 192.168.1.0/25 y se envía a 10.0.8.1.",
+      "por_que_importa": "Permite que coexistan rutas generales y específicas (incluida la por defecto) sin ambigüedad sobre cuál usar.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Tabla de ruteo – Algoritmo de búsqueda" }
+    },
+    {
+      "id": "ruteo-estatico",
+      "nombre": "Ruteo estático",
+      "unidad": "u7-ruteo",
+      "definicion": "Introducción manual, por parte del administrador, de rutas fijas en la tabla de ruteo.",
+      "definicion_extendida": "No hay un proceso corriendo en el equipo, por lo que no consume recursos ni ancho de banda en intercambiar información. Al ser configuración a mano no es escalable. Es ideal cuando hay un único enlace hacia un destino o se quiere control estricto del camino. Ante una falla los paquetes no llegan hasta que el administrador reconfigure la ruta.",
+      "ejemplo": "En el Router B se configura la entrada estática 10.0.0.0 255.255.255.0 → próximo salto 10.0.1.1 para alcanzar al servidor 10.0.0.2.",
+      "por_que_importa": "Es la opción más simple y liviana para redes pequeñas o topologías con un único camino.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Enrutamiento Estático" }
+    },
+    {
+      "id": "ruteo-dinamico",
+      "nombre": "Ruteo dinámico",
+      "unidad": "u7-ruteo",
+      "definicion": "Actualización automática de la tabla de ruteo mediante protocolos con los que los routers intercambian información de alcanzabilidad.",
+      "definicion_extendida": "Los routers comparten periódicamente información de alcanzabilidad IP usando protocolos como RIP, OSPF o BGP, y solo cargan en la tabla las rutas con la mejor métrica. Deciden según la cantidad de saltos, la topología y el ancho de banda. Ante la caída de un camino cambian la decisión automáticamente si hay redundancia, aunque se pueden perder paquetes hasta que las tablas convergen.",
+      "ejemplo": "Una tabla con la entrada 192.168.3.0/24 aprendida por RIP (3 hops) y 172.16.0.0/16 aprendida por OSPF (métrica 1000).",
+      "por_que_importa": "Hace escalable el ruteo en redes grandes y permite recuperarse solo ante fallas cuando hay caminos alternativos.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Enrutamiento Dinámico" }
+    },
+    {
+      "id": "vector-distancia",
+      "nombre": "Vector distancia (Distance Vector)",
+      "unidad": "u7-ruteo",
+      "definicion": "Algoritmo de ruteo dinámico en el que cada nodo solo sabe a qué vecino enviar el paquete para llegar a cada destino con la menor cantidad de saltos.",
+      "definicion_extendida": "Ningún nodo conoce la topología global. Periódicamente cada nodo recibe de sus vecinos las redes y distancias que conocen, las compara con las propias e incorpora las de menor costo. Luego suma un salto a todas sus entradas y las envía por sus interfaces.",
+      "ejemplo": "R0 llega a 10.0.0.0/24 en 5 saltos vía 192.168.1.1 y a 172.16.0.0/16 en 2 saltos vía 10.0.2.2; R1 anota 172.16.0.0/16 a 3 saltos vía R0.",
+      "por_que_importa": "Es la base de RIP: simple de implementar, pero cada router depende de lo que le cuentan sus vecinos.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Algoritmo Distance Vector" }
+    },
+    {
+      "id": "rip",
+      "nombre": "RIP (RIPv2)",
+      "unidad": "u7-ruteo",
+      "definicion": "Protocolo de ruteo dinámico de vector distancia cuya métrica es la cantidad de saltos, con un máximo de 15.",
+      "definicion_extendida": "RIPv2 (RFC 2453) es classless: envía la máscara junto con cada red. Envía updates periódicos cada 30 segundos con la tabla completa, a la dirección multicast 224.0.0.9 y puerto UDP 520. Un destino a 16 o más saltos es inalcanzable, y una red se declara inalcanzable si no se reciben updates durante 180 s.",
+      "ejemplo": "Router A (1.0.0.0 directa) anuncia a B: 1.0.0.0 a 1 hop, 12.0.0.0 a 1 hop y 2.0.0.0 a 2 hops.",
+      "por_que_importa": "Es el ejemplo clásico de protocolo de ruteo dinámico y del funcionamiento del algoritmo DV.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolo RIPv2 (RFC 2453)" }
+    },
+    {
+      "id": "estado-de-enlace",
+      "nombre": "Estado de enlace (Link State)",
+      "unidad": "u7-ruteo",
+      "definicion": "Algoritmo de ruteo dinámico en el que cada router conoce la topología completa a partir de LSA inundados y calcula el camino más corto con Dijkstra.",
+      "definicion_extendida": "Cada router descubre a sus vecinos con mensajes Hello, genera un LSA con su ID, enlaces directos, costos y estado, y lo distribuye a todos por flooding. Con la base de datos de estado de enlace calcula la ruta más corta con el algoritmo de Dijkstra. Si un enlace cambia, el router afectado genera un nuevo LSA y repite el flooding de inmediato.",
+      "ejemplo": "OSPF e IS-IS son protocolos de estado de enlace.",
+      "por_que_importa": "Da a cada router una visión global de la red y reacciona de inmediato a los cambios de un enlace.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Algoritmo Estado de Enlace" }
+    },
+    {
+      "id": "gateway-por-defecto",
+      "nombre": "Gateway por defecto",
+      "unidad": "u7-ruteo",
+      "definicion": "Router (próximo salto) al que un equipo envía todo lo que no está en su subred ni en otra entrada de su tabla.",
+      "definicion_extendida": "Al configurarlo, el equipo agrega a su tabla de ruteo una ruta por defecto 0.0.0.0/0.0.0.0 cuyo próximo salto es el GW. Debe pertenecer obligatoriamente a la misma subred IP que la interfaz del equipo, para poder alcanzarlo directamente (vía ARP). Sin gateway, un PC no puede enviar paquetes fuera de su subred.",
+      "ejemplo": "PC 1 (192.168.1.2/24) con GW 192.168.1.1; en Linux: route add default gw 192.168.1.1.",
+      "por_que_importa": "Es la causa típica de \"no me responde el ping\" hacia otra red: si falta, el echo request ni siquiera sale.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Solución: Gateway por defecto" }
+    },
+    {
+      "id": "ruta-por-defecto",
+      "nombre": "Ruta por defecto",
+      "unidad": "u7-ruteo",
+      "definicion": "Entrada de la tabla de ruteo con red 0.0.0.0 y máscara 0.0.0.0, que coincide con cualquier destino.",
+      "definicion_extendida": "Como (cualquier IP) AND 0.0.0.0 = 0.0.0.0, siempre hay coincidencia; por eso se ubica al final de la tabla y solo se usa cuando ninguna ruta más específica coincide. Puede ser configurada por el administrador (estática) o aprendida por un protocolo de ruteo (dinámica). Su próximo salto siempre está en la misma subred.",
+      "ejemplo": "Tabla del router: 0.0.0.0 0.0.0.0 → 192.168.2.1 por Eth_2; tabla de PC 1: 0.0.0.0 0.0.0.0 → 192.168.1.1.",
+      "por_que_importa": "Evita tener que conocer todas las redes: todo lo que el equipo no conoce se lo manda al gateway.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Configuración de Gateway (GW) por defecto" }
+    },
+    {
+      "id": "loopback",
+      "nombre": "Interfaz de loopback",
+      "unidad": "u7-ruteo",
+      "definicion": "Interfaz de red virtual, interna al propio equipo, asociada a \"localhost\" y a la IP 127.0.0.1.",
+      "definicion_extendida": "No depende de hardware ni de cables, por lo que siempre está disponible. Se usa para probar y diagnosticar servicios de red localmente, sin tráfico externo. Casi todos los sistemas operativos la configuran en 127.0.0.1, y todo el rango 127.0.0.1–127.255.255.255 está reservado para esta función.",
+      "ejemplo": "Un servicio web local se prueba en http://localhost, que resuelve a 127.0.0.1 sin que el tráfico salga del equipo.",
+      "por_que_importa": "Permite verificar la pila de red y los servicios del propio equipo independientemente de la red física.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Interfaz de loopback" }
+    },
+    {
+      "id": "arp",
+      "nombre": "ARP (Address Resolution Protocol)",
+      "unidad": "u7-ruteo",
+      "definicion": "Protocolo que obtiene la dirección MAC de un equipo de la red local a partir de su dirección IP.",
+      "definicion_extendida": "El equipo emite un ARP request en broadcast (MAC destino ff:ff:ff:ff:ff:ff) preguntando quién tiene cierta IP; solo el equipo que la tiene configurada responde con un ARP reply unicast con su MAC. La asociación IP ↔ MAC se guarda en la tabla ARP. Se hace ARP al destino si está en la misma red, o al próximo salto (gateway) si no.",
+      "ejemplo": "A (192.168.1.1) pregunta \"¿quién tiene 192.168.1.3?\"; C responde en unicast \"mi MAC es 00:0d:29:42:31:0c\" (opcode 0x0002).",
+      "por_que_importa": "Sin la MAC de destino no se puede armar la trama Ethernet: ARP une la capa de red con la de enlace.",
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Address Resolution Protocol (ARP)" }
+    },
+    {
+      "id": "icmp",
+      "nombre": "ICMP (Internet Control Message Protocol)",
+      "unidad": "u7-ruteo",
+      "definicion": "Protocolo (RFC 792) que envía mensajes de diagnóstico y de error en la red, transportado directamente sobre IP.",
+      "definicion_extendida": "Anuncia errores (host, red o puerto inalcanzable), congestión (source quench), permite verificar conectividad con mensajes Echo y avisa al origen cuando un router descarta un paquete porque su TTL llegó a cero. Su cabecera tiene Type, Code y Checksum, más ID, Sequence y un campo Data opcional; Type y Code identifican el mensaje.",
+      "ejemplo": "Type 8/code 0 = echo request; type 0/code 0 = echo reply; type 11/code 0 = TTL expired; type 3/code 3 = dest port unreachable.",
+      "por_que_importa": "Es la base de ping y traceroute y la forma en que la red le informa al emisor qué salió mal.",
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Protocolo ICMP" }
+    },
+    {
+      "id": "ping",
+      "nombre": "ping",
+      "unidad": "u7-ruteo",
+      "definicion": "Herramienta que verifica la conectividad con un host enviando ICMP Echo request y esperando Echo reply.",
+      "definicion_extendida": "El destino copia el campo data, invierte las IP de origen y destino y devuelve el Echo reply. El origen mide el tiempo de ida y vuelta (latencia) usando los identificadores y números de secuencia, y muestra estadísticas de paquetes enviados, recibidos y perdidos.",
+      "ejemplo": "ping 192.168.1.1 → \"Respuesta desde 192.168.1.1: bytes=32 tiempo<1m TTL=255\", 4 enviados, 4 recibidos, 0 % perdidos.",
+      "por_que_importa": "Es la primera prueba de diagnóstico para saber si hay conectividad IP y con qué retardo.",
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Herramienta: ping" }
+    },
+    {
+      "id": "traceroute",
+      "nombre": "traceroute / tracert",
+      "unidad": "u7-ruteo",
+      "definicion": "Herramienta que identifica el camino que siguen los paquetes hasta un destino haciendo expirar el TTL en cada router intermedio.",
+      "definicion_extendida": "Envía paquetes con TTL = 1, 2, 3… Cada router donde el TTL llega a cero descarta el paquete y devuelve un ICMP Time Exceeded, lo que revela su IP y su retardo. Cuando el paquete llega al destino, este responde con Echo reply. En Windows se llama tracert y en Linux traceroute.",
+      "ejemplo": "tracert 200.40.112.85 recorre 5 saltos: el primero es aagu3as1-acc.antel.net.uy [200.40.19.214] con unos 121–124 ms.",
+      "por_que_importa": "Permite ubicar en qué tramo del camino hay demora o se corta la conectividad.",
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Herramienta: traceroute" }
+    },
+    {
+      "id": "dhcp",
+      "nombre": "DHCP (Dynamic Host Configuration Protocol)",
+      "unidad": "u7-ruteo",
+      "definicion": "Protocolo que asigna automáticamente la dirección IP y otros parámetros de configuración a los hosts, en forma temporal (lease).",
+      "definicion_extendida": "Además de la IP entrega parámetros como máscara y gateway por defecto. La asignación no es permanente: se alquila por un tiempo (lease). Los mensajes se basan en broadcast, por lo que requiere un servidor DHCP en la misma red local, y viajan sobre UDP con puerto 67 (servidor) y 68 (cliente). El flujo básico es Discover, Offer, Request y Ack.",
+      "ejemplo": "El servidor 223.1.2.5 ofrece al cliente la IP 223.1.2.4 con un lifetime de 3600 s.",
+      "por_que_importa": "Hace la configuración \"plug and play\" para el usuario y permite reutilizar direcciones IP.",
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Protocolo DHCP" }
+    },
+    {
+      "id": "rut-plano-de-control",
+      "nombre": "Plano de control",
+      "unidad": "u7-ruteo",
+      "definicion": "Parte del router (software) que determina las rutas: ejecuta los protocolos de ruteo y mantiene la tabla de ruteo.",
+      "definicion_extendida": "Corresponde a la función de ruteo. En la arquitectura tradicional lo implementa el Routing Processor, que ejecuta protocolos como OSPF o BGP para comunicarse con otros routers y construye, actualiza y mantiene la tabla de ruteo según la topología.",
+      "ejemplo": "El Routing Processor recibe un update RIP y agrega la red 192.168.3.0/24 a la tabla con 3 hops.",
+      "por_que_importa": "Separa la decisión de rutas (lenta, en software) del reenvío de cada paquete (rápido, en hardware).",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Funciones del Router: Ruteo y Conmutación" }
+    },
+    {
+      "id": "rut-plano-de-datos",
+      "nombre": "Plano de datos",
+      "unidad": "u7-ruteo",
+      "definicion": "Parte del router (hardware) que transfiere cada paquete IP de la interfaz de entrada a la de salida usando la tabla de ruteo.",
+      "definicion_extendida": "Corresponde a la conmutación o reenvío. Hace búsquedas ultrarrápidas (look-up) del destino en la tabla y procesa la cabecera IP, por ejemplo decrementando el TTL, antes de enviar el paquete. Incluye las interfaces de entrada (capa física y enlace, desencapsulado, lookup, colas), la switch fabric y las interfaces de salida (colas, encapsulado).",
+      "ejemplo": "Un paquete a 192.168.3.65 entra por Eth_0, el lookup indica Eth_1, se decrementa el TTL y sale por Eth_1.",
+      "por_que_importa": "Es lo que determina la velocidad de reenvío del router, paquete por paquete.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Funciones del Router: Ruteo y Conmutación" }
+    },
+    {
+      "id": "rut-switch-fabric",
+      "nombre": "Switch fabric (matriz de conmutación)",
+      "unidad": "u7-ruteo",
+      "definicion": "Núcleo central del router que conecta físicamente las interfaces de entrada con las de salida.",
+      "definicion_extendida": "Puede implementarse por memoria (el paquete se copia en memoria y se redirige; rendimiento menor a B/2), por bus compartido (sin intervención de la CPU, pero pasa un paquete a la vez) o por red crossbar (malla de buses que permite conmutar varios paquetes en paralelo). Si su velocidad no alcanza, los paquetes se encolan en las interfaces de entrada.",
+      "ejemplo": "En una crossbar, un paquete de la entrada 1 a la salida 3 y otro de la entrada 2 a la salida 4 cruzan al mismo tiempo.",
+      "por_que_importa": "Su tecnología limita cuántos paquetes por segundo puede conmutar el router.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Tipos de conmutación" }
+    },
+    {
+      "id": "rut-metrica",
+      "nombre": "Métrica de ruteo",
+      "unidad": "u7-ruteo",
+      "definicion": "Valor con el que un protocolo de ruteo evalúa qué tan bueno es un camino, para cargar solo el mejor en la tabla.",
+      "definicion_extendida": "Cada protocolo considera aspectos distintos: RIP usa solo la cantidad de saltos; otros consideran la topología y el ancho de banda de los enlaces. Las rutas conectadas y estáticas figuran con métrica 0 en la tabla del material. Ante varias rutas al mismo destino, solo se incorpora la de mejor métrica.",
+      "ejemplo": "En la tabla del material: RIP 3 hops hacia 192.168.3.0 y OSPF 1000 hacia 172.16.0.0.",
+      "por_que_importa": "Es el criterio que distingue a los protocolos y define qué camino eligen.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Enrutamiento Dinámico" }
+    },
+    {
+      "id": "rut-ospf",
+      "nombre": "OSPF",
+      "unidad": "u7-ruteo",
+      "definicion": "Protocolo de ruteo dinámico de estado de enlace.",
+      "definicion_extendida": "Pertenece a la familia de estado de enlace junto con IS-IS: descubre vecinos con Hello, inunda LSA y calcula rutas con Dijkstra. En la tabla de ruteo las entradas aprendidas por él se marcan con el tipo OSPF y su métrica.",
+      "ejemplo": "Entrada OSPF con métrica 1000: red 172.16.0.0, máscara 255.255.0.0, próximo salto 192.168.1.1.",
+      "por_que_importa": "Es el ejemplo de protocolo de estado de enlace que contrasta con RIP (vector distancia).",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolos y Algoritmos de ruteo" }
+    },
+    {
+      "id": "rut-tabla-arp",
+      "nombre": "Tabla ARP",
+      "unidad": "u7-ruteo",
+      "definicion": "Tabla dinámica en la que cada dispositivo guarda temporalmente las asociaciones IP ↔ MAC aprendidas por ARP.",
+      "definicion_extendida": "Si hay que comunicarse con un destino antes de que expire su entrada, no se repite el pedido de ARP y se toma el dato de la tabla local. Se ve con arp -a, se borra una entrada con arp -d y se agrega una asociación estática con arp -s; las aprendidas automáticamente figuran como \"dinámico\".",
+      "ejemplo": "arp -a en la interfaz 192.168.1.2 muestra 192.168.1.1 → 00-50-54-7c-f0-9b, tipo dinámico.",
+      "por_que_importa": "Evita un broadcast ARP por cada paquete, reduciendo tráfico y tiempo de respuesta.",
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Tabla dinámica de ARP" }
+    },
+    {
+      "id": "rut-gratuitous-arp",
+      "nombre": "Gratuitous ARP",
+      "unidad": "u7-ruteo",
+      "definicion": "Mensaje ARP que un dispositivo envía por iniciativa propia, sin pedido previo, para anunciar o actualizar su asociación IP ↔ MAC.",
+      "definicion_extendida": "Se envía a broadcast, con Sender IP igual a Target IP (autoverificación), y en la captura del material usa opcode reply. Sirve para que todos actualicen de inmediato sus tablas. En alta disponibilidad, cuando falla el router principal, el secundario que asume la IP/MAC compartida lo emite y el switch actualiza su tabla MAC con el nuevo puerto.",
+      "ejemplo": "Router B asume 10.0.0.1 / 0053.ffff.1111 y emite un gratuitous ARP; el switch pasa a asociar 0053.ffff.1111 al Port 2.",
+      "por_que_importa": "Permite que la red se entere al instante de un cambio de ubicación de una IP/MAC, sin esperar a que expiren las tablas.",
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Gratuitous ARP" }
+    }
+  ],
+  "relaciones": [
+    { "origen": "router", "destino": "capa-de-red", "verbo": "opera en", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Introducción: Dispositivos Router" } },
+    { "origen": "router", "destino": "dominio-de-broadcast", "verbo": "separa", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Routers y dominios de broadcast" } },
+    { "origen": "router", "destino": "switch", "verbo": "contrasta con", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Routers y dominios de broadcast" } },
+    { "origen": "router", "destino": "tabla-de-ruteo", "verbo": "decide el próximo salto con", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Encaminar paquetes IP" } },
+    { "origen": "router", "destino": "multicast", "verbo": "no reenvía por defecto el tráfico", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Routers y dominios de broadcast" } },
+    { "origen": "rut-plano-de-control", "destino": "router", "verbo": "es parte de", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Funciones del Router: Ruteo y Conmutación" } },
+    { "origen": "rut-plano-de-datos", "destino": "router", "verbo": "es parte de", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Funciones del Router: Ruteo y Conmutación" } },
+    { "origen": "rut-plano-de-control", "destino": "tabla-de-ruteo", "verbo": "construye y mantiene", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Funciones del Router: Ruteo y Conmutación" } },
+    { "origen": "rut-plano-de-datos", "destino": "tabla-de-ruteo", "verbo": "consulta", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Funciones del Router: Ruteo y Conmutación" } },
+    { "origen": "rut-plano-de-datos", "destino": "ttl", "verbo": "decrementa el", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Conmutación de paquetes IP" } },
+    { "origen": "rut-plano-de-control", "destino": "ruteo-dinamico", "verbo": "ejecuta los protocolos de", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Funciones del Router: Ruteo y Conmutación" } },
+    { "origen": "rut-plano-de-control", "destino": "rut-plano-de-datos", "verbo": "contrasta con", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Funciones del Router: Ruteo y Conmutación" } },
+    { "origen": "rut-switch-fabric", "destino": "rut-plano-de-datos", "verbo": "es parte de", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Arquitectura de un Router" } },
+    { "origen": "tabla-de-ruteo", "destino": "longest-prefix-match", "verbo": "se recorre con", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Tabla de ruteo – Algoritmo de búsqueda" } },
+    { "origen": "longest-prefix-match", "destino": "mascara-de-red", "verbo": "hace un AND con la", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Look-up en la tabla de ruteo" } },
+    { "origen": "ruta-por-defecto", "destino": "tabla-de-ruteo", "verbo": "es parte de", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Campos de la tabla de ruteo" } },
+    { "origen": "ruta-por-defecto", "destino": "mascara-de-red", "verbo": "usa 0.0.0.0 como", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Configuración de Gateway (GW) por defecto" } },
+    { "origen": "ruta-por-defecto", "destino": "gateway-por-defecto", "verbo": "tiene como próximo salto al", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Solución: Gateway por defecto" } },
+    { "origen": "gateway-por-defecto", "destino": "router", "verbo": "es la interfaz de un", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Volviendo al problema inicial, paso a paso… \"el ping\"" } },
+    { "origen": "gateway-por-defecto", "destino": "arp", "verbo": "se resuelve a MAC con", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Comunicación fuera de la subred IP y ARP" } },
+    { "origen": "ruteo-estatico", "destino": "ruteo-dinamico", "verbo": "contrasta con", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Actualización de la Tabla de Ruteo" } },
+    { "origen": "ruteo-estatico", "destino": "tabla-de-ruteo", "verbo": "carga a mano rutas en la", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Enrutamiento Estático" } },
+    { "origen": "ruteo-dinamico", "destino": "tabla-de-ruteo", "verbo": "actualiza automáticamente la", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Actualización de la Tabla de Ruteo" } },
+    { "origen": "ruteo-dinamico", "destino": "rut-metrica", "verbo": "elige la ruta según la", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Actualización de la Tabla de Ruteo" } },
+    { "origen": "vector-distancia", "destino": "ruteo-dinamico", "verbo": "es un tipo de", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolos y Algoritmos de ruteo" } },
+    { "origen": "estado-de-enlace", "destino": "ruteo-dinamico", "verbo": "es un tipo de", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolos y Algoritmos de ruteo" } },
+    { "origen": "vector-distancia", "destino": "estado-de-enlace", "verbo": "contrasta con", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Algoritmo Estado de Enlace" } },
+    { "origen": "rip", "destino": "vector-distancia", "verbo": "usa el algoritmo", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolo RIPv2 (RFC 2453)" } },
+    { "origen": "rip", "destino": "rut-metrica", "verbo": "usa la cantidad de saltos como", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolo RIPv2 (RFC 2453)" } },
+    { "origen": "rip", "destino": "multicast", "verbo": "envía sus updates por", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolo RIPv2 (RFC 2453)" } },
+    { "origen": "rut-ospf", "destino": "estado-de-enlace", "verbo": "usa el algoritmo", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolos y Algoritmos de ruteo" } },
+    { "origen": "rut-ospf", "destino": "rip", "verbo": "contrasta con", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolos y Algoritmos de ruteo" } },
+    { "origen": "arp", "destino": "direccion-mac", "verbo": "obtiene la", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Address Resolution Protocol (ARP)" } },
+    { "origen": "arp", "destino": "direccion-ipv4", "verbo": "parte de una", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Address Resolution Protocol (ARP)" } },
+    { "origen": "arp", "destino": "broadcast", "verbo": "envía el request por", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Mensaje – ARP Request" } },
+    { "origen": "rut-tabla-arp", "destino": "arp", "verbo": "guarda lo aprendido por", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Tabla dinámica de ARP" } },
+    { "origen": "rut-gratuitous-arp", "destino": "arp", "verbo": "es un tipo de", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Gratuitous ARP" } },
+    { "origen": "rut-gratuitous-arp", "destino": "tabla-mac", "verbo": "hace actualizar la", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Ejemplo Práctico de Gratuitous ARP" } },
+    { "origen": "rut-gratuitous-arp", "destino": "rut-tabla-arp", "verbo": "actualiza en todos los equipos la", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Gratuitous ARP" } },
+    { "origen": "icmp", "destino": "protocolo-ip", "verbo": "se encapsula en", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Protocolo ICMP" } },
+    { "origen": "router", "destino": "icmp", "verbo": "genera errores", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Conmutación de paquetes IP" } },
+    { "origen": "ping", "destino": "icmp", "verbo": "usa mensajes echo de", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Herramienta: ping" } },
+    { "origen": "traceroute", "destino": "icmp", "verbo": "usa los Time Exceeded de", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Herramienta: traceroute" } },
+    { "origen": "traceroute", "destino": "ttl", "verbo": "hace expirar el", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Herramienta: traceroute" } },
+    { "origen": "loopback", "destino": "direccion-ipv4", "verbo": "tiene reservado el rango 127.x.x.x de", "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Interfaz de loopback" } },
+    { "origen": "dhcp", "destino": "broadcast", "verbo": "se basa en", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Protocolo DHCP" } },
+    { "origen": "dhcp", "destino": "direccion-ipv4", "verbo": "asigna en forma temporal una", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Protocolo DHCP" } },
+    { "origen": "dhcp", "destino": "gateway-por-defecto", "verbo": "configura también el", "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Funcionamiento del protocolo" } }
+  ],
+  "taxonomias": [
+    {
+      "id": "rut-tax-protocolos",
+      "nombre": "Protocolos y algoritmos de ruteo",
+      "unidad": "u7-ruteo",
+      "raiz": {
+        "nombre": "Ruteo",
+        "hijos": [
+          {
+            "nombre": "Estático (no adaptativo)",
+            "descripcion": "Configuración fija por el administrador; sin adaptabilidad automática.",
+            "hijos": []
+          },
+          {
+            "nombre": "Dinámico (adaptativo)",
+            "descripcion": "Los routers intercambian información de alcanzabilidad y actualizan la tabla solos.",
+            "hijos": [
+              { "nombre": "Vector distancia", "descripcion": "Algoritmo Distance Vector, métrica en saltos.", "hijos": [{ "nombre": "RIP", "hijos": [] }] },
+              { "nombre": "Estado de enlace", "descripcion": "LSA por flooding y Dijkstra.", "hijos": [{ "nombre": "OSPF", "hijos": [] }, { "nombre": "IS-IS", "hijos": [] }] },
+              { "nombre": "Híbridos", "descripcion": "Algoritmos híbridos.", "hijos": [{ "nombre": "EIGRP", "hijos": [] }] }
+            ]
+          }
+        ]
+      },
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolos y Algoritmos de ruteo" }
+    },
+    {
+      "id": "rut-tax-entradas",
+      "nombre": "Tipos de entradas de la tabla de ruteo",
+      "unidad": "u7-ruteo",
+      "raiz": {
+        "nombre": "Entrada de la tabla de ruteo (columna TIPO)",
+        "hijos": [
+          { "nombre": "Connected", "descripcion": "Red directamente conectada a una interfaz; se indica la interfaz física (métrica 0).", "hijos": [] },
+          { "nombre": "Static", "descripcion": "Configurada por el administrador.", "hijos": [] },
+          {
+            "nombre": "Dinámica",
+            "descripcion": "Se indica el protocolo por el que fue aprendida.",
+            "hijos": [
+              { "nombre": "RIP", "descripcion": "Métrica en hops (ej. 3 hops).", "hijos": [] },
+              { "nombre": "OSPF", "descripcion": "Métrica propia (ej. 1000).", "hijos": [] }
+            ]
+          },
+          {
+            "nombre": "Default (0.0.0.0/0.0.0.0)",
+            "descripcion": "Ruta por defecto; coincide con cualquier destino.",
+            "hijos": [
+              { "nombre": "Estática", "descripcion": "Configurada por el administrador.", "hijos": [] },
+              { "nombre": "Dinámica", "descripcion": "Aprendida por el protocolo de ruteo.", "hijos": [] }
+            ]
+          }
+        ]
+      },
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Campos de la tabla de ruteo" }
+    },
+    {
+      "id": "rut-tax-icmp",
+      "nombre": "Mensajes ICMP por tipo y código",
+      "unidad": "u7-ruteo",
+      "raiz": {
+        "nombre": "Mensajes ICMP",
+        "hijos": [
+          { "nombre": "Type 0 – Echo reply", "descripcion": "Code 0: respuesta de ping.", "hijos": [] },
+          {
+            "nombre": "Type 3 – Destination unreachable",
+            "hijos": [
+              { "nombre": "Code 0 – dest. network unreachable", "hijos": [] },
+              { "nombre": "Code 1 – dest host unreachable", "hijos": [] },
+              { "nombre": "Code 2 – dest protocol unreachable", "hijos": [] },
+              { "nombre": "Code 3 – dest port unreachable", "hijos": [] },
+              { "nombre": "Code 6 – dest network unknown", "hijos": [] },
+              { "nombre": "Code 7 – dest host unknown", "hijos": [] }
+            ]
+          },
+          { "nombre": "Type 4 – Source quench", "descripcion": "Code 0: control de congestión (no usado).", "hijos": [] },
+          { "nombre": "Type 8 – Echo request", "descripcion": "Code 0: pedido de ping.", "hijos": [] },
+          { "nombre": "Type 9 – Route advertisement", "descripcion": "Code 0.", "hijos": [] },
+          { "nombre": "Type 10 – Router discovery", "descripcion": "Code 0.", "hijos": [] },
+          { "nombre": "Type 11 – TTL expired", "descripcion": "Code 0: lo usa traceroute.", "hijos": [] },
+          { "nombre": "Type 12 – Bad IP header", "descripcion": "Code 0.", "hijos": [] }
+        ]
+      },
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Paquete ICMP – Tipos y Códigos más Comunes" }
+    }
+  ],
+  "procesos": [
+    {
+      "id": "rut-proc-ping-dos-redes",
+      "nombre": "Ping entre dos redes (ARP + Ethernet + IP + ICMP)",
+      "unidad": "u7-ruteo",
+      "descripcion": "PC 1 (192.168.1.2/24, MAC_1) hace ping a PC 2 (192.168.2.2/24, MAC_2) a través de un router (Eth 0: 192.168.1.1/MAC_11, Eth 1: 192.168.2.1/MAC_21), con cachés ARP vacías y sin NAT. Las IP se mantienen de punta a punta; las MAC cambian en cada salto.",
+      "pasos": [
+        {
+          "actor": "PC 1",
+          "accion": "Ejecuta ping 192.168.2.2, aplica su máscara /24 y ve que el destino no está en su red, así que debe enviarlo a su gateway 192.168.1.1.",
+          "por_que": "Solo puede entregar directamente a equipos de su misma subred; lo demás va al gateway por defecto.",
+          "valores": [
+            { "nombre": "Red de PC 1", "valor": "192.168.1.0/24" },
+            { "nombre": "Destino final", "valor": "192.168.2.2" },
+            { "nombre": "Gateway", "valor": "192.168.1.1" }
+          ]
+        },
+        {
+          "actor": "PC 1",
+          "accion": "No encuentra 192.168.1.1 en su tabla ARP y emite un ARP request: \"¿Quién tiene 192.168.1.1?\".",
+          "por_que": "Necesita la MAC del gateway para armar la trama Ethernet.",
+          "valores": [
+            { "nombre": "MAC origen", "valor": "MAC_1" },
+            { "nombre": "MAC destino", "valor": "broadcast (ff:ff:ff:ff:ff:ff)" }
+          ]
+        },
+        {
+          "actor": "Router (Eth 0)",
+          "accion": "Responde el ARP en unicast: \"Tengo la 192.168.1.1 y mi MAC es MAC_11\".",
+          "por_que": "Solo responde el equipo que tiene configurada la IP buscada.",
+          "valores": [
+            { "nombre": "MAC origen", "valor": "MAC_11" },
+            { "nombre": "MAC destino", "valor": "MAC_1" }
+          ]
+        },
+        {
+          "actor": "PC 1",
+          "accion": "Envía el ICMP echo request al router, con la IP de PC 2 como destino.",
+          "por_que": "La trama va al gateway (MAC_11), pero el paquete IP está dirigido al destino final.",
+          "valores": [
+            { "nombre": "MAC origen / destino", "valor": "MAC_1 / MAC_11" },
+            { "nombre": "IP origen / destino", "valor": "192.168.1.2 / 192.168.2.2" },
+            { "nombre": "Protocolo", "valor": "ICMP" }
+          ]
+        },
+        {
+          "actor": "Router",
+          "accion": "Busca 192.168.2.2 en su tabla de ruteo, ve que la red está directamente conectada y hace un ARP request para obtener la MAC de PC 2.",
+          "por_que": "Para entregar en la red de destino necesita la MAC del host final.",
+          "valores": [{ "nombre": "Red de destino", "valor": "192.168.2.0/24 (directamente conectada)" }]
+        },
+        {
+          "actor": "Router (Eth 1)",
+          "accion": "Con la respuesta ARP, reenvía el ICMP a PC 2 en una nueva trama Ethernet.",
+          "por_que": "Cambia la cabecera de enlace en cada salto; la cabecera IP conserva origen y destino.",
+          "valores": [
+            { "nombre": "MAC origen / destino", "valor": "MAC_21 / MAC_2" },
+            { "nombre": "IP origen / destino", "valor": "192.168.1.2 / 192.168.2.2" },
+            { "nombre": "Protocolo", "valor": "ICMP" }
+          ]
+        }
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Volviendo al problema inicial, paso a paso… \"el ping\"" }
+    },
+    {
+      "id": "rut-proc-dhcp",
+      "nombre": "Intercambio DHCP: Discover, Offer, Request, Ack",
+      "unidad": "u7-ruteo",
+      "descripcion": "Un cliente que llega a la red obtiene su IP del servidor DHCP 223.1.2.5 mediante cuatro mensajes UDP en broadcast (servidor puerto 67, cliente puerto 68).",
+      "pasos": [
+        {
+          "actor": "Cliente DHCP",
+          "accion": "Hace broadcast de un DHCP discover (IP address request).",
+          "por_que": "Todavía no tiene IP ni conoce al servidor, así que usa 0.0.0.0 como origen y difusión como destino.",
+          "valores": [
+            { "nombre": "src", "valor": "0.0.0.0, 68" },
+            { "nombre": "dest", "valor": "255.255.255.255, 67" },
+            { "nombre": "yiaddr", "valor": "0.0.0.0" },
+            { "nombre": "transaction ID", "valor": "654" }
+          ]
+        },
+        {
+          "actor": "Servidor DHCP",
+          "accion": "Responde con un DHCP offer que propone una IP (IP address offer).",
+          "por_que": "Ofrece una dirección libre con su tiempo de alquiler (lease).",
+          "valores": [
+            { "nombre": "src", "valor": "223.1.2.5, 67" },
+            { "nombre": "dest", "valor": "255.255.255.255, 68" },
+            { "nombre": "yiaddr", "valor": "223.1.2.4" },
+            { "nombre": "transaction ID", "valor": "654" },
+            { "nombre": "Lifetime", "valor": "3600 s" }
+          ]
+        },
+        {
+          "actor": "Cliente DHCP",
+          "accion": "Envía un DHCP request pidiendo la IP ofrecida (IP address selection).",
+          "por_que": "Confirma qué dirección elige; sigue sin IP propia, por eso el origen es 0.0.0.0.",
+          "valores": [
+            { "nombre": "src", "valor": "0.0.0.0, 68" },
+            { "nombre": "dest", "valor": "255.255.255.255, 67" },
+            { "nombre": "yiaddr", "valor": "223.1.2.4" },
+            { "nombre": "transaction ID", "valor": "655" },
+            { "nombre": "Lifetime", "valor": "3600 s" }
+          ]
+        },
+        {
+          "actor": "Servidor DHCP",
+          "accion": "Envía el DHCP ACK confirmando la asignación (IP address acknowledgment).",
+          "por_que": "A partir de aquí el cliente usa 223.1.2.4 durante el lease.",
+          "valores": [
+            { "nombre": "src", "valor": "223.1.2.5, 67" },
+            { "nombre": "dest", "valor": "255.255.255.255, 68" },
+            { "nombre": "yiaddr", "valor": "223.1.2.4" },
+            { "nombre": "transaction ID", "valor": "655" },
+            { "nombre": "Lifetime", "valor": "3600 s" }
+          ]
+        }
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Mensajes DHCP (detalle)" }
+    },
+    {
+      "id": "rut-proc-arp",
+      "nombre": "Resolución ARP: request, reply y tabla ARP",
+      "unidad": "u7-ruteo",
+      "descripcion": "A (192.168.1.1, 00:e0:4c:9b:e1:de) quiere enviar un paquete IP a C (192.168.1.3, 00:0d:29:42:31:0c) en el mismo segmento Ethernet.",
+      "pasos": [
+        {
+          "actor": "Equipo A",
+          "accion": "Envía un ARP request en broadcast preguntando \"¿Quién tiene 192.168.1.3?\".",
+          "por_que": "Conoce la IP de destino pero no la MAC, y no sabe quién la tiene, así que pregunta a todo el segmento.",
+          "valores": [
+            { "nombre": "MAC destino (Ethernet)", "valor": "ff:ff:ff:ff:ff:ff" },
+            { "nombre": "Opcode", "valor": "request (0x0001)" },
+            { "nombre": "Target MAC", "valor": "00:00:00:00:00:00" },
+            { "nombre": "Target IP", "valor": "192.168.1.3" }
+          ]
+        },
+        {
+          "actor": "Equipo C",
+          "accion": "Responde con un ARP reply unicast dirigido a A con su MAC.",
+          "por_que": "Solo responde el equipo que tiene configurada la IP buscada; B y los demás descartan el pedido.",
+          "valores": [
+            { "nombre": "MAC origen / destino", "valor": "00:0d:29:42:31:0c / 00:e0:4c:9b:e1:de" },
+            { "nombre": "Opcode", "valor": "reply (0x0002)" }
+          ]
+        },
+        {
+          "actor": "Equipo A",
+          "accion": "Guarda la asociación 192.168.1.3 ↔ 00:0d:29:42:31:0c en su tabla ARP dinámica y envía la trama.",
+          "por_que": "Mientras la entrada no expire no repetirá el pedido ARP para ese destino.",
+          "valores": [{ "nombre": "Tipo de entrada", "valor": "dinámico" }]
+        }
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Secuencia de mensajes ARP \"Request\" y \"Reply\"" }
+    },
+    {
+      "id": "rut-proc-traceroute",
+      "nombre": "Descubrimiento de ruta con traceroute",
+      "unidad": "u7-ruteo",
+      "descripcion": "Host A traza la ruta hasta Host B, que está detrás de Router 1 y Router 2, haciendo expirar el TTL en cada salto.",
+      "pasos": [
+        {
+          "actor": "Host A",
+          "accion": "Envía un paquete con TTL = 1; Router 1 lo decrementa a 0, lo descarta y devuelve ICMP Time Exceeded.",
+          "por_que": "El mensaje de error trae la IP de Router 1 y permite medir su retardo.",
+          "valores": [
+            { "nombre": "TTL", "valor": "1" },
+            { "nombre": "Responde", "valor": "Router 1 (ICMP type 11, code 0)" }
+          ]
+        },
+        {
+          "actor": "Host A",
+          "accion": "Envía un paquete con TTL = 2; pasa Router 1 y expira en Router 2, que responde ICMP Time Exceeded.",
+          "por_que": "Cada incremento del TTL descubre el router siguiente del camino.",
+          "valores": [
+            { "nombre": "TTL", "valor": "2" },
+            { "nombre": "Responde", "valor": "Router 2 (ICMP type 11, code 0)" }
+          ]
+        },
+        {
+          "actor": "Host A",
+          "accion": "Envía un paquete con TTL = 3; llega a Host B, que responde con ICMP Echo Reply.",
+          "por_que": "Al recibir la respuesta del destino, la traza termina.",
+          "valores": [
+            { "nombre": "TTL", "valor": "3" },
+            { "nombre": "Responde", "valor": "Host B (ICMP type 0, code 0)" }
+          ]
+        }
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Proceso de Mapeo – Descubrimiento de Ruta" }
+    },
+    {
+      "id": "rut-proc-conmutacion",
+      "nombre": "Conmutación de un paquete IP en el router",
+      "unidad": "u7-ruteo",
+      "descripcion": "Qué hace el router cuando un paquete IP llega a una de sus interfaces.",
+      "pasos": [
+        {
+          "actor": "Interfaz de entrada",
+          "accion": "Recibe la trama, ejecuta las funciones de capa física y enlace y desencapsula el paquete IP.",
+          "por_que": "El router debe implementar capas 1 y 2 en cada interfaz para recibir y transmitir."
+        },
+        {
+          "actor": "Plano de datos",
+          "accion": "Examina la IP de destino y hace el look-up en la tabla de ruteo (AND con la máscara de cada entrada, longest prefix match).",
+          "por_que": "La IP de destino y la tabla son los dos elementos con los que se decide el próximo salto.",
+          "valores": [{ "nombre": "Ejemplo", "valor": "192.168.3.65 → 192.168.3.0/24 → 192.168.1.1 por Eth_1" }]
+        },
+        {
+          "actor": "Plano de datos (hay coincidencia)",
+          "accion": "Decrementa el TTL y conmuta el paquete a través de la switch fabric hacia la interfaz de salida indicada.",
+          "por_que": "El TTL evita bucles infinitos; la switch fabric une entrada y salida."
+        },
+        {
+          "actor": "Plano de datos (sin coincidencia)",
+          "accion": "Descarta el paquete y envía un ICMP de error al host origen.",
+          "por_que": "Sin ruta válida (ni por defecto) no hay hacia dónde reenviarlo; ICMP avisa al emisor."
+        },
+        {
+          "actor": "Interfaz de salida",
+          "accion": "Encola el paquete, lo encapsula en una nueva trama de capa 2 y lo transmite.",
+          "por_que": "Puede haber que esperar a que la interfaz esté libre, y cada enlace usa su propia cabecera de enlace."
+        }
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Conmutación de paquetes IP" }
+    },
+    {
+      "id": "rut-proc-estado-enlace",
+      "nombre": "Algoritmo de estado de enlace",
+      "unidad": "u7-ruteo",
+      "descripcion": "Los cinco pasos con los que un protocolo de estado de enlace (como OSPF o IS-IS) construye y mantiene sus rutas.",
+      "pasos": [
+        {
+          "actor": "Cada router",
+          "accion": "Descubre a sus vecinos directamente conectados con mensajes Hello y forma adyacencias.",
+          "por_que": "Necesita saber con quién tiene enlace directo y si la conectividad funciona."
+        },
+        {
+          "actor": "Cada router",
+          "accion": "Genera un LSA (Link-State Advertisement) con su ID, sus enlaces directos con su costo y el estado de cada enlace.",
+          "por_que": "Es la descripción de su porción de la topología que compartirá con todos."
+        },
+        {
+          "actor": "Todos los routers",
+          "accion": "Distribuyen los LSA a todos los demás routers por flooding.",
+          "por_que": "Así cada router obtiene la misma visión completa de la red."
+        },
+        {
+          "actor": "Cada router",
+          "accion": "Construye la base de datos de estado de enlace y calcula la ruta más corta con el algoritmo de Dijkstra.",
+          "por_que": "Con la topología completa puede calcular por sí mismo el mejor camino a cada destino."
+        },
+        {
+          "actor": "Router afectado",
+          "accion": "Si un enlace cambia de estado, genera un nuevo LSA y repite el flooding de inmediato.",
+          "por_que": "Mantiene las bases de datos actualizadas sin esperar updates periódicos."
+        }
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Algoritmo Estado de Enlace" }
+    }
+  ],
+  "comparaciones": [
+    {
+      "id": "rut-comp-estatico-dinamico",
+      "nombre": "Ruteo estático vs dinámico",
+      "unidad": "u7-ruteo",
+      "columnas": ["Estático", "Dinámico"],
+      "filas": [
+        { "criterio": "Quién carga las rutas", "celdas": ["El administrador, a mano", "Protocolos de ruteo, automáticamente"] },
+        { "criterio": "Consumo de recursos", "celdas": ["Ninguno: no hay proceso corriendo", "Intercambio periódico de información"] },
+        { "criterio": "Escalabilidad", "celdas": ["No escalable", "Apto para redes grandes"] },
+        { "criterio": "Ante una falla", "celdas": ["Los paquetes no llegan hasta reconfigurar", "Cambia la ruta solo si hay redundancia; pierde paquetes hasta converger"] },
+        { "criterio": "Caso de uso", "celdas": ["Redes pequeñas, único enlace, control estricto", "Topologías con caminos alternativos"] },
+        { "criterio": "Ejemplos", "celdas": ["10.0.0.0/24 → 10.0.1.1 en Router B", "RIP, OSPF, BGP"] }
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Actualización de la Tabla de Ruteo" }
+    },
+    {
+      "id": "rut-comp-dv-ls",
+      "nombre": "Vector distancia vs estado de enlace",
+      "unidad": "u7-ruteo",
+      "columnas": ["Vector distancia", "Estado de enlace"],
+      "filas": [
+        { "criterio": "Conocimiento de la topología", "celdas": ["Ninguno global: solo vecino y distancia", "Completo: base de datos de estado de enlace"] },
+        { "criterio": "Qué se intercambia", "celdas": ["Redes y distancias de la propia tabla", "LSA (ID, enlaces, costo, estado)"] },
+        { "criterio": "A quién se envía", "celdas": ["A los vecinos, por sus interfaces", "A todos los routers, por flooding"] },
+        { "criterio": "Cuándo se envía", "celdas": ["Periódicamente (RIP: cada 30 s)", "Ante un cambio de enlace, de inmediato"] },
+        { "criterio": "Cálculo de rutas", "celdas": ["Compara costos y suma un salto", "Algoritmo de Dijkstra"] },
+        { "criterio": "Protocolos", "celdas": ["RIP", "OSPF, IS-IS"] }
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Algoritmo Distance Vector" }
+    },
+    {
+      "id": "rut-comp-arp",
+      "nombre": "ARP request vs reply vs gratuitous ARP",
+      "unidad": "u7-ruteo",
+      "columnas": ["ARP request", "ARP reply", "Gratuitous ARP"],
+      "filas": [
+        { "criterio": "Quién lo envía", "celdas": ["Quien necesita una MAC", "Solo quien tiene la IP buscada", "El propio dispositivo, sin pedido"] },
+        { "criterio": "MAC destino Ethernet", "celdas": ["Broadcast ff:ff:ff:ff:ff:ff", "Unicast al solicitante", "Broadcast ff:ff:ff:ff:ff:ff"] },
+        { "criterio": "Opcode", "celdas": ["request (0x0001)", "reply (0x0002)", "reply (0x0002) en la captura"] },
+        { "criterio": "Target MAC", "celdas": ["00:00:00:00:00:00", "MAC del solicitante", "Broadcast"] },
+        { "criterio": "Sender IP vs Target IP", "celdas": ["Distintas (192.168.1.1 → 192.168.1.3)", "Distintas (192.168.1.3 → 192.168.1.1)", "Iguales (192.168.1.3)"] },
+        { "criterio": "Propósito", "celdas": ["Preguntar \"¿quién tiene esta IP?\"", "Informar \"esta es mi MAC\"", "Anunciar/actualizar IP-MAC en toda la red"] }
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Gratuitous ARP" }
+    },
+    {
+      "id": "rut-comp-asignacion-ip",
+      "nombre": "Asignación de IP estática vs dinámica (DHCP)",
+      "unidad": "u7-ruteo",
+      "columnas": ["Estática", "Dinámica (DHCP)"],
+      "filas": [
+        { "criterio": "Intervención", "celdas": ["Requiere al administrador", "\"Plug and play\" para el usuario"] },
+        { "criterio": "Escalabilidad", "celdas": ["No escalable", "Asignación on-demand"] },
+        { "criterio": "Duración", "celdas": ["Fija", "Temporal, por lease (ej. 3600 s)"] },
+        { "criterio": "Reutilización de IP", "celdas": ["No", "Sí, las direcciones se reutilizan"] },
+        { "criterio": "Cuándo conviene", "celdas": ["Equipos que requieren IP fija", "Dispositivos donde es deseable"] }
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Dos formas de asignar" }
+    },
+    {
+      "id": "rut-comp-conmutacion",
+      "nombre": "Conmutación por memoria, bus y crossbar",
+      "unidad": "u7-ruteo",
+      "columnas": ["Por memoria", "Por bus", "Por red (crossbar)"],
+      "filas": [
+        { "criterio": "Mecanismo", "celdas": ["Se copia en memoria y se redirige a la salida", "La entrada lo pasa directo a la salida por un bus compartido", "Malla de buses que une cualquier entrada con cualquier salida"] },
+        { "criterio": "Ventaja / evolución", "celdas": ["Antes CPU central; hoy chips en line cards", "La CPU principal no interviene", "Conmuta varios paquetes en paralelo"] },
+        { "criterio": "Limitación", "celdas": ["Ancho de banda de memoria: rendimiento < B/2", "Un paquete a la vez; si el bus está ocupado, se bloquea", "El material no indica"] }
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Tipos de conmutación" }
+    }
+  ],
+  "ejercicios": [
+    {
+      "id": "rut-ej-lookup-192-168-3-65",
+      "titulo": "Lookup de un paquete con destino 192.168.3.65",
+      "unidad": "u7-ruteo",
+      "tipo": "Tabla de ruteo",
+      "enunciado": "Un router recibe por Eth_0 un paquete con IP destino 192.168.3.65. Su tabla de ruteo es:\n10.1.5.0 / 255.255.255.0 → directamente conectada, Eth_0\n192.168.1.0 / 255.255.255.0 → directamente conectada, Eth_1\n192.168.2.0 / 255.255.255.0 → directamente conectada, Eth_2\n192.168.3.0 / 255.255.255.0 → 192.168.1.1, Eth_1\n0.0.0.0 / 0.0.0.0 → 192.168.2.1, Eth_2\nDeterminá cómo se encamina el paquete.",
+      "pasos": [
+        {
+          "consigna": "¿Qué resultado da 192.168.3.65 AND 255.255.255.0?",
+          "respuesta": "192.168.3.0",
+          "tipo_respuesta": "ip",
+          "explicacion": "El AND con una máscara /24 conserva los tres primeros octetos y pone el último en 0: 192.168.3.0."
+        },
+        {
+          "consigna": "¿Con qué red de la tabla (en notación prefijo) coincide el destino como ruta más específica?",
+          "respuesta": "192.168.3.0/24",
+          "tipo_respuesta": "ip",
+          "alternativas": ["192.168.3.0"],
+          "explicacion": "El resultado del AND coincide con la red 192.168.3.0/255.255.255.0. También coincide la ruta por defecto, pero /24 es más específica (longest prefix match)."
+        },
+        {
+          "consigna": "¿Cuál es la IP del próximo salto?",
+          "respuesta": "192.168.1.1",
+          "tipo_respuesta": "ip",
+          "explicacion": "La entrada 192.168.3.0/24 indica próximo salto 192.168.1.1."
+        },
+        {
+          "consigna": "¿Por qué interfaz sale el paquete?",
+          "respuesta": "Eth_1",
+          "tipo_respuesta": "texto",
+          "alternativas": ["Eth1", "Eth 1", "Ethernet 1"],
+          "explicacion": "El próximo salto 192.168.1.1 está en la red 192.168.1.0/24, directamente conectada por Eth_1."
+        },
+        {
+          "consigna": "¿Qué IP de destino lleva el paquete al salir del router?",
+          "respuesta": "192.168.3.65",
+          "tipo_respuesta": "ip",
+          "explicacion": "El router no cambia la IP de destino: el próximo salto solo determina a quién se entrega la trama."
+        }
+      ],
+      "pistas": [
+        "Aplicá a la IP de destino la máscara de cada entrada y compará con la red.",
+        "Hay dos entradas que coinciden; quedate con la de máscara más larga.",
+        "La interfaz de salida es la que está conectada a la red del próximo salto."
+      ],
+      "errores_comunes": [
+        "Elegir la ruta por defecto (Eth_2) porque también coincide, ignorando que hay una más específica.",
+        "Responder que sale por Eth_0, la interfaz por la que entró.",
+        "Creer que el router cambia la IP de destino por la del próximo salto."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Consulta de la tabla de ruteo (ejemplo)" }
+    },
+    {
+      "id": "rut-ej-lookup-and",
+      "titulo": "Look-up con AND: destino 192.168.1.1",
+      "unidad": "u7-ruteo",
+      "tipo": "Tabla de ruteo",
+      "enunciado": "Un router debe encaminar un paquete con destino 192.168.1.1. Su tabla es:\n10.0.1.0 / 255.255.255.0 → 10.0.0.1\n192.168.2.0 / 255.255.255.0 → 10.0.8.1\n172.16.0.0 / 255.255.0.0 → 172.16.1.1\n10.4.0.0 / 255.255.252.0 → 10.0.0.1\n192.168.1.0 / 255.255.255.128 → 10.0.8.1\nEvaluá entrada por entrada.",
+      "pasos": [
+        {
+          "consigna": "¿Cuánto da 192.168.1.1 AND 255.255.255.0 (máscara de la segunda entrada)?",
+          "respuesta": "192.168.1.0",
+          "tipo_respuesta": "ip",
+          "explicacion": "Con /24 el último octeto queda en 0: 192.168.1.0, que no es igual a 192.168.2.0, así que esa entrada no coincide."
+        },
+        {
+          "consigna": "¿Cuánto da 192.168.1.1 AND 255.255.0.0 (tercera entrada)? ¿Coincide con 172.16.0.0?",
+          "respuesta": "192.168.0.0",
+          "tipo_respuesta": "ip",
+          "explicacion": "Con /16 quedan los dos primeros octetos: 192.168.0.0 ≠ 172.16.0.0, no coincide."
+        },
+        {
+          "consigna": "¿Cuánto da 192.168.1.1 AND 255.255.255.128?",
+          "respuesta": "192.168.1.0",
+          "tipo_respuesta": "ip",
+          "explicacion": "El último octeto 1 = 00000001; AND 10000000 = 00000000. Resultado 192.168.1.0, igual a la red de la última entrada."
+        },
+        {
+          "consigna": "¿A qué próximo salto se envía el paquete?",
+          "respuesta": "10.0.8.1",
+          "tipo_respuesta": "ip",
+          "explicacion": "Coincide con 192.168.1.0/25, cuyo próximo salto es 10.0.8.1."
+        },
+        {
+          "consigna": "¿Qué prefijo tiene la red que coincidió?",
+          "respuesta": "192.168.1.0/25",
+          "tipo_respuesta": "ip",
+          "explicacion": "255.255.255.128 tiene 25 bits en 1: /25."
+        }
+      ],
+      "pistas": [
+        "Para cada entrada calculá destino AND máscara y comparalo con la red de esa entrada.",
+        "En la máscara 255.255.255.128 solo importa el primer bit del último octeto.",
+        "El último octeto del destino es 1 (00000001): su primer bit es 0."
+      ],
+      "errores_comunes": [
+        "Comparar la IP de destino directamente con la red sin aplicar la máscara.",
+        "Pensar que 192.168.1.1 no puede estar en una red /25 porque la máscara no es /24.",
+        "Confundir la máscara 255.255.255.128 con /24 o con /26."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Look-up en la tabla de ruteo" }
+    },
+    {
+      "id": "rut-ej-rip-updates",
+      "titulo": "Updates de RIP entre Router A y Router B",
+      "unidad": "u7-ruteo",
+      "tipo": "Vector distancia",
+      "enunciado": "Topología: 1.0.0.0 — (e0) Router A (s0) — 12.0.0.0 — (s0) Router B (e0) — 2.0.0.0. Ambos corren RIP. Router A tiene 1.0.0.0 y 12.0.0.0 directamente conectadas; Router B tiene 2.0.0.0 y 12.0.0.0. Cada router suma un salto a sus entradas al enviar el update.",
+      "pasos": [
+        {
+          "consigna": "En el update que A envía a B, ¿con cuántos saltos anuncia la red 1.0.0.0?",
+          "respuesta": "1",
+          "tipo_respuesta": "numero",
+          "explicacion": "1.0.0.0 está directamente conectada a A (0 saltos); al enviar suma uno: 1."
+        },
+        {
+          "consigna": "En el update que A envía a B, ¿con cuántos saltos anuncia la red 2.0.0.0?",
+          "respuesta": "2",
+          "tipo_respuesta": "numero",
+          "explicacion": "A aprendió 2.0.0.0 a 1 salto (vía B por s0); al anunciarla suma uno: 2."
+        },
+        {
+          "consigna": "En la tabla de Router A, ¿a cuántos saltos figura la red 2.0.0.0?",
+          "respuesta": "1",
+          "tipo_respuesta": "numero",
+          "explicacion": "B la anuncia con 1 salto (directa + 1) y A la incorpora con ese costo."
+        },
+        {
+          "consigna": "¿Por qué interfaz de Router A se alcanza la red 2.0.0.0?",
+          "respuesta": "s0",
+          "tipo_respuesta": "texto",
+          "explicacion": "El update llegó desde B por la interfaz serial s0 de A."
+        },
+        {
+          "consigna": "¿Cada cuántos segundos se envían estos updates?",
+          "respuesta": "30",
+          "tipo_respuesta": "numero",
+          "explicacion": "RIP envía su tabla completa cada 30 segundos a la dirección multicast 224.0.0.9."
+        },
+        {
+          "consigna": "¿A partir de cuántos saltos RIP considera inalcanzable un destino?",
+          "respuesta": "16",
+          "tipo_respuesta": "numero",
+          "explicacion": "El límite es 15 saltos; 16 o más significa inalcanzable."
+        }
+      ],
+      "pistas": [
+        "Las redes directamente conectadas cuentan como 0 saltos en la propia tabla.",
+        "Al enviar un update, el router suma un salto a cada entrada de su tabla.",
+        "B anuncia 2.0.0.0 con 1 salto; A la guarda así y la reanuncia sumando otro."
+      ],
+      "errores_comunes": [
+        "Anunciar las redes directas con 0 saltos, olvidando el incremento al enviar.",
+        "Pensar que RIP solo envía las rutas que cambiaron (envía la tabla completa).",
+        "Tomar 15 como el valor de inalcanzable en lugar de 16."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Ejemplo: Funcionamiento de RIP" }
+    },
+    {
+      "id": "rut-ej-capturas-ping",
+      "titulo": "Capturas del ping PC 1 → PC 2",
+      "unidad": "u7-ruteo",
+      "tipo": "Encapsulamiento por salto",
+      "enunciado": "PC 1 (192.168.1.2/24, MAC_1) hace ping a PC 2 (192.168.2.2/24, MAC_2). Entre ambos hay un router: Eth 0 = 192.168.1.1 (MAC_11) en la LAN 1 y Eth 1 = 192.168.2.1 (MAC_21) en la LAN 2. Las cachés ARP están vacías y no hay NAT. Completá las direcciones del echo request en cada tramo.",
+      "pasos": [
+        {
+          "consigna": "¿Qué MAC destino lleva el primer ARP request que envía PC 1?",
+          "respuesta": "ff:ff:ff:ff:ff:ff (broadcast)",
+          "tipo_respuesta": "opcion",
+          "opciones": ["ff:ff:ff:ff:ff:ff (broadcast)", "MAC_11", "MAC_2", "00:00:00:00:00:00"],
+          "explicacion": "El ARP request se envía en broadcast porque PC 1 todavía no conoce la MAC del gateway."
+        },
+        {
+          "consigna": "Tramo LAN 1 (PC 1 → router): MAC origen del echo request.",
+          "respuesta": "MAC_1",
+          "tipo_respuesta": "texto",
+          "alternativas": ["MAC 1", "MAC1"],
+          "explicacion": "Lo emite la placa de PC 1."
+        },
+        {
+          "consigna": "Tramo LAN 1 (PC 1 → router): MAC destino del echo request.",
+          "respuesta": "MAC_11",
+          "tipo_respuesta": "texto",
+          "alternativas": ["MAC 11", "MAC11"],
+          "explicacion": "PC 2 no está en su red, así que la trama va al gateway: Eth 0 del router (MAC_11)."
+        },
+        {
+          "consigna": "Tramo LAN 2 (router → PC 2): MAC origen del echo request.",
+          "respuesta": "MAC_21",
+          "tipo_respuesta": "texto",
+          "alternativas": ["MAC 21", "MAC21"],
+          "explicacion": "El router reencapsula el paquete en una nueva trama que sale por Eth 1 (MAC_21)."
+        },
+        {
+          "consigna": "Tramo LAN 2 (router → PC 2): MAC destino del echo request.",
+          "respuesta": "MAC_2",
+          "tipo_respuesta": "texto",
+          "alternativas": ["MAC 2", "MAC2"],
+          "explicacion": "La red 192.168.2.0/24 está directamente conectada; el router obtiene por ARP la MAC de PC 2."
+        },
+        {
+          "consigna": "Tramo LAN 2: ¿qué IP de origen lleva el paquete?",
+          "respuesta": "192.168.1.2",
+          "tipo_respuesta": "ip",
+          "explicacion": "Las IP se mantienen de punta a punta: sigue siendo la de PC 1."
+        },
+        {
+          "consigna": "Tramo LAN 2: ¿qué IP de destino lleva el paquete?",
+          "respuesta": "192.168.2.2",
+          "tipo_respuesta": "ip",
+          "explicacion": "La IP de destino es la de PC 2 en ambos tramos."
+        }
+      ],
+      "pistas": [
+        "Pensá qué cambia en cada salto: la cabecera de enlace o la de red.",
+        "En cada LAN, las MAC son las de los dos equipos que están en los extremos de ese tramo.",
+        "Sin NAT, el router no toca las IP de origen ni de destino."
+      ],
+      "errores_comunes": [
+        "Poner MAC_2 como destino en la LAN 1, como si la MAC de destino fuera la del host final.",
+        "Poner como IP de origen en la LAN 2 la del router (192.168.2.1).",
+        "Pensar que la IP de destino en la LAN 1 es la del gateway 192.168.1.1."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Volviendo al problema inicial, paso a paso… \"el ping\"" }
+    },
+    {
+      "id": "rut-ej-no-responde-ping",
+      "titulo": "¡No me responde el ping!",
+      "unidad": "u7-ruteo",
+      "tipo": "Diagnóstico",
+      "enunciado": "PC 1 (192.168.1.2, MAC_1) quiere hacer ping a PC 2 (192.168.2.2, MAC_2), conectados a través de un router (Eth 0: 192.168.1.1 / MAC_11; Eth 1: 192.168.2.1 / MAC_21). El echo request ni siquiera sale de PC 1. La tabla de ruteo de PC 1 tiene solo la entrada 192.168.1.0 255.255.255.0 → Interfaz Ethernet.",
+      "pasos": [
+        {
+          "consigna": "¿Qué está fallando?",
+          "respuesta": "Falta configurar el gateway por defecto en PC 1",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Falta configurar el gateway por defecto en PC 1",
+            "El router no tiene una ruta hacia 192.168.2.0/24",
+            "PC 2 no respondió el ARP request de PC 1",
+            "La máscara /24 de PC 1 es incorrecta"
+          ],
+          "explicacion": "192.168.2.2 no coincide con ninguna entrada de la tabla de PC 1 y no hay ruta por defecto, así que descarta el paquete."
+        },
+        {
+          "consigna": "Red de la entrada que hay que agregar.",
+          "respuesta": "0.0.0.0",
+          "tipo_respuesta": "ip",
+          "explicacion": "La ruta por defecto tiene red 0.0.0.0."
+        },
+        {
+          "consigna": "Máscara de esa entrada.",
+          "respuesta": "0.0.0.0",
+          "tipo_respuesta": "ip",
+          "alternativas": ["/0"],
+          "explicacion": "Con máscara 0.0.0.0 cualquier destino AND 0.0.0.0 = 0.0.0.0: siempre coincide."
+        },
+        {
+          "consigna": "Próximo salto de esa entrada.",
+          "respuesta": "192.168.1.1",
+          "tipo_respuesta": "ip",
+          "explicacion": "Es la interfaz Eth 0 del router, en la misma subred que PC 1."
+        },
+        {
+          "consigna": "¿Qué comando de Linux lo configura?",
+          "respuesta": "route add default gw 192.168.1.1",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "route add default gw 192.168.1.1",
+            "route add default gw 192.168.2.1",
+            "arp -s 192.168.1.1 MAC_11",
+            "route delete 0.0.0.0"
+          ],
+          "explicacion": "route add default gw IP_del_GW agrega la ruta por defecto; el GW debe estar en la misma subred que PC 1 (192.168.1.1, no 192.168.2.1)."
+        }
+      ],
+      "pistas": [
+        "Seguí el flujo del PC: ¿es la mía?, ¿está en mi subred?, ¿hay gateway?",
+        "192.168.2.2 no está en 192.168.1.0/24 y no hay otra entrada.",
+        "La entrada que falta es la que coincide con cualquier destino."
+      ],
+      "errores_comunes": [
+        "Culpar al router, cuando el paquete nunca salió de PC 1.",
+        "Poner como gateway la IP 192.168.2.1, que no está en la subred de PC 1.",
+        "Usar máscara 255.255.255.255 en la ruta por defecto."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Problema: ¡No me responde el ping!" }
+    },
+    {
+      "id": "rut-ej-traceroute-ttl",
+      "titulo": "Traceroute: qué responde cada TTL",
+      "unidad": "u7-ruteo",
+      "tipo": "ICMP",
+      "enunciado": "Host A ejecuta traceroute hacia Host B. El camino es Host A → Router 1 → Router 2 → Host B.",
+      "pasos": [
+        {
+          "consigna": "Con TTL = 1, ¿quién responde?",
+          "respuesta": "Router 1",
+          "tipo_respuesta": "opcion",
+          "opciones": ["Router 1", "Router 2", "Host B", "Nadie: el paquete se pierde sin aviso"],
+          "explicacion": "Router 1 decrementa el TTL a 0, descarta el paquete y avisa al origen."
+        },
+        {
+          "consigna": "¿Qué tipo ICMP envía ese router?",
+          "respuesta": "11",
+          "tipo_respuesta": "numero",
+          "explicacion": "Type 11 = TTL expired (Time Exceeded)."
+        },
+        {
+          "consigna": "¿Con qué código?",
+          "respuesta": "0",
+          "tipo_respuesta": "numero",
+          "explicacion": "La tabla del material: type 11, code 0 = TTL expired."
+        },
+        {
+          "consigna": "Con TTL = 3, ¿qué mensaje recibe Host A?",
+          "respuesta": "ICMP Echo Reply de Host B (type 0)",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "ICMP Echo Reply de Host B (type 0)",
+            "ICMP Time Exceeded de Router 2 (type 11)",
+            "ICMP Destination unreachable de Router 2 (type 3)",
+            "ICMP Echo Request de Host B (type 8)"
+          ],
+          "explicacion": "Con TTL = 3 el paquete alcanza a Host B, que responde con Echo Reply y la traza termina."
+        }
+      ],
+      "pistas": [
+        "Cada router decrementa el TTL en 1 y descarta el paquete si llega a 0.",
+        "El aviso de expiración es un mensaje ICMP de error que vuelve al origen.",
+        "Buscá en la tabla de ICMP la fila \"TTL expired\"."
+      ],
+      "errores_comunes": [
+        "Creer que con TTL = 1 responde el destino final.",
+        "Confundir TTL expired (11) con destination unreachable (3).",
+        "Pensar que el destino responde con Time Exceeded en lugar de Echo Reply."
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Proceso de Mapeo – Descubrimiento de Ruta" }
+    }
+  ],
+  "preguntas": [
+    {
+      "id": "rut-p01",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿En qué capa opera un router y qué hace con los broadcasts de capa 2 (MAC destino ff:ff:ff:ff:ff:ff)?",
+      "opciones": [
+        "Capa de enlace; los reenvía por todas sus interfaces, igual que un switch",
+        "Capa de red; no los reenvía, por eso separa dominios de broadcast",
+        "Capa de red; los reenvía, pero separa solamente los dominios de colisión de cada puerto",
+        "Capa física; regenera la señal y la repite por todas sus interfaces"
+      ],
+      "correcta": 1,
+      "explicacion": "El router opera en capa de red y, a diferencia del switch, no reenvía broadcasts de capa 2 ni multicast: separa dominios de broadcast.",
+      "por_que_falla": [
+        "Eso describe a un switch/bridge, dispositivo de capa de enlace que sí propaga broadcasts.",
+        "",
+        "El router no reenvía broadcasts de capa 2; separar solo colisiones es lo que hace un switch.",
+        "Eso describe a un repetidor, dispositivo de capa física."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Routers y dominios de broadcast" }
+    },
+    {
+      "id": "rut-p02",
+      "unidad": "u7-ruteo",
+      "enunciado": "Un router recibe por Eth_0 un paquete a 192.168.3.65. Su tabla tiene 192.168.1.0/24 y 192.168.2.0/24 conectadas en Eth_1 y Eth_2, 192.168.3.0/24 → 192.168.1.1 (Eth_1) y 0.0.0.0/0 → 192.168.2.1 (Eth_2). ¿Cómo lo reenvía?",
+      "opciones": [
+        "Por Eth_2 hacia 192.168.2.1, porque la ruta por defecto coincide con cualquier destino",
+        "Por Eth_0, que es la interfaz por la que entró el paquete",
+        "Lo descarta, porque la red 192.168.3.0 no está directamente conectada",
+        "Por Eth_1, hacia el próximo salto 192.168.1.1"
+      ],
+      "correcta": 3,
+      "explicacion": "192.168.3.65 AND 255.255.255.0 = 192.168.3.0: coincide con la entrada /24, más específica que la ruta por defecto. Próximo salto 192.168.1.1, salida Eth_1.",
+      "por_que_falla": [
+        "La ruta por defecto también coincide, pero /0 es menos específica que /24 (longest prefix match).",
+        "La interfaz de entrada no determina la salida; la determina la tabla.",
+        "No hace falta que esté conectada: hay una entrada con próximo salto 192.168.1.1.",
+        ""
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Consulta de la tabla de ruteo (ejemplo)" }
+    },
+    {
+      "id": "rut-p03",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿Qué ruta selecciona el algoritmo longest prefix match?",
+      "opciones": [
+        "La que coincide con el destino y tiene la máscara más larga",
+        "La de menor cantidad de saltos, aunque su máscara sea más corta",
+        "La primera de la tabla que aparece, sin mirar la longitud de la máscara",
+        "La ruta por defecto, porque coincide con cualquier destino IP"
+      ],
+      "correcta": 0,
+      "explicacion": "Longest prefix match elige la ruta más específica (máscara más larga) entre las que coinciden con la IP de destino.",
+      "por_que_falla": [
+        "",
+        "La cantidad de saltos es una métrica de RIP para elegir qué ruta cargar, no el criterio de búsqueda.",
+        "El orden de la tabla no prevalece sobre la especificidad de la máscara.",
+        "La ruta por defecto es la menos específica: solo se usa si no hay otra coincidencia."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Tabla de ruteo – Algoritmo de búsqueda" }
+    },
+    {
+      "id": "rut-p04",
+      "unidad": "u7-ruteo",
+      "enunciado": "Una tabla tiene la entrada 192.168.1.0 / 255.255.255.128 → 10.0.8.1. Llega un paquete a 192.168.1.1. ¿Qué da el AND con esa máscara y qué hace el router?",
+      "opciones": [
+        "192.168.1.128; no coincide con ninguna entrada y se envía por la ruta por defecto",
+        "192.168.1.1; no coincide con ninguna red de la tabla y se descarta",
+        "192.168.1.0; coincide con 192.168.1.0/25 y se envía a 10.0.8.1",
+        "192.168.0.0; coincide con 172.16.0.0/16 y se envía a 172.16.1.1"
+      ],
+      "correcta": 2,
+      "explicacion": "Último octeto 00000001 AND 10000000 = 0 → 192.168.1.0, igual a la red de la entrada /25: se envía a 10.0.8.1.",
+      "por_que_falla": [
+        "El AND no puede poner en 1 un bit que en la IP es 0: el último octeto da 0, no 128.",
+        "La máscara pone en 0 el último bit; el resultado no puede seguir siendo 192.168.1.1.",
+        "",
+        "El AND con /16 da 192.168.0.0, que no es igual a 172.16.0.0."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Look-up en la tabla de ruteo" }
+    },
+    {
+      "id": "rut-p05",
+      "unidad": "u7-ruteo",
+      "enunciado": "Según el material, ¿cuál es una ventaja del ruteo estático?",
+      "opciones": [
+        "Se adapta solo ante una falla buscando un camino alternativo",
+        "Escala bien en redes grandes porque casi no requiere configuración",
+        "No consume recursos ni ancho de banda en intercambiar información",
+        "Calcula automáticamente la ruta de mejor métrica usando el algoritmo de Dijkstra"
+      ],
+      "correcta": 2,
+      "explicacion": "Como no hay un proceso de ruteo corriendo, no consume recursos ni ancho de banda en intercambiar información.",
+      "por_que_falla": [
+        "Ante una falla los paquetes no llegan hasta que el administrador reconfigure: eso es del ruteo dinámico.",
+        "Es configuración a mano, justamente no escalable.",
+        "",
+        "Dijkstra lo usan los protocolos dinámicos de estado de enlace."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Enrutamiento Estático" }
+    },
+    {
+      "id": "rut-p06",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿Qué métrica usa RIP y cuál es su límite?",
+      "opciones": [
+        "Cantidad de saltos; a 16 o más saltos el destino es inalcanzable",
+        "Ancho de banda de los enlaces; admite como máximo 15 enlaces",
+        "Costo calculado con Dijkstra; no tiene límite de saltos",
+        "Cantidad de saltos; el límite es 30 saltos, igual que el máximo de tracert"
+      ],
+      "correcta": 0,
+      "explicacion": "RIP usa solo la cantidad de saltos, con un máximo de 15: 16 o más se declara inalcanzable.",
+      "por_que_falla": [
+        "",
+        "RIP no considera el ancho de banda; su métrica es fija en saltos.",
+        "Dijkstra es de estado de enlace (OSPF, IS-IS), no de RIP.",
+        "Los 30 saltos son el máximo por defecto de tracert, no de RIP."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolo RIPv2 (RFC 2453)" }
+    },
+    {
+      "id": "rut-p07",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿Cada cuánto envía RIP sus updates y hacia dónde?",
+      "opciones": [
+        "Cada 180 segundos, por broadcast a 255.255.255.255",
+        "Solo ante cambios de topología, por unicast a cada vecino",
+        "Cada 30 segundos, a la dirección multicast 224.0.0.1 por el puerto TCP 520",
+        "Cada 30 segundos, a la dirección multicast 224.0.0.9, UDP 520"
+      ],
+      "correcta": 3,
+      "explicacion": "RIP envía la tabla completa cada 30 s a 224.0.0.9, puerto UDP 520.",
+      "por_que_falla": [
+        "180 s es el tiempo sin updates tras el cual una red se declara inalcanzable; además usa multicast.",
+        "Enviar solo ante cambios es propio de estado de enlace; RIP es periódico.",
+        "La dirección es 224.0.0.9 y el transporte es UDP, no TCP.",
+        ""
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Protocolo RIPv2 (RFC 2453)" }
+    },
+    {
+      "id": "rut-p08",
+      "unidad": "u7-ruteo",
+      "enunciado": "En el algoritmo de estado de enlace, ¿qué se distribuye por flooding a todos los routers?",
+      "opciones": [
+        "La tabla de ruteo completa de cada router, cada 30 segundos",
+        "Los LSA, con el ID del router, sus enlaces, costo y estado",
+        "Los mensajes Hello, que son los que se usan para calcular Dijkstra",
+        "Los ARP request para conocer la MAC de todos los routers de la red"
+      ],
+      "correcta": 1,
+      "explicacion": "Cada router genera un LSA (ID, enlaces directos con su costo, estado) y lo inunda a todos para que construyan la base de datos.",
+      "por_que_falla": [
+        "Enviar la tabla completa cada 30 s es el comportamiento de RIP (vector distancia).",
+        "",
+        "Los Hello solo sirven para descubrir vecinos directos; Dijkstra usa la base de LSA.",
+        "ARP no es parte del algoritmo de ruteo y no se propaga entre redes."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Algoritmo Estado de Enlace" }
+    },
+    {
+      "id": "rut-p09",
+      "unidad": "u7-ruteo",
+      "enunciado": "En el algoritmo vector distancia, ¿qué conoce cada nodo?",
+      "opciones": [
+        "A qué vecino enviar el paquete para llegar a cada destino con menos saltos",
+        "La topología completa de la red, armada a partir de los LSA recibidos",
+        "Solo sus redes directamente conectadas, sin información de otros routers",
+        "Las direcciones MAC de todos los hosts que hay en cada red de destino"
+      ],
+      "correcta": 0,
+      "explicacion": "En DV ningún nodo conoce la topología global: solo sabe la distancia y el vecino (próximo salto) para cada destino.",
+      "por_que_falla": [
+        "",
+        "Conocer la topología completa vía LSA es propio de estado de enlace.",
+        "Recibe de sus vecinos redes y distancias, así que conoce más que las directas.",
+        "Las MAC se resuelven con ARP, no con el algoritmo de ruteo."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Algoritmo Distance Vector" }
+    },
+    {
+      "id": "rut-p10",
+      "unidad": "u7-ruteo",
+      "enunciado": "Llega a un router un paquete cuyo destino no coincide con ninguna entrada de la tabla y no hay ruta por defecto. ¿Qué hace?",
+      "opciones": [
+        "Lo reenvía por todas las interfaces, como hace un switch con el flooding",
+        "Decrementa el TTL y lo devuelve por la interfaz por la que entró",
+        "Lo descarta y envía un ICMP de error hacia el host origen",
+        "Lo guarda en cola hasta que RIP aprenda una ruta hacia ese destino"
+      ],
+      "correcta": 2,
+      "explicacion": "Sin coincidencia, el router descarta el paquete y genera un ICMP de error hacia el origen.",
+      "por_que_falla": [
+        "El flooding es de los switches con MAC desconocidas; el router no inunda paquetes IP.",
+        "Decrementar el TTL y conmutar solo ocurre si hay coincidencia, y nunca lo devuelve.",
+        "",
+        "Las colas de entrada son por velocidad de la switch fabric, no para esperar rutas."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Conmutación de paquetes IP" }
+    },
+    {
+      "id": "rut-p11",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿Qué función corresponde al plano de datos del router?",
+      "opciones": [
+        "Ejecutar los protocolos de ruteo y construir la tabla de ruteo",
+        "Hacer el look-up del destino, decrementar el TTL y reenviar",
+        "Intercambiar LSA con los vecinos y calcular rutas con Dijkstra",
+        "Asignar direcciones IP a los hosts conectados a cada interfaz"
+      ],
+      "correcta": 1,
+      "explicacion": "El plano de datos (conmutación) busca el destino en la tabla, procesa la cabecera (TTL) y transfiere el paquete a la interfaz de salida.",
+      "por_que_falla": [
+        "Eso es el plano de control (función de ruteo).",
+        "",
+        "Intercambiar LSA y correr Dijkstra es parte del plano de control.",
+        "Asignar IP es tarea de DHCP, no del plano de datos del router."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Funciones del Router: Ruteo y Conmutación" }
+    },
+    {
+      "id": "rut-p12",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿Qué tipo de conmutación interna permite que varios paquetes crucen la switch fabric al mismo tiempo?",
+      "opciones": [
+        "Por memoria, porque hoy cada line card tiene su propio chip",
+        "Por bus, porque la CPU principal no interviene en la transferencia",
+        "Por memoria compartida, con rendimiento limitado a menos de B/2",
+        "Por red crossbar, una malla de múltiples buses"
+      ],
+      "correcta": 3,
+      "explicacion": "La crossbar conecta dinámicamente cualquier entrada con cualquier salida y permite conmutación en paralelo.",
+      "por_que_falla": [
+        "Los chips en line cards son la evolución de la conmutación por memoria, que sigue limitada por el ancho de banda de memoria.",
+        "En el bus solo pasa un paquete a la vez; si está ocupado, se bloquea.",
+        "Ese límite (< B/2) es justamente la desventaja de la conmutación por memoria.",
+        ""
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Tipos de conmutación" }
+    },
+    {
+      "id": "rut-p13",
+      "unidad": "u7-ruteo",
+      "enunciado": "PC 1 (192.168.1.2/24) no logra que su ping a 192.168.2.2 salga. Su tabla solo tiene 192.168.1.0/24 → Interfaz Ethernet. El router de la LAN es 192.168.1.1. ¿Qué entrada hay que agregar?",
+      "opciones": [
+        "192.168.2.0 255.255.255.0 → Interfaz Ethernet",
+        "192.168.1.0 255.255.255.0 → 192.168.1.1",
+        "0.0.0.0 255.255.255.255 → 192.168.1.1",
+        "0.0.0.0 0.0.0.0 → 192.168.1.1"
+      ],
+      "correcta": 3,
+      "explicacion": "Falta la ruta por defecto: red 0.0.0.0, máscara 0.0.0.0, próximo salto el gateway 192.168.1.1.",
+      "por_que_falla": [
+        "192.168.2.0 no está directamente conectada a PC 1; hacer ARP por PC 2 en su LAN no funcionaría.",
+        "La red local ya está en la tabla; enviarla al router no resuelve el destino 192.168.2.2.",
+        "Con máscara 255.255.255.255, el AND da la IP misma y no coincide con 0.0.0.0: no sería ruta por defecto.",
+        ""
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Solución: Gateway por defecto" }
+    },
+    {
+      "id": "rut-p14",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿Qué requisito de direccionamiento debe cumplir el gateway por defecto?",
+      "opciones": [
+        "Estar en una subred distinta a la del host, para poder rutear",
+        "Pertenecer a la misma subred IP que la interfaz del equipo",
+        "Ser la dirección de broadcast de la red local del host",
+        "Ser 127.0.0.1, la dirección de loopback del propio equipo"
+      ],
+      "correcta": 1,
+      "explicacion": "El GW debe estar en la misma subred que la interfaz del equipo, para comunicarse directamente con él (ARP incluido).",
+      "por_que_falla": [
+        "Si estuviera en otra subred el host no podría alcanzarlo directamente: el próximo salto siempre está en la misma subred.",
+        "",
+        "La dirección de broadcast no identifica a un router; no se puede usar como próximo salto.",
+        "Loopback es interna al equipo; no saca tráfico hacia otras redes."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Configuración de Gateway (GW) por defecto" }
+    },
+    {
+      "id": "rut-p15",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿Qué afirmación sobre la interfaz de loopback es correcta?",
+      "opciones": [
+        "Es una interfaz física que necesita cable conectado para estar activa",
+        "Solo 127.0.0.1 está reservada; el resto del rango 127.x.x.x es público",
+        "Es virtual e interna, se asocia a localhost y siempre está disponible",
+        "La asigna el servidor DHCP junto con la máscara y el gateway"
+      ],
+      "correcta": 2,
+      "explicacion": "Loopback es una interfaz lógica dentro del equipo, asociada a \"localhost\" (127.0.0.1), que no depende de hardware y siempre está disponible.",
+      "por_que_falla": [
+        "No depende de hardware ni de cables.",
+        "Todo el rango 127.0.0.1–127.255.255.255 está reservado para loopback.",
+        "",
+        "La configura el propio sistema operativo; DHCP asigna la IP de la interfaz de red."
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Interfaz de loopback" }
+    },
+    {
+      "id": "rut-p16",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿Qué MAC de destino lleva la trama Ethernet de un ARP request?",
+      "opciones": [
+        "ff:ff:ff:ff:ff:ff, porque se envía en broadcast a todo el segmento",
+        "La MAC del equipo que tiene la IP buscada, porque el pedido es unicast",
+        "00:00:00:00:00:00, porque todavía no se conoce la MAC de destino",
+        "La MAC del gateway por defecto, que se encarga de reenviar el pedido"
+      ],
+      "correcta": 0,
+      "explicacion": "El ARP request es un broadcast: la trama va a ff:ff:ff:ff:ff:ff y llega a todos los equipos del segmento.",
+      "por_que_falla": [
+        "",
+        "Si conociera esa MAC no haría falta ARP; el unicast es el reply.",
+        "00:00:00:00:00:00 es el campo Target MAC dentro del mensaje ARP, no la MAC destino de la trama.",
+        "El router no reenvía broadcasts de capa 2; el pedido no pasa por el gateway."
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Secuencia de mensajes ARP \"Request\" y \"Reply\"" }
+    },
+    {
+      "id": "rut-p17",
+      "unidad": "u7-ruteo",
+      "enunciado": "Una captura muestra un ARP con destino Ethernet broadcast, Sender IP = Target IP = 192.168.1.3 y sin pedido previo. ¿Qué es?",
+      "opciones": [
+        "El ARP reply unicast con el que C contesta el pedido de A",
+        "Un gratuitous ARP: el equipo anuncia por sí solo su IP y MAC",
+        "Un ARP request en el que el host pregunta por la MAC del gateway",
+        "Un mensaje que el switch genera para vaciar por completo su tabla MAC"
+      ],
+      "correcta": 1,
+      "explicacion": "Sender IP igual a Target IP, destino broadcast y sin solicitud previa: es un gratuitous ARP, que actualiza las tablas de todos.",
+      "por_que_falla": [
+        "Un reply normal es unicast al solicitante y su Target IP es la del que preguntó.",
+        "",
+        "En un request la Target IP es la buscada (otra IP), no la propia.",
+        "Lo genera un host o router, no el switch; el switch solo actualiza su tabla MAC al recibirlo."
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Wireshark: Gratuitous ARP" }
+    },
+    {
+      "id": "rut-p18",
+      "unidad": "u7-ruteo",
+      "enunciado": "Después de recibir un ARP reply, ¿qué hace el equipo con la MAC aprendida?",
+      "opciones": [
+        "La guarda temporalmente en su tabla ARP y no repite el pedido mientras no expire",
+        "La agrega a su tabla de ruteo como próximo salto de la red de destino",
+        "La reenvía por broadcast para que todos los hosts de la red la conozcan",
+        "La descarta después de enviar la trama y vuelve a hacer ARP en cada paquete"
+      ],
+      "correcta": 0,
+      "explicacion": "La asociación IP ↔ MAC se guarda en la tabla ARP dinámica; mientras no expire, no se repite el pedido.",
+      "por_que_falla": [
+        "",
+        "La tabla de ruteo trabaja con IP y máscaras, no con direcciones MAC.",
+        "Anunciar la propia asociación a todos es el gratuitous ARP, y lo hace el dueño de la IP.",
+        "Justamente la tabla ARP existe para no repetir el pedido en cada paquete."
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Tabla dinámica de ARP" }
+    },
+    {
+      "id": "rut-p19",
+      "unidad": "u7-ruteo",
+      "enunciado": "PC 1 (192.168.1.2, MAC_1) hace ping a PC 2 (192.168.2.2, MAC_2) a través de un router (Eth 0: 192.168.1.1/MAC_11, Eth 1: 192.168.2.1/MAC_21). ¿Qué muestra la captura del echo request en la LAN de PC 2?",
+      "opciones": [
+        "MAC origen MAC_1, MAC destino MAC_2, IP origen 192.168.1.2",
+        "MAC origen MAC_21, MAC destino MAC_2, IP origen 192.168.2.1",
+        "MAC origen MAC_11, MAC destino MAC_2, IP origen 192.168.1.1",
+        "MAC origen MAC_21, MAC destino MAC_2, IP origen 192.168.1.2"
+      ],
+      "correcta": 3,
+      "explicacion": "El router reencapsula con su MAC de Eth 1 (MAC_21) hacia MAC_2, pero sin NAT la IP de origen sigue siendo la de PC 1.",
+      "por_que_falla": [
+        "La MAC de origen cambia en cada salto: en la LAN 2 ya no es MAC_1.",
+        "El router no cambia la IP de origen; 192.168.2.1 sería su propia IP.",
+        "MAC_11 es la interfaz de la LAN 1, y la IP de origen no cambia por la del gateway.",
+        ""
+      ],
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Volviendo al problema inicial, paso a paso… \"el ping\"" }
+    },
+    {
+      "id": "rut-p20",
+      "unidad": "u7-ruteo",
+      "enunciado": "Un router descarta un paquete porque su TTL llegó a cero. ¿Qué tipo y código ICMP le llega al origen?",
+      "opciones": [
+        "Type 3, code 0 (destination network unreachable)",
+        "Type 0, code 0 (echo reply)",
+        "Type 11, code 0 (TTL expired)",
+        "Type 4, code 0 (source quench)"
+      ],
+      "correcta": 2,
+      "explicacion": "La expiración del TTL se informa con ICMP type 11, code 0; es lo que aprovecha traceroute.",
+      "por_que_falla": [
+        "Type 3 indica que no hay forma de llegar a la red, no que expiró el TTL.",
+        "Echo reply es la respuesta normal de ping del destino.",
+        "",
+        "Source quench (type 4) anunciaba congestión y ya no se usa."
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Tipos y Códigos más Comunes" }
+    },
+    {
+      "id": "rut-p21",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿Cómo descubre traceroute los routers intermedios hacia un destino?",
+      "opciones": [
+        "Envía paquetes con TTL creciente; cada router donde expira devuelve ICMP Time Exceeded",
+        "Consulta la tabla de ruteo de cada router del camino mediante updates de RIP",
+        "Envía un solo echo request y cada router del camino agrega su dirección IP al campo data",
+        "Hace un ARP request a cada router del camino y anota todas sus direcciones MAC"
+      ],
+      "correcta": 0,
+      "explicacion": "Traceroute hace expirar el TTL (1, 2, 3…); cada router donde llega a cero responde con ICMP Time Exceeded, revelando su IP y retardo.",
+      "por_que_falla": [
+        "",
+        "Traceroute usa ICMP, no protocolos de ruteo.",
+        "En ping el destino copia el campo data; los routers no agregan su IP al paquete.",
+        "ARP solo funciona dentro del segmento local; no atraviesa routers."
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Herramienta: traceroute" }
+    },
+    {
+      "id": "rut-p22",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿Cuál de estas NO es una función de ICMP según el material?",
+      "opciones": [
+        "Anunciar que un host, red o puerto de destino es inalcanzable",
+        "Avisar congestión al emisor con source quench",
+        "Verificar la conectividad con mensajes Echo",
+        "Obtener la dirección MAC a partir de una IP"
+      ],
+      "correcta": 3,
+      "explicacion": "Resolver IP → MAC es la función de ARP, no de ICMP.",
+      "por_que_falla": [
+        "Sí es función de ICMP: anunciar errores en la red (unreachable).",
+        "Sí es función de ICMP: anunciar congestión (source quench).",
+        "Sí es función de ICMP: troubleshooting con Echo request/reply.",
+        ""
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Protocolo ICMP" }
+    },
+    {
+      "id": "rut-p23",
+      "unidad": "u7-ruteo",
+      "enunciado": "En el ejemplo del material (servidor DHCP 223.1.2.5), ¿qué origen y destino lleva el DHCP discover del cliente?",
+      "opciones": [
+        "src 223.1.2.5:67 → dest 255.255.255.255:68",
+        "src 0.0.0.0:67 → dest 223.1.2.5:68",
+        "src 0.0.0.0:68 → dest 255.255.255.255:67",
+        "src 223.1.2.4:68 → dest 223.1.2.5:67"
+      ],
+      "correcta": 2,
+      "explicacion": "El cliente aún no tiene IP (0.0.0.0), usa el puerto 68 y envía en broadcast al puerto 67 del servidor.",
+      "por_que_falla": [
+        "Ese es el origen y destino del offer/ack, que envía el servidor.",
+        "Los puertos están invertidos (cliente 68, servidor 67) y el cliente no conoce todavía la IP del servidor.",
+        "",
+        "223.1.2.4 es la IP que se le ofrecerá después; en el discover todavía no la tiene."
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Mensajes DHCP (detalle)" }
+    },
+    {
+      "id": "rut-p24",
+      "unidad": "u7-ruteo",
+      "enunciado": "¿Qué característica corresponde a la asignación dinámica de IP con DHCP?",
+      "opciones": [
+        "Requiere intervención del administrador en cada equipo y no es escalable",
+        "Permite reutilizar direcciones y asignarlas on-demand, con lease",
+        "Es la opción indicada para equipos que necesitan siempre la misma IP",
+        "Funciona sobre TCP (puertos 67 y 68) y no necesita servidor en la misma LAN"
+      ],
+      "correcta": 1,
+      "explicacion": "La asignación dinámica es plug and play, permite reutilizar direcciones y asignarlas on-demand, en forma temporal (lease).",
+      "por_que_falla": [
+        "Eso describe la asignación estática.",
+        "",
+        "Los equipos que requieren IP fija usan asignación estática.",
+        "DHCP usa UDP y, al basarse en broadcast, requiere un servidor en la misma red local."
+      ],
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Dos formas de asignar" }
+    }
+  ],
+  "glosario": [
+    { "termino": "RIP", "sigla": "Routing Information Protocol", "definicion": "Protocolo de ruteo dinámico de vector distancia; métrica en saltos (máx. 15), updates cada 30 s a 224.0.0.9, UDP 520.", "unidad": "u7-ruteo" },
+    { "termino": "OSPF", "sigla": "Open Shortest Path First", "definicion": "Protocolo de ruteo dinámico de estado de enlace.", "unidad": "u7-ruteo" },
+    { "termino": "IS-IS", "sigla": "Intermediate System to Intermediate System", "definicion": "Protocolo de ruteo dinámico de estado de enlace, como OSPF.", "unidad": "u7-ruteo" },
+    { "termino": "EIGRP", "sigla": "Enhanced Interior Gateway Routing Protocol", "definicion": "Protocolo de ruteo dinámico de tipo híbrido.", "unidad": "u7-ruteo" },
+    { "termino": "BGP", "sigla": "Border Gateway Protocol", "definicion": "Protocolo de ruteo dinámico mencionado junto con RIP y OSPF como estándar de la industria.", "unidad": "u7-ruteo" },
+    { "termino": "LSA", "sigla": "Link-State Advertisement", "definicion": "Anuncio que genera cada router en estado de enlace con su ID, sus enlaces directos con su costo y el estado de cada enlace; se distribuye por flooding.", "unidad": "u7-ruteo" },
+    { "termino": "Hello", "definicion": "Mensaje con el que un router de estado de enlace descubre a sus vecinos directamente conectados y forma adyacencias.", "unidad": "u7-ruteo" },
+    { "termino": "Dijkstra", "definicion": "Algoritmo con el que cada router de estado de enlace calcula la ruta más corta a partir de su base de datos de estado de enlace.", "unidad": "u7-ruteo" },
+    { "termino": "Convergencia", "definicion": "Período hasta que las tablas de ruteo se estabilizan tras un cambio; durante él se pueden perder paquetes.", "unidad": "u7-ruteo" },
+    { "termino": "LPM", "sigla": "Longest Prefix Match", "definicion": "Criterio de búsqueda que elige la ruta coincidente con la máscara más larga.", "unidad": "u7-ruteo" },
+    { "termino": "Próximo salto (next hop)", "definicion": "IP del siguiente router al que se entrega el paquete; siempre está en la misma subred que la interfaz de salida.", "unidad": "u7-ruteo" },
+    { "termino": "GW", "sigla": "Gateway", "definicion": "Gateway por defecto: próximo salto de la ruta 0.0.0.0/0.0.0.0 al que se envía todo lo que el equipo no conoce.", "unidad": "u7-ruteo" },
+    { "termino": "Loopback", "definicion": "Interfaz virtual interna del equipo, asociada a localhost y a 127.0.0.1 (rango 127.0.0.1–127.255.255.255 reservado).", "unidad": "u7-ruteo" },
+    { "termino": "ARP", "sigla": "Address Resolution Protocol", "definicion": "Protocolo que obtiene la MAC de un equipo a partir de su IP: request en broadcast, reply en unicast.", "unidad": "u7-ruteo" },
+    { "termino": "ICMP", "sigla": "Internet Control Message Protocol", "definicion": "Protocolo de mensajes de diagnóstico y error (RFC 792), transportado sobre IP; base de ping y traceroute.", "unidad": "u7-ruteo" },
+    { "termino": "DHCP", "sigla": "Dynamic Host Configuration Protocol", "definicion": "Protocolo que asigna dinámicamente IP, máscara y gateway a los hosts, sobre UDP 67 (servidor) y 68 (cliente).", "unidad": "u7-ruteo" },
+    { "termino": "DORA", "definicion": "Forma abreviada de recordar los cuatro mensajes básicos de DHCP: Discover, Offer, Request, Ack.", "unidad": "u7-ruteo" },
+    { "termino": "Lease", "definicion": "Alquiler temporal de una dirección IP asignada por DHCP (ej. lifetime de 3600 s).", "unidad": "u7-ruteo" },
+    { "termino": "Routing Processor", "definicion": "CPU de propósito general del router que implementa los protocolos de ruteo y calcula y mantiene las tablas de forwarding.", "unidad": "u7-ruteo" }
+  ],
+  "dudas": [
+    {
+      "texto": "La lámina de Gratuitous ARP dice que evita inconsistencias en las \"tablas ARP de los switches\", pero el ejemplo práctico muestra que el switch actualiza su tabla de direcciones MAC (los switches de capa 2 no mantienen tabla ARP). Se tomó la versión del ejemplo: el switch actualiza su tabla MAC y los hosts su tabla ARP.",
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Gratuitous ARP" }
+    },
+    {
+      "texto": "La conmutación de paquetes describe un look-up \"secuencial\" que reenvía ante la primera coincidencia, mientras que el algoritmo de búsqueda se define como longest prefix match (la ruta más específica). En los ejemplos ambos dan el mismo resultado porque la ruta por defecto está al final; se tomó longest prefix match como criterio.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Conmutación de paquetes IP" }
+    },
+    {
+      "texto": "En la salida de tracert 200.40.112.85 el destino ya responde en el salto 5, pero la traza continúa con un salto 6 en tiempo agotado y se corta con ^C; normalmente la traza termina al llegar al destino.",
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Terminal – tracert 200.40.112.85" }
+    },
+    {
+      "texto": "En el ejercicio de gateway por defecto, PC_2 está en el puerto 4 (VLAN 200) y la interfaz E0 del router en el puerto 1 (VLAN 100), sin enlace trunk ni otra interfaz del router en la VLAN 200; tal como está planteado, el ping de PC_2 a PC_1 no podría atravesar el router. El material no da la solución, por lo que no se usó como ejercicio.",
+      "fuente": { "archivo": "capa3_enrutamiento.md", "seccion": "Ejercicio: Gateway por defecto" }
+    }
+  ]
+}

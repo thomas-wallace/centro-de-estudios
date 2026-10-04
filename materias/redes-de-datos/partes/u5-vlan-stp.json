@@ -1,0 +1,1829 @@
+{
+  "conceptos": [
+    {
+      "id": "vlan",
+      "nombre": "VLAN (Virtual LAN)",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Red lógica independiente creada dentro de una misma infraestructura física de switches.",
+      "definicion_extendida": "Permite dividir una infraestructura física en múltiples redes lógicas, cada una con su propio dominio de broadcast. Un switch con soporte de VLANs se comporta como varios switches virtuales independientes: el broadcast y el multicast solo se inundan por los puertos de la misma VLAN y un unicast solo se conmuta si el puerto de destino pertenece a la misma VLAN. Se define en el estándar IEEE 802.1Q.",
+      "ejemplo": "En el ejercicio del material, la VLAN 100 (Informática) agrupa a PC1, PC2 y PC5 aunque estén en switches distintos (IOU1 e IOU2).",
+      "por_que_importa": "Mejora la seguridad separando tráfico, limita los dominios de broadcast, optimiza el uso del ancho de banda y permite reubicar equipos sin cambiar la topología física.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "¿Qué es una VLAN?"
+      }
+    },
+    {
+      "id": "ieee-802-1q",
+      "nombre": "IEEE 802.1Q",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Estándar de etiquetado que agrega a la trama Ethernet un tag de 4 bytes indicando a qué VLAN pertenece.",
+      "definicion_extendida": "Inserta un encabezado de 4 bytes entre la dirección de origen y el campo Tipo. Ese tag tiene TPID (16 bits, 0x8100), PCP (3 bits de prioridad), DEI (1 bit de elegibilidad de descarte) y VID (12 bits de identificador de VLAN). Es el protocolo estándar global para identificar el tráfico de cada VLAN.",
+      "ejemplo": "La captura de Wireshark muestra 'Type: 802.1Q Virtual LAN (0x8100)' seguido de '802.1Q Virtual LAN, PRI: 0, DEI: 0, ID: 100'.",
+      "por_que_importa": "Permite que un mismo enlace entre switches transporte tráfico de varias VLANs sin mezclarlas.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "IEEE 802.1q"
+      }
+    },
+    {
+      "id": "enlace-trunk",
+      "nombre": "Enlace trunk",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Enlace entre switches que transporta tramas de varias VLANs etiquetadas con 802.1Q.",
+      "definicion_extendida": "Los puertos que comunican con otros switches reciben y transmiten las tramas ya identificadas con la etiqueta de su VLAN. Así, un único enlace físico lleva el tráfico de todas las VLANs que se extienden entre los switches, y el switch que recibe sabe a qué VLAN pertenece cada trama por su VID.",
+      "ejemplo": "En el ejemplo con dos Cisco 2950, el TRUNK IEEE 802.1q transporta la VLAN 100 y la VLAN 200 tageadas; en el ejercicio, e1/1 (IOU1) y e0/0 (IOU2) son trunk.",
+      "por_que_importa": "Resuelve qué pasa cuando el destino de una VLAN está en otro switch sin necesitar un cable por VLAN.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Funcionamiento de una red con VLANs"
+      }
+    },
+    {
+      "id": "puerto-de-acceso",
+      "nombre": "Puerto de acceso",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Puerto de switch asociado a una sola VLAN, por el que circula tráfico Ethernet sin tag.",
+      "definicion_extendida": "Por lo general las tarjetas de red de los PCs no soportan VLANs, por eso los puertos donde se conectan PCs están en modo acceso. El switch asocia cada puerto físico a la VLAN correspondiente y el tráfico entre PC y switch viaja como Ethernet común, sin etiqueta.",
+      "ejemplo": "VLAN 3 → puertos 3, 6 y 7: un PC conectado al puerto 6 queda en la VLAN 3 sin enterarse de que existe una VLAN.",
+      "por_que_importa": "Permite usar VLANs con equipos finales que no entienden 802.1Q.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Configuración del soporte de VLANs"
+      }
+    },
+    {
+      "id": "vst-vlan-id",
+      "nombre": "VLAN ID (VID)",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Campo de 12 bits del tag 802.1Q que identifica de forma única la VLAN de la trama.",
+      "definicion_extendida": "Con 12 bits se pueden representar hasta 4096 VLANs. Al configurar el switch, la entidad lógica VLAN se crea con un VLAN ID dentro del rango 1 a 4095. El switch que recibe una trama por un trunk usa el VID para saber a qué VLAN pertenece.",
+      "ejemplo": "En la captura, '.... 0000 0110 0100 = ID: 100': el VID 100 en 12 bits es 0000 0110 0100.",
+      "por_que_importa": "Es el dato que mantiene separadas las VLANs cuando comparten un mismo enlace trunk.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Campos del Tag 802.1q"
+      }
+    },
+    {
+      "id": "vst-tpid",
+      "nombre": "TPID (Tag Protocol ID)",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Campo de 16 bits del tag 802.1Q con el valor 0x8100, que indica que la trama está etiquetada.",
+      "definicion_extendida": "Una conexión 802.1Q usa el Tipo Ethernet 0x8100 como identificador de protocolo. Ocupa el lugar donde normalmente iría el Tipo, y el tipo original (por ejemplo IPv4, 0x0800) aparece después del tag.",
+      "ejemplo": "Captura: 'Type: 802.1Q Virtual LAN (0x8100)' y, luego del tag, 'Type: IPv4 (0x0800)'.",
+      "por_que_importa": "Le avisa al switch que lo que sigue es un tag de VLAN y no el encabezado de capa 3.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Anatomía del Frame 802.1q"
+      }
+    },
+    {
+      "id": "vst-pcp",
+      "nombre": "PCP (Priority Code Point)",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Campo de 3 bits del tag 802.1Q que marca la prioridad de la trama para calidad de servicio (CoS).",
+      "definicion_extendida": "Junto al PCP va el bit DEI (Discard Eligibility Indicator), que indica si la trama es elegible para ser descartada. Ambos se ubican entre el TPID y el VID dentro del tag de 4 bytes.",
+      "ejemplo": "En la captura, '000. .... .... .... = Priority: Best Effort (default) (0)' y '...0 .... = DEI: Ineligible'.",
+      "por_que_importa": "Permite priorizar tipos de tráfico en capa 2 dentro de una VLAN.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Campos del Tag 802.1q"
+      }
+    },
+    {
+      "id": "vst-topologia-redundante",
+      "nombre": "Topología redundante",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Diseño de red con enlaces o equipos de respaldo para asegurar alta disponibilidad ante fallos.",
+      "definicion_extendida": "Si existen varios enlaces y uno falla, otro puede seguir soportando el tráfico. A cambio aumenta los costos de hardware, cableado y administración, y sin un protocolo de control provoca loops de capa 2. Los mecanismos vistos son STP, LACP y Stacking.",
+      "ejemplo": "Cinco switches (SwitchA a SwitchE) conectados formando un anillo: hay dos caminos posibles entre SwitchD y SwitchE.",
+      "por_que_importa": "Evita puntos únicos de fallo, pero obliga a usar STP para no generar bucles.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Topologías Redundantes: beneficios y costos"
+      }
+    },
+    {
+      "id": "loop-capa-2",
+      "nombre": "Loop de capa 2",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Bucle que se forma cuando hay caminos redundantes entre switches sin un protocolo que los controle.",
+      "definicion_extendida": "Es el principal riesgo de la redundancia física. Provoca broadcast storms, frames repetidos que hacen cambiar constantemente la tabla MAC, y un aumento de tráfico que satura el procesamiento de los switches hasta colapsar la red.",
+      "ejemplo": "Un broadcast a ff:ff:ff:ff:ff:ff da vueltas sin fin entre switches conectados en anillo.",
+      "por_que_importa": "Es el problema que STP viene a resolver; sin él, agregar redundancia rompe la red.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Loops de Capa 2"
+      }
+    },
+    {
+      "id": "broadcast-storm",
+      "nombre": "Broadcast storm (tormenta de broadcast)",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Propagación sin fin de tramas de broadcast que inunda todos los puertos y consume el ancho de banda.",
+      "definicion_extendida": "Aparece cuando hay un loop de capa 2: cada switch inunda el broadcast por todos sus puertos, incluso por los enlaces redundantes, y las copias vuelven una y otra vez. El volumen de tráfico supera el procesamiento de los switches y la red colapsa.",
+      "ejemplo": "Una trama con destino ff:ff:ff:ff:ff:ff que circula indefinidamente en una topología redundante sin STP.",
+      "por_que_importa": "Es el síntoma más grave de un loop: deja la red inutilizable.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Loops de Capa 2"
+      }
+    },
+    {
+      "id": "stp",
+      "nombre": "STP (Spanning Tree Protocol, 802.1D)",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Protocolo que deja un único camino activo entre switches y bloquea los redundantes para evitar loops.",
+      "definicion_extendida": "Se ejecuta en los switches: elige un root switch, define root ports y designated ports, y mantiene los caminos redundantes en estado de bloqueo como respaldo pasivo. Si la trayectoria principal falla, activa automáticamente los enlaces de reserva. Puede ejecutarse por VLAN (en la captura, PVST+).",
+      "ejemplo": "En 'show spanning-tree vlan 101' de IOU2, la interfaz Et0/0 queda en estado BLK para evitar el loop.",
+      "por_que_importa": "Permite tener redundancia física sin sufrir broadcast storms ni inestabilidad de tablas MAC.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D"
+      }
+    },
+    {
+      "id": "root-switch",
+      "nombre": "Root switch (puente raíz)",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Switch elegido por STP como punto de referencia de toda la topología: el de menor bridge ID.",
+      "definicion_extendida": "La elección se hace comparando el bridge ID: primero la prioridad (valor configurable) y, si empatan, la dirección MAC. Todos los demás switches calculan su camino de menor costo hacia el root switch.",
+      "ejemplo": "SwitchA (prioridad 100, MAC 0000.1111.2222) gana a SwitchD (prioridad 100, MAC 0000.4444.5555) por tener menor MAC.",
+      "por_que_importa": "Define a partir de dónde se construye el árbol sin bucles.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D – Topología y parámetros"
+      }
+    },
+    {
+      "id": "vst-bridge-id",
+      "nombre": "Bridge ID",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Identificador de 8 bytes de cada switch en STP: 2 bytes de prioridad más 6 bytes de dirección MAC.",
+      "definicion_extendida": "La prioridad del bridge es un valor numérico configurable; la MAC desempata. En STP por VLAN, la prioridad mostrada suma un 'sys-id-ext' igual al número de VLAN.",
+      "ejemplo": "IOU2: 'Bridge ID Priority 32869 (priority 32768 sys-id-ext 101) Address aabb.cc00.0400'.",
+      "por_que_importa": "Es el valor que decide qué switch será root: gana el menor.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D – Topología y parámetros"
+      }
+    },
+    {
+      "id": "vst-root-port",
+      "nombre": "Root port (puerto raíz)",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Puerto de cada switch no-raíz con el camino de menor costo hacia el root switch.",
+      "definicion_extendida": "Cada switch que no es root tiene exactamente un root port, que queda en forwarding. El costo se acumula enlace por enlace (en el ejemplo, 4 por cada enlace de 1 Gbps).",
+      "ejemplo": "En IOU2 para la VLAN 101: 'Et1/1 Root FWD 100'.",
+      "por_que_importa": "Fija por dónde cada switch alcanza al root sin formar bucles.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D"
+      }
+    },
+    {
+      "id": "vst-designated-port",
+      "nombre": "Designated port (puerto designado)",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Puerto encargado de reenviar el tráfico en un segmento de red específico.",
+      "definicion_extendida": "En cada segmento, el designated bridge y su puerto son los responsables de reenviar el tráfico; queda en forwarding. Los puertos que no son ni root ni designated se bloquean.",
+      "ejemplo": "En el enlace SwitchD–SwitchE, el lado de SwitchD es designated y el de SwitchE queda Blocked.",
+      "por_que_importa": "Garantiza que cada segmento tenga un único puerto que reenvía, evitando duplicados.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D"
+      }
+    },
+    {
+      "id": "bpdu",
+      "nombre": "BPDU",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Mensaje de STP que intercambian los switches para conocer la topología y elegir root, roles y estados.",
+      "definicion_extendida": "Lleva, entre otros campos, el Root Identifier, el Root Path Cost, el Bridge Identifier, el Port identifier y los temporizadores (Max Age 20, Hello Time 2, Forward Delay 15). Los puertos bloqueados no reenvían tramas pero siguen escuchando BPDUs.",
+      "ejemplo": "Captura: 'Dst: PVST+ (01:00:0c:cc:cc:cd)', '802.1Q ... ID: 101', 'BPDU Type: Configuration (0x00)', 'Root Identifier: 32768 / 101 / aa:bb:cc:00:03:00'.",
+      "por_que_importa": "Sin BPDUs los switches no podrían detectar el loop ni decidir qué puerto bloquear.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol (per VLAN)"
+      }
+    },
+    {
+      "id": "lacp",
+      "nombre": "LACP (IEEE 802.3ad)",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Protocolo que gestiona la agregación de varios enlaces físicos en un único enlace lógico (bond).",
+      "definicion_extendida": "La agregación se hace en capa 2, transparente para el sistema operativo; el bond o teaming une 2 o más puertos físicos (Cisco lo llama PortChannel, HP Link Aggregation, Mikrotik Bonding). Requiere enlaces full-duplex, de velocidad idéntica y con la misma configuración de VLANs. Aporta tolerancia a fallos y balanceo de carga por MAC, IP o puertos de capa 4.",
+      "ejemplo": "El firewall del escenario real conecta eth0 y eth1 al stack como 'bond 0 – mode 4 – 802.3ad LACP'.",
+      "por_que_importa": "Aumenta el ancho de banda con costo mínimo y evita que STP bloquee los enlaces paralelos.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Agregación de Enlaces (Bonding)"
+      }
+    },
+    {
+      "id": "stacking",
+      "nombre": "Stacking (apilamiento)",
+      "unidad": "u5-vlan-stp",
+      "definicion": "Agrupación de varios switches para que ante la red aparenten ser un solo dispositivo lógico y centralizado.",
+      "definicion_extendida": "Las unidades se enlazan por puertos específicos o por puertos configurados en agregación. Un equipo es master (por ejemplo SW 1) y otro actúa como backup redundante (SW 2). Sus beneficios son escalabilidad, gestión unificada desde el master y redundancia ante fallos de switches o enlaces.",
+      "ejemplo": "En el escenario real, SW 1 (Master) y SW 2 (Backup) forman un stack que recibe un trunk con las VLANs 10, 11 y 12.",
+      "por_que_importa": "Permite agregar puertos y redundancia administrando todo como un único switch.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Stacking"
+      }
+    }
+  ],
+  "relaciones": [
+    {
+      "origen": "vlan",
+      "destino": "lan",
+      "verbo": "divide lógicamente",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "¿Qué es una VLAN?"
+      }
+    },
+    {
+      "origen": "vlan",
+      "destino": "dominio-de-broadcast",
+      "verbo": "segmenta",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "¿Qué es una VLAN?"
+      }
+    },
+    {
+      "origen": "vlan",
+      "destino": "switch",
+      "verbo": "se configura en",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Switch con soporte de VLANs"
+      }
+    },
+    {
+      "origen": "ieee-802-1q",
+      "destino": "trama-ethernet-ii",
+      "verbo": "agrega un tag de 4 bytes a",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Anatomía del Frame 802.1q"
+      }
+    },
+    {
+      "origen": "vst-tpid",
+      "destino": "ieee-802-1q",
+      "verbo": "es parte de",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Campos del Tag 802.1q"
+      }
+    },
+    {
+      "origen": "vst-tpid",
+      "destino": "ethertype",
+      "verbo": "ocupa la posición de",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "IEEE 802.1q"
+      }
+    },
+    {
+      "origen": "vst-vlan-id",
+      "destino": "ieee-802-1q",
+      "verbo": "es parte de",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Campos del Tag 802.1q"
+      }
+    },
+    {
+      "origen": "vst-vlan-id",
+      "destino": "vlan",
+      "verbo": "identifica",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Campos del Tag 802.1q"
+      }
+    },
+    {
+      "origen": "vst-pcp",
+      "destino": "ieee-802-1q",
+      "verbo": "es parte de",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Campos del Tag 802.1q"
+      }
+    },
+    {
+      "origen": "enlace-trunk",
+      "destino": "ieee-802-1q",
+      "verbo": "usa",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Ejemplo: Red con 2 VLANs"
+      }
+    },
+    {
+      "origen": "enlace-trunk",
+      "destino": "vlan",
+      "verbo": "transporta tráfico de varias",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Ejemplo: Red con 2 VLANs"
+      }
+    },
+    {
+      "origen": "puerto-de-acceso",
+      "destino": "enlace-trunk",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Funcionamiento de una red con VLANs"
+      }
+    },
+    {
+      "origen": "puerto-de-acceso",
+      "destino": "vlan",
+      "verbo": "se asocia a una sola",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Configuración del soporte de VLANs"
+      }
+    },
+    {
+      "origen": "vst-topologia-redundante",
+      "destino": "loop-capa-2",
+      "verbo": "puede generar",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Topologías Redundantes: beneficios y costos"
+      }
+    },
+    {
+      "origen": "loop-capa-2",
+      "destino": "broadcast-storm",
+      "verbo": "genera",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Loops de Capa 2"
+      }
+    },
+    {
+      "origen": "loop-capa-2",
+      "destino": "tabla-mac",
+      "verbo": "desestabiliza",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Loops de Capa 2"
+      }
+    },
+    {
+      "origen": "broadcast-storm",
+      "destino": "broadcast",
+      "verbo": "propaga sin fin",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Loops de Capa 2"
+      }
+    },
+    {
+      "origen": "stp",
+      "destino": "loop-capa-2",
+      "verbo": "evita",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D"
+      }
+    },
+    {
+      "origen": "stp",
+      "destino": "switch",
+      "verbo": "se ejecuta en",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D"
+      }
+    },
+    {
+      "origen": "stp",
+      "destino": "bpdu",
+      "verbo": "intercambia",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol (per VLAN)"
+      }
+    },
+    {
+      "origen": "stp",
+      "destino": "root-switch",
+      "verbo": "elige",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D"
+      }
+    },
+    {
+      "origen": "root-switch",
+      "destino": "vst-bridge-id",
+      "verbo": "se elige por el menor",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D – Topología y parámetros"
+      }
+    },
+    {
+      "origen": "vst-bridge-id",
+      "destino": "direccion-mac",
+      "verbo": "incluye",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D – Topología y parámetros"
+      }
+    },
+    {
+      "origen": "vst-root-port",
+      "destino": "root-switch",
+      "verbo": "es el camino de menor costo hacia",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D"
+      }
+    },
+    {
+      "origen": "vst-root-port",
+      "destino": "stp",
+      "verbo": "es un rol de puerto de",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D"
+      }
+    },
+    {
+      "origen": "vst-designated-port",
+      "destino": "stp",
+      "verbo": "es un rol de puerto de",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D"
+      }
+    },
+    {
+      "origen": "vst-designated-port",
+      "destino": "vst-root-port",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D"
+      }
+    },
+    {
+      "origen": "bpdu",
+      "destino": "vst-bridge-id",
+      "verbo": "transporta",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol (per VLAN)"
+      }
+    },
+    {
+      "origen": "bpdu",
+      "destino": "multicast",
+      "verbo": "se envía como",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol (per VLAN)"
+      }
+    },
+    {
+      "origen": "lacp",
+      "destino": "full-duplex",
+      "verbo": "requiere enlaces en",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Agregación de Enlaces – ¿Cómo funciona?"
+      }
+    },
+    {
+      "origen": "lacp",
+      "destino": "ancho-de-banda",
+      "verbo": "incrementa",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Agregación de Enlaces (Link Aggregation)"
+      }
+    },
+    {
+      "origen": "lacp",
+      "destino": "stp",
+      "verbo": "evita que bloquee enlaces paralelos",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Agregación de Enlaces – ¿Cómo funciona?"
+      }
+    },
+    {
+      "origen": "lacp",
+      "destino": "vst-topologia-redundante",
+      "verbo": "es un mecanismo de",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Topologías Redundantes – Alta disponibilidad y tolerancia a fallos"
+      }
+    },
+    {
+      "origen": "stacking",
+      "destino": "vst-topologia-redundante",
+      "verbo": "es un mecanismo de",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Topologías Redundantes – Alta disponibilidad y tolerancia a fallos"
+      }
+    },
+    {
+      "origen": "stacking",
+      "destino": "switch",
+      "verbo": "agrupa varios",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Stacking"
+      }
+    },
+    {
+      "origen": "stacking",
+      "destino": "lacp",
+      "verbo": "puede enlazar sus unidades con",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Stacking"
+      }
+    }
+  ],
+  "taxonomias": [
+    {
+      "id": "vst-tax-mecanismos-redundancia",
+      "nombre": "Mecanismos de topologías redundantes",
+      "unidad": "u5-vlan-stp",
+      "raiz": {
+        "nombre": "Topologías redundantes",
+        "descripcion": "Alta disponibilidad y tolerancia a fallos de enlaces o dispositivos.",
+        "hijos": [
+          {
+            "nombre": "STP (Spanning Tree Protocol, 802.1D)",
+            "descripcion": "Deja un único camino activo y bloquea los redundantes.",
+            "hijos": [
+              {
+                "nombre": "Root switch",
+                "descripcion": "Menor bridge ID (prioridad, luego MAC).",
+                "hijos": []
+              },
+              {
+                "nombre": "Root port",
+                "descripcion": "Menor costo hacia el root en cada switch no-raíz.",
+                "hijos": []
+              },
+              {
+                "nombre": "Designated port",
+                "descripcion": "Reenvía en cada segmento.",
+                "hijos": []
+              },
+              {
+                "nombre": "Puertos bloqueados",
+                "descripcion": "Respaldo pasivo que se activa ante una falla.",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "LACP (Agregación de enlaces, 802.3ad)",
+            "descripcion": "Une 2 o más puertos físicos en un enlace lógico.",
+            "hijos": [
+              {
+                "nombre": "Requisitos",
+                "descripcion": "Full-duplex, velocidad idéntica y misma configuración de VLANs.",
+                "hijos": []
+              },
+              {
+                "nombre": "Ventajas",
+                "descripcion": "Más ancho de banda, tolerancia a fallos y balanceo de carga (MAC, IP, puertos L4).",
+                "hijos": []
+              },
+              {
+                "nombre": "Nombres por fabricante",
+                "descripcion": "Cisco: PortChannel · HP: Link Aggregation · Mikrotik: Bonding.",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Stack (stacking)",
+            "descripcion": "Varios switches vistos como un solo dispositivo lógico.",
+            "hijos": [
+              {
+                "nombre": "Master",
+                "descripcion": "Equipo desde el que se gestiona toda la pila (SW 1).",
+                "hijos": []
+              },
+              {
+                "nombre": "Backup / esclavos",
+                "descripcion": "Unidades redundantes (SW 2).",
+                "hijos": []
+              },
+              {
+                "nombre": "Beneficios",
+                "descripcion": "Escalabilidad, gestión unificada y redundancia.",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      },
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Resumen: VLAN y Topologías Redundantes"
+      }
+    },
+    {
+      "id": "vst-tax-puertos-stp",
+      "nombre": "Roles y estados de puerto en STP",
+      "unidad": "u5-vlan-stp",
+      "raiz": {
+        "nombre": "Puertos en STP",
+        "hijos": [
+          {
+            "nombre": "Roles",
+            "descripcion": "Qué papel cumple el puerto en el árbol.",
+            "hijos": [
+              {
+                "nombre": "Root port",
+                "descripcion": "Camino de menor costo al root switch (Role 'Root').",
+                "hijos": []
+              },
+              {
+                "nombre": "Designated port",
+                "descripcion": "Reenvía el tráfico de su segmento (Role 'Desg').",
+                "hijos": []
+              },
+              {
+                "nombre": "Puerto bloqueado / alternativo",
+                "descripcion": "Ni root ni designated; en la salida aparece como 'Altn BLK'.",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Estados",
+            "descripcion": "Qué hace el puerto con las tramas.",
+            "hijos": [
+              {
+                "nombre": "Blocking",
+                "descripcion": "No reenvía tramas, escucha BPDUs.",
+                "hijos": []
+              },
+              {
+                "nombre": "Listening",
+                "descripcion": "Escucha BPDUs para determinar la topología.",
+                "hijos": []
+              },
+              {
+                "nombre": "Learning",
+                "descripcion": "Aprende direcciones MAC para poblar la tabla.",
+                "hijos": []
+              },
+              {
+                "nombre": "Forwarding",
+                "descripcion": "Envía y recibe tramas de datos.",
+                "hijos": []
+              },
+              {
+                "nombre": "Disabled",
+                "descripcion": "No participa de STP (apagado o falla administrativa).",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      },
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Estado de los puertos"
+      }
+    }
+  ],
+  "procesos": [
+    {
+      "id": "vst-proc-loop-broadcast-storm",
+      "nombre": "Cómo se forma un loop de capa 2 y una broadcast storm",
+      "unidad": "u5-vlan-stp",
+      "descripcion": "Qué ocurre con un broadcast en una topología redundante cuando no hay STP.",
+      "pasos": [
+        {
+          "actor": "Administrador de red",
+          "accion": "Conecta los switches con enlaces redundantes (más de un camino entre ellos) sin protocolo de control.",
+          "por_que": "Busca alta disponibilidad: si un enlace falla, otro sigue llevando el tráfico."
+        },
+        {
+          "actor": "Host",
+          "accion": "Envía una trama de broadcast.",
+          "por_que": "Por ejemplo, para llegar a todos los equipos de la LAN.",
+          "valores": [
+            {
+              "nombre": "MAC destino",
+              "valor": "ff:ff:ff:ff:ff:ff"
+            }
+          ]
+        },
+        {
+          "actor": "Switch",
+          "accion": "Inunda (flooding) el broadcast por todos sus puertos, incluidos los enlaces redundantes.",
+          "por_que": "Un switch siempre reenvía el broadcast por todos los puertos menos el de entrada."
+        },
+        {
+          "actor": "Switches vecinos",
+          "accion": "Reciben copias del mismo frame por distintos puertos y las vuelven a inundar.",
+          "por_que": "Cada copia es tratada como un broadcast nuevo; el bucle la devuelve una y otra vez."
+        },
+        {
+          "actor": "Tabla MAC de cada switch",
+          "accion": "Cambia constantemente el puerto asociado a la MAC de origen.",
+          "por_que": "El mismo origen aparece llegando por puertos diferentes con cada copia repetida."
+        },
+        {
+          "actor": "Red",
+          "accion": "Se satura: el tráfico consume el ancho de banda y supera el procesamiento de los switches hasta colapsar.",
+          "por_que": "Las tramas de broadcast se propagan sin fin (broadcast storm); hace falta STP para mitigarlo."
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Loops de Capa 2"
+      }
+    },
+    {
+      "id": "vst-proc-funcionamiento-stp",
+      "nombre": "Funcionamiento de STP en la topología SwitchA–E",
+      "unidad": "u5-vlan-stp",
+      "descripcion": "Cómo STP construye un árbol sin bucles y cómo reacciona ante una falla.",
+      "pasos": [
+        {
+          "actor": "Todos los switches",
+          "accion": "Intercambian BPDUs con su bridge ID y su costo hacia el root.",
+          "por_que": "Necesitan conocer la topología para decidir qué puertos usar."
+        },
+        {
+          "actor": "Todos los switches",
+          "accion": "Eligen como root switch al de menor bridge ID: primero menor prioridad y, si empata, menor MAC.",
+          "por_que": "Hace falta un único punto de referencia para todo el árbol.",
+          "valores": [
+            {
+              "nombre": "SwitchA",
+              "valor": "prioridad 100, MAC 0000.1111.2222"
+            },
+            {
+              "nombre": "SwitchD",
+              "valor": "prioridad 100, MAC 0000.4444.5555"
+            },
+            {
+              "nombre": "Root",
+              "valor": "SwitchA (empata prioridad con D y tiene menor MAC)"
+            }
+          ]
+        },
+        {
+          "actor": "Cada switch no-raíz",
+          "accion": "Elige como root port el puerto con menor costo acumulado hacia el root.",
+          "por_que": "Asegura un único camino, el más barato, hacia el root switch.",
+          "valores": [
+            {
+              "nombre": "Costo por enlace de 1 Gbps",
+              "valor": "4"
+            },
+            {
+              "nombre": "SwitchB y SwitchC",
+              "valor": "costo 4 (directo a A)"
+            },
+            {
+              "nombre": "SwitchD (vía B) y SwitchE (vía C)",
+              "valor": "costo 8"
+            }
+          ]
+        },
+        {
+          "actor": "Cada segmento",
+          "accion": "Define un designated port que reenvía el tráfico de ese segmento.",
+          "por_que": "Cada segmento debe tener un solo puerto que reenvíe; en el enlace D–E queda designado el lado de SwitchD."
+        },
+        {
+          "actor": "STP",
+          "accion": "Bloquea los puertos que no son root ni designated.",
+          "por_que": "Así queda una sola trayectoria activa entre switches y desaparece el loop.",
+          "valores": [
+            {
+              "nombre": "Puerto bloqueado",
+              "valor": "SwitchE hacia SwitchD"
+            }
+          ]
+        },
+        {
+          "actor": "STP",
+          "accion": "Ante la falla del camino principal, activa automáticamente el enlace que estaba bloqueado.",
+          "por_que": "Los caminos redundantes se mantienen como respaldo pasivo para la conmutación por error."
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D – Topología y parámetros"
+      }
+    },
+    {
+      "id": "vst-proc-trama-por-trunk",
+      "nombre": "Envío de una trama entre PCs de la misma VLAN en distintos switches",
+      "unidad": "u5-vlan-stp",
+      "descripcion": "Recorrido de una trama de un PC de la VLAN 100 a otro PC de la VLAN 100 conectado a otro switch, a través de un trunk 802.1Q.",
+      "pasos": [
+        {
+          "actor": "PC de origen (VLAN 100)",
+          "accion": "Envía una trama Ethernet común, sin tag, al switch.",
+          "por_que": "Las tarjetas de red de los PCs por lo general no soportan VLANs; el puerto está en modo acceso."
+        },
+        {
+          "actor": "Switch de origen",
+          "accion": "Asocia la trama a la VLAN 100 según el puerto de acceso por el que entró.",
+          "por_que": "El puerto físico fue asociado a la VLAN 100 en la configuración."
+        },
+        {
+          "actor": "Switch de origen",
+          "accion": "Consulta la tabla MAC y solo reenvía por puertos de la VLAN 100; el destino se alcanza por el trunk.",
+          "por_que": "Un switch VLAN-aware solo conmuta o inunda dentro de la misma VLAN."
+        },
+        {
+          "actor": "Switch de origen",
+          "accion": "Agrega el tag 802.1Q a la trama antes de enviarla por el trunk.",
+          "por_que": "El otro switch necesita saber a qué VLAN pertenece la trama.",
+          "valores": [
+            {
+              "nombre": "Tamaño del tag",
+              "valor": "4 bytes"
+            },
+            {
+              "nombre": "TPID",
+              "valor": "0x8100"
+            },
+            {
+              "nombre": "VID",
+              "valor": "100"
+            }
+          ]
+        },
+        {
+          "actor": "Switch de destino",
+          "accion": "Lee el VID del tag y reenvía la trama solo por puertos de la VLAN 100.",
+          "por_que": "El VID mantiene separado el tráfico de cada VLAN que comparte el trunk."
+        },
+        {
+          "actor": "Switch de destino",
+          "accion": "Entrega la trama al PC de destino por su puerto de acceso, sin tag.",
+          "por_que": "Entre switch y PC el tráfico es Ethernet sin etiqueta."
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Funcionamiento de una red con VLANs"
+      }
+    }
+  ],
+  "comparaciones": [
+    {
+      "id": "vst-comp-acceso-vs-trunk",
+      "nombre": "Puerto de acceso vs. enlace trunk",
+      "unidad": "u5-vlan-stp",
+      "columnas": [
+        "Puerto de acceso",
+        "Enlace trunk"
+      ],
+      "filas": [
+        {
+          "criterio": "Qué conecta",
+          "celdas": [
+            "Switch con PC / equipo final",
+            "Switch con otro switch"
+          ]
+        },
+        {
+          "criterio": "VLANs que lleva",
+          "celdas": [
+            "Una sola VLAN",
+            "Varias VLANs"
+          ]
+        },
+        {
+          "criterio": "Formato de las tramas",
+          "celdas": [
+            "Ethernet sin tag",
+            "Etiquetadas con 802.1Q"
+          ]
+        },
+        {
+          "criterio": "Motivo",
+          "celdas": [
+            "Las NIC de los PCs no suelen soportar VLANs",
+            "El otro switch debe saber la VLAN de cada trama"
+          ]
+        },
+        {
+          "criterio": "Ejemplo del material",
+          "celdas": [
+            "Puertos de PC1–PC8",
+            "e1/1 (IOU1) – e0/0 (IOU2)"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Ejemplo: Red con 2 VLANs"
+      }
+    },
+    {
+      "id": "vst-comp-stp-lacp-stack",
+      "nombre": "STP vs. LACP vs. Stacking",
+      "unidad": "u5-vlan-stp",
+      "columnas": [
+        "STP",
+        "LACP",
+        "Stacking"
+      ],
+      "filas": [
+        {
+          "criterio": "Estándar / tipo",
+          "celdas": [
+            "IEEE 802.1D",
+            "IEEE 802.3ad",
+            "Stacking físico / lógico"
+          ]
+        },
+        {
+          "criterio": "Qué hace",
+          "celdas": [
+            "Bloquea caminos redundantes",
+            "Une puertos en un enlace lógico",
+            "Une switches en un dispositivo lógico"
+          ]
+        },
+        {
+          "criterio": "Enlaces redundantes",
+          "celdas": [
+            "Uno activo, el resto en reserva",
+            "Todos activos a la vez",
+            "Enlaces entre unidades del stack"
+          ]
+        },
+        {
+          "criterio": "Beneficio principal",
+          "celdas": [
+            "Evita loops de capa 2",
+            "Más ancho de banda y balanceo",
+            "Gestión unificada y escalabilidad"
+          ]
+        },
+        {
+          "criterio": "Ante una falla",
+          "celdas": [
+            "Activa el enlace bloqueado",
+            "Siguen los enlaces activos",
+            "Asume otra unidad (backup)"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Resumen: VLAN y Topologías Redundantes"
+      }
+    },
+    {
+      "id": "vst-comp-lan-sin-con-vlan",
+      "nombre": "LAN sin VLAN vs. LAN con VLAN",
+      "unidad": "u5-vlan-stp",
+      "columnas": [
+        "LAN sin VLAN",
+        "LAN con VLAN"
+      ],
+      "filas": [
+        {
+          "criterio": "Dominios de broadcast",
+          "celdas": [
+            "Uno solo",
+            "Uno por VLAN"
+          ]
+        },
+        {
+          "criterio": "Alcance de un broadcast",
+          "celdas": [
+            "Todos los dispositivos",
+            "Solo los puertos de la misma VLAN"
+          ]
+        },
+        {
+          "criterio": "Separación del tráfico",
+          "celdas": [
+            "Ninguna",
+            "Aislamiento lógico (seguridad)"
+          ]
+        },
+        {
+          "criterio": "Uso del ancho de banda",
+          "celdas": [
+            "Tráfico innecesario en toda la red",
+            "Más eficiente"
+          ]
+        },
+        {
+          "criterio": "Requisito de los switches",
+          "celdas": [
+            "Cualquier switch",
+            "Switches VLAN-aware"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "¿Qué es una VLAN?"
+      }
+    },
+    {
+      "id": "vst-comp-segmentacion-fisica-logica",
+      "nombre": "Segmentación física vs. lógica",
+      "unidad": "u5-vlan-stp",
+      "columnas": [
+        "Física",
+        "Lógica (VLAN)"
+      ],
+      "filas": [
+        {
+          "criterio": "Cómo se implementa",
+          "celdas": [
+            "Infraestructuras totalmente separadas",
+            "VLANs en los switches existentes"
+          ]
+        },
+        {
+          "criterio": "Costo",
+          "celdas": [
+            "Mayor (más equipos y cableado)",
+            "Menor"
+          ]
+        },
+        {
+          "criterio": "Reubicar un equipo",
+          "celdas": [
+            "Requiere recablear",
+            "Basta reasignar el puerto a la VLAN"
+          ]
+        },
+        {
+          "criterio": "Requisito",
+          "celdas": [
+            "Switches separados por segmento",
+            "Switches VLAN-aware y 802.1Q"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Implementar VLANs"
+      }
+    }
+  ],
+  "ejercicios": [
+    {
+      "id": "vst-ej-vlans-iou",
+      "titulo": "Ejercicio de VLANs con IOU1 e IOU2",
+      "unidad": "u5-vlan-stp",
+      "tipo": "Análisis de topología con VLANs",
+      "enunciado": "Dos switches, IOU1 e IOU2, se conectan entre sí por e1/1 (IOU1) y e0/0 (IOU2). En IOU1 están PC1, PC2, PC3 y PC4; en IOU2 están PC5, PC6, PC7 y PC8. VLAN 100 (Informática): PC1, PC2, PC5. VLAN 101 (Ingeniería): PC3, PC6, PC7. VLAN 102 (Audiovisual): PC4, PC8.",
+      "pasos": [
+        {
+          "consigna": "¿Cuántos dominios de broadcast existen en la red?",
+          "respuesta": "3",
+          "tipo_respuesta": "numero",
+          "explicacion": "Cada VLAN es un dominio de broadcast independiente, sin importar en cuántos switches esté repartida. Hay 3 VLANs (100, 101 y 102), así que hay 3 dominios de broadcast."
+        },
+        {
+          "consigna": "¿Cuántas de esas VLANs tienen PCs en ambos switches y por lo tanto deben cruzar el enlace e1/1–e0/0?",
+          "respuesta": "3",
+          "tipo_respuesta": "numero",
+          "explicacion": "VLAN 100: PC1 y PC2 en IOU1, PC5 en IOU2. VLAN 101: PC3 en IOU1, PC6 y PC7 en IOU2. VLAN 102: PC4 en IOU1, PC8 en IOU2. Las tres se extienden entre los dos switches."
+        },
+        {
+          "consigna": "¿Qué tipo de configuración tienen las interfaces e1/1 (IOU1) y e0/0 (IOU2)?",
+          "respuesta": "Trunk 802.1Q",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Acceso en la VLAN 100",
+            "Trunk 802.1Q",
+            "Acceso en la VLAN 1 (por defecto)",
+            "Bloqueadas por STP en todas las VLANs"
+          ],
+          "explicacion": "Los puertos que comunican switches deben transmitir tramas de varias VLANs identificadas con su etiqueta: eso es un enlace trunk IEEE 802.1Q."
+        }
+      ],
+      "pistas": [
+        "Pensá qué delimita un dominio de broadcast cuando hay VLANs.",
+        "Ubicá en qué switch está cada PC de cada VLAN.",
+        "Si por un mismo enlace tienen que pasar tramas de varias VLANs, el switch receptor necesita una etiqueta para distinguirlas."
+      ],
+      "errores_comunes": [
+        "Contar un dominio de broadcast por switch (2) o uno solo para toda la red.",
+        "Contar 6 dominios pensando que cada VLAN se duplica en cada switch.",
+        "Configurar el enlace entre switches como puerto de acceso: solo pasaría una VLAN."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Ejercicio de VLANs"
+      }
+    },
+    {
+      "id": "vst-ej-tag-8021q",
+      "titulo": "Campos del tag 802.1Q",
+      "unidad": "u5-vlan-stp",
+      "tipo": "Formato de trama",
+      "enunciado": "Una trama viaja por un enlace trunk con el encabezado 802.1Q insertado entre la dirección de origen (SA) y el campo Tipo. Respondé sobre ese tag.",
+      "pasos": [
+        {
+          "consigna": "¿Cuántos bytes agrega el tag 802.1Q a la trama?",
+          "respuesta": "4",
+          "tipo_respuesta": "numero",
+          "explicacion": "El tag tiene 16 bits de TPID + 3 de PCP + 1 de DEI + 12 de VID = 32 bits = 4 bytes."
+        },
+        {
+          "consigna": "¿Qué valor tiene el TPID, que indica que la trama está etiquetada?",
+          "respuesta": "0x8100",
+          "tipo_respuesta": "texto",
+          "alternativas": [
+            "8100"
+          ],
+          "explicacion": "Una conexión 802.1Q usa el Tipo Ethernet 0x8100 como identificador de protocolo."
+        },
+        {
+          "consigna": "¿Cuántos bits ocupa el VID?",
+          "respuesta": "12",
+          "tipo_respuesta": "numero",
+          "explicacion": "El VLAN ID ocupa los últimos 12 bits del tag."
+        },
+        {
+          "consigna": "¿Cuántas VLANs distintas se pueden identificar con ese campo?",
+          "respuesta": "4096",
+          "tipo_respuesta": "numero",
+          "explicacion": "Con 12 bits hay 2^12 = 4096 combinaciones, que es la cantidad de VLANs que indica el material."
+        }
+      ],
+      "pistas": [
+        "El tag tiene cuatro campos: TPID, PCP, DEI y VID.",
+        "Sus tamaños son 16, 3, 1 y 12 bits.",
+        "Con n bits se representan 2^n valores."
+      ],
+      "errores_comunes": [
+        "Confundir el TPID 0x8100 con el Tipo IPv4 0x0800.",
+        "Decir que el VID tiene 16 bits (el TPID es el de 16 bits).",
+        "Confundir 4096 VLANs con el rango configurable 1 a 4095."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Anatomía del Frame 802.1q"
+      }
+    },
+    {
+      "id": "vst-ej-root-switch",
+      "titulo": "Elección del root switch en la topología SwitchA–E",
+      "unidad": "u5-vlan-stp",
+      "tipo": "Spanning Tree",
+      "enunciado": "Cinco switches con enlaces de 1 Gbps (costo 4 cada uno): SwitchA (prioridad 100, MAC 0000.1111.2222), SwitchB (32.768, 0000.2222.3333), SwitchC (32.768, 0000.6666.7777), SwitchD (100, 0000.4444.5555) y SwitchE (32.768, 0000.8888.9999). Enlaces: A–B, A–C, B–D, C–E y D–E.",
+      "pasos": [
+        {
+          "consigna": "¿Cuántos bytes tiene el bridge ID que se compara?",
+          "respuesta": "8",
+          "tipo_respuesta": "numero",
+          "explicacion": "Bridge ID = 2 bytes de prioridad + 6 bytes de dirección MAC = 8 bytes."
+        },
+        {
+          "consigna": "Comparando primero la prioridad, ¿qué switches quedan empatados con el menor valor?",
+          "respuesta": "SwitchA y SwitchD",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "SwitchA y SwitchD",
+            "SwitchB, SwitchC y SwitchE",
+            "SwitchA y SwitchB",
+            "Solo SwitchA"
+          ],
+          "explicacion": "SwitchA y SwitchD tienen prioridad 100, menor que 32.768; los demás quedan descartados."
+        },
+        {
+          "consigna": "Desempatando por MAC, ¿cuál es el root switch?",
+          "respuesta": "SwitchA",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "SwitchA",
+            "SwitchD",
+            "SwitchB",
+            "SwitchE"
+          ],
+          "explicacion": "0000.1111.2222 (SwitchA) es menor que 0000.4444.5555 (SwitchD), así que SwitchA tiene el menor bridge ID."
+        },
+        {
+          "consigna": "¿Cuál es el costo del camino de SwitchD hacia el root a través de su root port?",
+          "respuesta": "8",
+          "tipo_respuesta": "numero",
+          "explicacion": "SwitchD llega a SwitchA por SwitchB: 4 (D–B) + 4 (B–A) = 8. Por E sería 4 + 4 + 4 = 12."
+        }
+      ],
+      "pistas": [
+        "Gana el menor bridge ID, no el mayor.",
+        "El bridge ID se compara primero por prioridad y después por MAC.",
+        "Sumá el costo de cada enlace de 1 Gbps en el camino hasta el root."
+      ],
+      "errores_comunes": [
+        "Elegir el switch con mayor prioridad numérica.",
+        "Comparar la MAC antes que la prioridad y elegir un switch con prioridad 32.768.",
+        "Tomar SwitchD como root porque comparte la prioridad 100 con SwitchA."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D – Topología y parámetros"
+      }
+    },
+    {
+      "id": "vst-ej-vid-binario",
+      "titulo": "VID en binario como en la captura",
+      "unidad": "u5-vlan-stp",
+      "tipo": "Conversión binaria",
+      "enunciado": "En la captura de Wireshark del material aparece '.... 0000 0110 0100 = ID: 100'. Convertí los VIDs a binario de 12 bits.",
+      "pasos": [
+        {
+          "consigna": "Escribí el VID 100 en binario de 12 bits.",
+          "respuesta": "0000 0110 0100",
+          "tipo_respuesta": "binario",
+          "alternativas": [
+            "000001100100"
+          ],
+          "explicacion": "100 = 64 + 32 + 4 → 1100100; completado a 12 bits: 0000 0110 0100."
+        },
+        {
+          "consigna": "La BPDU de la captura pertenece a la VLAN 101. Escribí el VID 101 en binario de 12 bits.",
+          "respuesta": "0000 0110 0101",
+          "tipo_respuesta": "binario",
+          "alternativas": [
+            "000001100101"
+          ],
+          "explicacion": "101 = 100 + 1, así que es igual al anterior con el último bit en 1: 0000 0110 0101."
+        },
+        {
+          "consigna": "En la misma captura el PCP vale 0 (Best Effort). Escribí sus 3 bits.",
+          "respuesta": "000",
+          "tipo_respuesta": "binario",
+          "explicacion": "El PCP ocupa 3 bits; el valor 0 es 000, como muestra '000. .... .... ....'."
+        }
+      ],
+      "pistas": [
+        "Descomponé el número en potencias de 2 (64, 32, 16, 8, 4, 2, 1).",
+        "100 = 64 + 32 + 4.",
+        "Completá con ceros a la izquierda hasta tener 12 bits."
+      ],
+      "errores_comunes": [
+        "Dejar el resultado en 7 bits (1100100) sin completar a 12.",
+        "Agregar los ceros a la derecha, lo que cambia el valor.",
+        "Confundir el VID con el TPID (0x8100)."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Campos del Tag 802.1q"
+      }
+    }
+  ],
+  "preguntas": [
+    {
+      "id": "vst-p01",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Qué valor tiene el campo TPID de una trama etiquetada con 802.1Q?",
+      "opciones": [
+        "0x8100",
+        "0x0800",
+        "0x8006",
+        "0x0064"
+      ],
+      "correcta": 0,
+      "explicacion": "Una conexión 802.1Q usa el Tipo Ethernet 0x8100 como TPID para indicar que la trama está etiquetada.",
+      "por_que_falla": [
+        "",
+        "0x0800 es el Tipo de IPv4, que aparece después del tag.",
+        "0x8006 es el Port identifier de la BPDU capturada, no el TPID.",
+        "0x0064 es 100 en hexadecimal: el VID de la captura, no el TPID."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "IEEE 802.1q"
+      }
+    },
+    {
+      "id": "vst-p02",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "Una LAN tiene 3 switches VLAN-aware unidos por trunks y 4 VLANs configuradas que se extienden por todos ellos. ¿Cuántos dominios de broadcast hay?",
+      "opciones": [
+        "1",
+        "4",
+        "3",
+        "12"
+      ],
+      "correcta": 1,
+      "explicacion": "Cada VLAN es un dominio de broadcast, aunque esté repartida en varios switches: 4 VLANs → 4 dominios.",
+      "por_que_falla": [
+        "Sería el caso de una LAN sin VLANs: un único dominio de broadcast.",
+        "",
+        "Cuenta switches, pero los switches no separan dominios de broadcast por sí mismos.",
+        "Multiplica VLANs por switches; una VLAN que cruza un trunk sigue siendo un solo dominio."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "¿Qué es una VLAN?"
+      }
+    },
+    {
+      "id": "vst-p03",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Cuántos bits ocupa el VID en el tag 802.1Q y cuántas VLANs permite identificar?",
+      "opciones": [
+        "3 bits, 8 VLANs",
+        "16 bits, 65.536 VLANs",
+        "12 bits, 4096 VLANs",
+        "12 bits, 1024 VLANs"
+      ],
+      "correcta": 2,
+      "explicacion": "El VID tiene 12 bits, que identifican hasta 2^12 = 4096 VLANs.",
+      "por_que_falla": [
+        "3 bits es el tamaño del PCP (prioridad), no del VID.",
+        "16 bits es el tamaño del TPID.",
+        "",
+        "El tamaño es correcto pero 2^12 es 4096, no 1024."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Campos del Tag 802.1q"
+      }
+    },
+    {
+      "id": "vst-p04",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Qué función cumple el campo PCP del tag 802.1Q?",
+      "opciones": [
+        "Indicar si la trama es elegible para ser descartada",
+        "Identificar la VLAN a la que pertenece la trama",
+        "Avisar que la trama lleva una etiqueta 802.1Q",
+        "Marcar la prioridad de la trama para CoS"
+      ],
+      "correcta": 3,
+      "explicacion": "PCP (Priority Code Point) son 3 bits de prioridad para calidad de servicio (CoS).",
+      "por_que_falla": [
+        "Eso lo hace el bit DEI (Discard Eligibility Indicator).",
+        "Eso lo hace el VID de 12 bits.",
+        "Eso lo hace el TPID con el valor 0x8100.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Campos del Tag 802.1q"
+      }
+    },
+    {
+      "id": "vst-p05",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Por qué los puertos del switch donde se conectan los PCs suelen configurarse en modo acceso?",
+      "opciones": [
+        "Porque las NIC de los PCs por lo general no soportan VLANs",
+        "Porque los PCs necesitan recibir las BPDUs para evitar loops",
+        "Porque así pueden transportar varias VLANs etiquetadas",
+        "Porque el modo acceso duplica el ancho de banda del PC"
+      ],
+      "correcta": 0,
+      "explicacion": "Como las tarjetas de red de los PCs normalmente no entienden 802.1Q, el tráfico entre PC y switch viaja sin tag y el puerto se asocia a una sola VLAN.",
+      "por_que_falla": [
+        "",
+        "Las BPDUs son para los switches que ejecutan STP, no el motivo del modo acceso.",
+        "Transportar varias VLANs etiquetadas es lo que hace un trunk, no un acceso.",
+        "Aumentar el ancho de banda agrupando enlaces es tarea de LACP."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Funcionamiento de una red con VLANs"
+      }
+    },
+    {
+      "id": "vst-p06",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "Un switch VLAN-aware recibe un broadcast por un puerto de la VLAN 101. ¿Por dónde lo reenvía?",
+      "opciones": [
+        "Por todos sus puertos, sin importar la VLAN",
+        "Solo por el root port hacia el root switch",
+        "Por los puertos que pertenecen a la VLAN 101",
+        "Solo por los puertos de acceso, nunca por el trunk"
+      ],
+      "correcta": 2,
+      "explicacion": "Con VLANs, el broadcast y el multicast se inundan solo por los puertos que pertenecen a la misma VLAN que el puerto de entrada.",
+      "por_que_falla": [
+        "Así se comporta un switch sin VLANs (un único dominio de broadcast).",
+        "El root port es un concepto de STP; no limita el flooding a un solo puerto.",
+        "",
+        "El trunk lleva la VLAN 101 hacia otros switches, así que el broadcast también sale por él (etiquetado)."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Funcionamiento con soporte de VLANs de un switch"
+      }
+    },
+    {
+      "id": "vst-p07",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Cuál de estas NO es una consecuencia de un loop de capa 2?",
+      "opciones": [
+        "Aparición de broadcast storms",
+        "Separación del tráfico en varios dominios de broadcast",
+        "Inestabilidad de la tabla MAC por frames repetidos",
+        "Saturación de la red por tráfico descontrolado"
+      ],
+      "correcta": 1,
+      "explicacion": "Separar el tráfico en varios dominios de broadcast es un beneficio de las VLANs, no un efecto de un loop.",
+      "por_que_falla": [
+        "Sí es consecuencia: los broadcast se propagan sin fin.",
+        "",
+        "Sí es consecuencia: las copias duplicadas hacen cambiar constantemente la tabla MAC.",
+        "Sí es consecuencia: el volumen de tráfico supera a los switches y colapsa la red."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Loops de Capa 2"
+      }
+    },
+    {
+      "id": "vst-p08",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Con qué criterio elige STP el root switch?",
+      "opciones": [
+        "El de mayor prioridad y, si empatan, la mayor MAC",
+        "El que tenga menor costo hacia los demás switches",
+        "El que tenga más puertos en estado forwarding",
+        "El de menor bridge ID: menor prioridad, luego menor MAC"
+      ],
+      "correcta": 3,
+      "explicacion": "Gana el menor bridge ID (8 bytes: prioridad + MAC); se compara primero la prioridad y, si empata, la MAC.",
+      "por_que_falla": [
+        "Invierte el criterio: en STP gana el valor más bajo, no el más alto.",
+        "El costo se usa después para elegir root ports, no para elegir el root.",
+        "Los estados de puerto son consecuencia del árbol, no criterio de elección.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D – Topología y parámetros"
+      }
+    },
+    {
+      "id": "vst-p09",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "En la salida de 'show spanning-tree vlan 101' de IOU2 aparece 'Et0/0  Altn BLK 100'. ¿Qué indica?",
+      "opciones": [
+        "Et0/0 no reenvía tramas, pero sigue escuchando BPDUs",
+        "Et0/0 es el root port de IOU2 hacia el root switch",
+        "Et0/0 está apagado y no participa del proceso STP",
+        "Et0/0 reenvía tramas de datos como designated port del segmento"
+      ],
+      "correcta": 0,
+      "explicacion": "BLK es el estado Blocking: no reenvía tramas pero escucha BPDUs; STP lo bloquea para evitar el loop.",
+      "por_que_falla": [
+        "",
+        "El root port de IOU2 es Et1/1 ('Root FWD').",
+        "Eso sería el estado Disabled, no Blocking.",
+        "Los designated están en FWD (Et0/2 y Et0/3), no en BLK."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol (per VLAN)"
+      }
+    },
+    {
+      "id": "vst-p10",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Cómo está formado el bridge ID de STP?",
+      "opciones": [
+        "6 bytes: solo la dirección MAC",
+        "4 bytes: TPID más VID",
+        "8 bytes: 2 de prioridad y 6 de MAC",
+        "8 bytes: 6 de prioridad y 2 de MAC"
+      ],
+      "correcta": 2,
+      "explicacion": "El bridge ID tiene 8 bytes: Bridge Priority (2 bytes) + MAC Address (6 bytes).",
+      "por_que_falla": [
+        "Le falta la prioridad, que es lo primero que se compara.",
+        "Esos son campos del tag 802.1Q, no del bridge ID.",
+        "",
+        "Invierte los tamaños: la MAC ocupa 6 bytes."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D – Topología y parámetros"
+      }
+    },
+    {
+      "id": "vst-p11",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Qué es el root port en STP?",
+      "opciones": [
+        "El puerto del root switch que reenvía a todos los segmentos",
+        "El puerto bloqueado que queda como respaldo pasivo",
+        "El puerto que conecta con el switch de mayor prioridad",
+        "El puerto de un switch no-raíz con menor costo al root"
+      ],
+      "correcta": 3,
+      "explicacion": "Cada switch no-raíz tiene un root port: el puerto con el camino de menor costo hacia el root switch.",
+      "por_que_falla": [
+        "El root switch no tiene root port; sus puertos son designated.",
+        "El respaldo pasivo son los puertos bloqueados, no el root port.",
+        "La prioridad decide el root switch, no qué puerto es root port; además gana la menor.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol 802.1D"
+      }
+    },
+    {
+      "id": "vst-p12",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "En IOU2 se ve 'Bridge ID Priority 32869 (priority 32768 sys-id-ext 101)'. ¿De dónde sale 32869?",
+      "opciones": [
+        "Es un valor que se configuró a mano en el switch",
+        "Es la prioridad 32768 más el número de VLAN 101",
+        "Es el costo acumulado de IOU2 hasta el root switch",
+        "Es 32768 más el costo del root port (100)"
+      ],
+      "correcta": 1,
+      "explicacion": "STP se ejecuta por VLAN: la prioridad mostrada suma la prioridad base 32768 y el sys-id-ext, que es el número de VLAN (101).",
+      "por_que_falla": [
+        "La propia salida lo desglosa en priority 32768 + sys-id-ext 101.",
+        "",
+        "El costo al root aparece aparte ('Cost 100') y no forma parte del bridge ID.",
+        "32768 + 100 da 32868, no 32869; el costo no se suma a la prioridad."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol (per VLAN)"
+      }
+    },
+    {
+      "id": "vst-p13",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Qué estándar define LACP, el protocolo de agregación de enlaces?",
+      "opciones": [
+        "IEEE 802.3ad",
+        "IEEE 802.1Q",
+        "IEEE 802.1D",
+        "IEEE 802.3"
+      ],
+      "correcta": 0,
+      "explicacion": "LACP corresponde a IEEE 802.3ad, como se ve también en 'bond 0 – mode 4 – 802.3ad LACP'.",
+      "por_que_falla": [
+        "",
+        "802.1Q es el estándar de etiquetado de VLANs.",
+        "802.1D es Spanning Tree Protocol.",
+        "802.3 es Ethernet en general; la agregación es la enmienda 802.3ad."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Agregación de Enlaces (Bonding)"
+      }
+    },
+    {
+      "id": "vst-p14",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Cuál de estos NO es un requisito para armar un Link Aggregation?",
+      "opciones": [
+        "Que todos los enlaces trabajen en full-duplex",
+        "Que la velocidad negociada sea idéntica en todos",
+        "Que ambos switches formen parte del mismo stack",
+        "Que la configuración de VLANs sea igual en los extremos"
+      ],
+      "correcta": 2,
+      "explicacion": "Los requisitos son full-duplex, velocidad idéntica y consistencia de VLANs; el stacking es otro mecanismo y no es requisito.",
+      "por_que_falla": [
+        "Sí es requisito: todos los enlaces deben ser full-duplex.",
+        "Sí es requisito: si uno negocia a 1 Gbps, todos deben ser de 1 Gbps.",
+        "",
+        "Sí es requisito en switches gestionables."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Agregación de Enlaces – ¿Cómo funciona?"
+      }
+    },
+    {
+      "id": "vst-p15",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "Dos switches con STP se conectan con dos cables en paralelo, sin LACP. ¿Qué pasa?",
+      "opciones": [
+        "Ambos enlaces reenvían y se suma el ancho de banda",
+        "STP bloquea todos los enlaces excepto uno",
+        "Se forma una broadcast storm que STP no puede evitar",
+        "Los dos switches pasan a comportarse como un stack"
+      ],
+      "correcta": 1,
+      "explicacion": "Sin LACP, los enlaces paralelos forman un loop y STP bloquea todos menos uno; con LACP se ven como un único enlace lógico.",
+      "por_que_falla": [
+        "Sumar el ancho de banda requiere LACP, que los agrupa en un solo enlace lógico.",
+        "",
+        "STP justamente evita el loop bloqueando los enlaces redundantes.",
+        "El stacking se configura a propósito; no surge de conectar cables en paralelo."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Agregación de Enlaces – ¿Cómo funciona?"
+      }
+    },
+    {
+      "id": "vst-p16",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Qué describe mejor al stacking?",
+      "opciones": [
+        "Agrupar varios puertos físicos en un único enlace lógico",
+        "Bloquear dinámicamente los caminos redundantes",
+        "Etiquetar tramas con el VID para separar VLANs",
+        "Agrupar switches para que la red los vea como uno solo"
+      ],
+      "correcta": 3,
+      "explicacion": "El stacking agrupa varios switches de manera que ante la red aparenten ser un solo dispositivo lógico y centralizado.",
+      "por_que_falla": [
+        "Eso es la agregación de enlaces (LACP / bonding).",
+        "Eso es lo que hace STP.",
+        "Eso es el etiquetado IEEE 802.1Q.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Stacking"
+      }
+    },
+    {
+      "id": "vst-p17",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "En el escenario real, SW 1 es master y SW 2 es backup del stack. ¿Cómo se administran los puertos de toda la pila?",
+      "opciones": [
+        "Conectándose al master, que gestiona todos los puertos",
+        "Conectándose a cada switch de la pila por separado",
+        "Conectándose al backup, que es el que elige el root",
+        "A través del firewall, por la interfaz bond 0"
+      ],
+      "correcta": 0,
+      "explicacion": "La gestión unificada permite conectarse de manera exclusiva al equipo master para administrar todos los puertos de la pila.",
+      "por_que_falla": [
+        "",
+        "Justamente el stacking evita gestionar cada switch por separado.",
+        "El backup es redundante; no es el punto de gestión ni elige un root.",
+        "El bond 0 es la agregación entre el firewall y el stack, no la vía de gestión."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Stacking: principales beneficios de la tecnología de apilamiento"
+      }
+    },
+    {
+      "id": "vst-p18",
+      "unidad": "u5-vlan-stp",
+      "enunciado": "¿Cómo llama Cisco al enlace virtual que agrupa varios puertos físicos con LACP?",
+      "opciones": [
+        "Bonding",
+        "Link Aggregation",
+        "PortChannel",
+        "Trunk 802.1Q"
+      ],
+      "correcta": 2,
+      "explicacion": "Según la nomenclatura por fabricante, Cisco lo llama PortChannel.",
+      "por_que_falla": [
+        "Bonding es el nombre que usa Mikrotik.",
+        "Link Aggregation es el nombre que usa HP.",
+        "",
+        "Un trunk lleva varias VLANs etiquetadas; no agrupa puertos físicos."
+      ],
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Agregación de Enlaces (Bonding)"
+      }
+    }
+  ],
+  "glosario": [
+    {
+      "termino": "VLAN",
+      "sigla": "Virtual LAN",
+      "definicion": "Red lógica independiente dentro de una misma infraestructura física; cada VLAN es un dominio de broadcast.",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "IEEE 802.1Q",
+      "definicion": "Estándar que agrega a la trama Ethernet un tag de 4 bytes con la VLAN a la que pertenece.",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "TPID",
+      "sigla": "Tag Protocol ID",
+      "definicion": "Campo de 16 bits del tag 802.1Q con valor 0x8100 que indica trama etiquetada.",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "PCP",
+      "sigla": "Priority Code Point",
+      "definicion": "3 bits del tag 802.1Q para la prioridad de la trama (CoS).",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "DEI",
+      "sigla": "Discard Eligibility Indicator",
+      "definicion": "Bit del tag 802.1Q que indica si la trama es elegible para ser descartada.",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "VID",
+      "sigla": "VLAN ID",
+      "definicion": "12 bits del tag 802.1Q que identifican la VLAN (hasta 4096).",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "CoS",
+      "sigla": "Class of Service",
+      "definicion": "Calidad de servicio en capa 2, marcada con los bits PCP del tag 802.1Q.",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "Trunk",
+      "definicion": "Enlace entre switches que transporta tramas de varias VLANs etiquetadas con 802.1Q.",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "Puerto de acceso",
+      "definicion": "Puerto asociado a una sola VLAN, con tráfico Ethernet sin tag; se usa para conectar PCs.",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "STP (Spanning Tree Protocol)",
+      "sigla": "Spanning Tree Protocol",
+      "definicion": "Protocolo IEEE 802.1D que bloquea caminos redundantes para evitar loops de capa 2.",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "BPDU",
+      "sigla": "Bridge Protocol Data Unit",
+      "definicion": "Mensaje que intercambian los switches en STP con root ID, bridge ID, costo y temporizadores.",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "PVST+",
+      "sigla": "Per-VLAN Spanning Tree Plus",
+      "definicion": "Variante de STP que corre una instancia por VLAN; en la captura es el destino 01:00:0c:cc:cc:cd.",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "LACP",
+      "sigla": "Link Aggregation Control Protocol",
+      "definicion": "Protocolo IEEE 802.3ad que gestiona la agregación de varios enlaces físicos en uno lógico.",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "Bond / Teaming",
+      "definicion": "Enlace virtual formado por 2 o más puertos físicos (PortChannel en Cisco, Link Aggregation en HP, Bonding en Mikrotik).",
+      "unidad": "u5-vlan-stp"
+    },
+    {
+      "termino": "Stacking",
+      "definicion": "Apilamiento de switches para gestionarlos como un único dispositivo lógico con un master.",
+      "unidad": "u5-vlan-stp"
+    }
+  ],
+  "dudas": [
+    {
+      "texto": "El material dice que el VID de 12 bits permite 4096 VLANs, pero al configurar la entidad lógica indica un rango de 1 a 4095. No aclara qué pasa con el valor 0 ni si 4095 es utilizable.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Configuración del soporte de VLANs"
+      }
+    },
+    {
+      "texto": "En el ejercicio de VLANs el diagrama no permite asignar sin ambigüedad cada PC a un puerto de IOU2 (se listan e0/3, e1/0 y e0/2 sin correspondencia) y no se dan las MACs de los PCs, por lo que la consigna de completar las tablas de MACs no se puede resolver con el material.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Ejercicio de VLANs"
+      }
+    },
+    {
+      "texto": "La salida de 'show spanning-tree' muestra el rol 'Altn' (alternate) para el puerto bloqueado, pero la lista de conceptos del material solo menciona root port, designated port y estado Blocked, sin definir el rol alternate.",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Spanning Tree Protocol (per VLAN)"
+      }
+    }
+  ]
+}

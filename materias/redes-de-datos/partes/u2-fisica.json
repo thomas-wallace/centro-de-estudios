@@ -1,0 +1,2336 @@
+{
+  "conceptos": [
+    {
+      "id": "capa-fisica",
+      "nombre": "Capa física",
+      "unidad": "u2-fisica",
+      "definicion": "Capa que se ocupa de transmitir bits a lo largo de un canal de comunicación entre dispositivos directamente conectados.",
+      "definicion_extendida": "Es la capa 1 del modelo en capas y está presente en hosts y routers. Su diseño busca que, cuando un extremo envía un bit con valor 1, el otro extremo lo reciba como 1 y no como 0. El éxito de la transmisión depende de la calidad de la señal en el receptor, que se ve afectada por las características físicas del medio y por el ambiente.",
+      "ejemplo": "Una PC (Tx) envía la secuencia 1100011 por un cable hasta un router (Rx), que debe recibir exactamente 1100011.",
+      "por_que_importa": "Todas las capas superiores dependen de que los bits lleguen intactos; si la capa física falla, nada de lo que viaja por encima funciona.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "01 – Introducción"
+      }
+    },
+    {
+      "id": "senal-analogica",
+      "nombre": "Señal analógica",
+      "unidad": "u2-fisica",
+      "definicion": "Señal cuya intensidad varía de forma continua en el tiempo y toma valores en un conjunto infinito.",
+      "definicion_extendida": "También se la llama señal continua: su amplitud cambia sin saltos a lo largo del tiempo. En la transmisión analógica el ruido se suma directamente a la onda, y los amplificadores intermedios amplifican la señal junto con el ruido, por lo que se degrada en trayectos largos. A cambio, permite una reproducción fiel en condiciones óptimas y se adapta con facilidad a los canales existentes.",
+      "ejemplo": "La señal de TV por cable distribuida por coaxial de 75 Ω en banda ancha.",
+      "por_que_importa": "Entender cómo la afecta el ruido explica por qué los sistemas modernos prefieren transmitir información digital.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Señal analógica o continua"
+      }
+    },
+    {
+      "id": "senal-digital",
+      "nombre": "Señal digital",
+      "unidad": "u2-fisica",
+      "definicion": "Señal que mantiene un nivel constante durante un período y luego cambia a otro nivel, tomando valores de un conjunto finito.",
+      "definicion_extendida": "También se la llama señal discreta. Los cambios de nivel se ven como flancos de subida y de bajada; en la señal ideal los flancos son verticales, pero en la real no. Para interpretarla, el receptor necesita sincronización (inicio y fin de cada bit o símbolo) y umbrales para identificar niveles y fases.",
+      "ejemplo": "Una codificación NRZ-L con dos niveles para representar la secuencia 0 1 1 0 0 0 1 1 0 1 0 0.",
+      "por_que_importa": "Puede regenerarse en puntos intermedios, de modo que el ruido no se acumula a lo largo del trayecto.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Señal digital o discreta"
+      }
+    },
+    {
+      "id": "ancho-de-banda",
+      "nombre": "Ancho de banda",
+      "unidad": "u2-fisica",
+      "definicion": "Rango de frecuencias que contiene una señal o que un canal soporta, y por extensión la cantidad de información que fluye por unidad de tiempo (bps).",
+      "definicion_extendida": "El material distingue el ancho de banda de una señal (ancho de su espectro; el efectivo es la banda pequeña donde se concentra la mayor parte de la energía) y el ancho de banda de transmisión, que mide cuánta información puede fluir de un lugar a otro en un tiempo dado, en bits por segundo. La velocidad real está limitada por el transmisor, el receptor y el medio.",
+      "ejemplo": "La voz humana tiene un ancho de banda efectivo de unos 4 kHz; un pendrive de 128 GB que viaja 3 h equivale a ≈ 101,81 Mbps.",
+      "por_que_importa": "Junto con la SNR fija la capacidad máxima de un canal y permite comparar medios y enlaces.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Espectro y ancho de banda de una señal"
+      }
+    },
+    {
+      "id": "ruido",
+      "nombre": "Ruido e interferencia",
+      "unidad": "u2-fisica",
+      "definicion": "Señales adicionales no deseadas que se introducen entre el transmisor y el receptor y alteran la señal original.",
+      "definicion_extendida": "El material distingue ruido térmico (o blanco, uniforme en todo el espectro e inevitable), ruido impulsivo (impredecible, corto y de gran amplitud), interferencia (señales externas que se acoplan al medio) y diafonía (acople entre líneas adyacentes). En una señal digital el ruido puede convertir un 1 en un 0; en una analógica se suma a la onda y la degrada.",
+      "ejemplo": "El encendido y apagado de un interruptor eléctrico genera ruido impulsivo que puede corromper bits.",
+      "por_que_importa": "Es la causa de los errores de transmisión; por eso hay que mantener alta la SNR y las capas superiores detectan errores.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ruido e interferencias – Tipos"
+      }
+    },
+    {
+      "id": "atenuacion",
+      "nombre": "Atenuación",
+      "unidad": "u2-fisica",
+      "definicion": "Disminución de la amplitud de la señal a medida que se propaga y aumenta la distancia.",
+      "definicion_extendida": "Cada medio se ve afectado de forma distinta y la potencia recibida tiene que ser suficiente para que el receptor la detecte. Se puede mejorar cambiando de medio o usando repetidores. Como la atenuación además varía con la frecuencia, contribuye a la distorsión de la señal.",
+      "ejemplo": "En UTP, al estar los pares más expuestos, la señal se degrada si no se coloca un repetidor; en microondas a 60 GHz el oxígeno limita el alcance a ~1 km.",
+      "por_que_importa": "Determina la distancia máxima de cada medio y cuándo hace falta un repetidor.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Durante la propagación las señales sufren…"
+      }
+    },
+    {
+      "id": "limite-de-shannon",
+      "nombre": "Límite de Shannon",
+      "unidad": "u2-fisica",
+      "definicion": "Capacidad máxima teórica de un canal lineal, dada por C = B · log₂(1 + S/N).",
+      "definicion_extendida": "C es la capacidad máxima en bps, B el ancho de banda del canal en Hz, S la potencia de la señal útil y N la potencia del ruido; S/N es la relación señal a ruido. La capacidad crece linealmente con el ancho de banda y logarítmicamente con la SNR.",
+      "ejemplo": "Con B = 4 kHz y S/N = 15: C = 4000 · log₂(16) = 4000 · 4 = 16 kbps.",
+      "por_que_importa": "Marca un techo que ninguna técnica de codificación puede superar en un canal dado.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Límite de Shannon"
+      }
+    },
+    {
+      "id": "codificacion",
+      "nombre": "Codificación",
+      "unidad": "u2-fisica",
+      "definicion": "Conversión de los datos binarios en una forma que pueda desplazarse por un enlace físico.",
+      "definicion_extendida": "Adapta la información lógica (1s y 0s) al medio, transformando los bits en fenómenos físicos: pulsos eléctricos en cobre, pulsos luminosos en fibra u ondas electromagnéticas en el espacio libre. En banda base la señal lleva los datos directamente en su banda original, por ejemplo con NRZ-L o Manchester.",
+      "ejemplo": "Ethernet 10BASE-T usa codificación Manchester: el byte 0D hex (0000 1101) se transmite como transiciones en mitad de cada bit.",
+      "por_que_importa": "Es el primer problema de toda transmisión: expresar los datos de forma que el medio pueda transportarlos y el receptor interpretarlos.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Codificación"
+      }
+    },
+    {
+      "id": "modulacion",
+      "nombre": "Modulación",
+      "unidad": "u2-fisica",
+      "definicion": "Técnica que transporta los datos variando una señal portadora (en amplitud, frecuencia o fase).",
+      "definicion_extendida": "A diferencia de la banda base, usa una señal portadora para llevar el mensaje por el medio. Las variantes básicas son ASK (amplitud), FSK (frecuencia) y PSK (fase); QAM combina amplitudes y fases para codificar varios bits por símbolo. En un canal con ruido los puntos del diagrama de constelación se dispersan y es más difícil decidir qué bits llegaron.",
+      "ejemplo": "8-QAM usa 2 amplitudes y 4 fases: 8 símbolos, cada uno con 3 bits (000, 001, …, 111).",
+      "por_que_importa": "Permite adaptar los datos a medios como la radio y aumentar los bits por símbolo.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ejemplos: codificación / modulación"
+      }
+    },
+    {
+      "id": "par-trenzado",
+      "nombre": "Par trenzado",
+      "unidad": "u2-fisica",
+      "definicion": "Medio guiado de pares de cobre trenzados entre sí, más inmune al ruido y a la diafonía que el cable plano.",
+      "definicion_extendida": "El trenzado mejora la protección frente al ruido y a la diafonía respecto del cable plano de telefonía, que es muy propenso a ruido electromagnético y acople capacitivo. Tiene tres variantes según el blindaje: UTP (sin blindaje), FTP (pantalla global) y STP (blindaje por par). Es el medio de Ethernet 10Base-T, 100Base-TX, 1000Base-T y 10GBase-T.",
+      "ejemplo": "802.3ab (1000Base-T) transmite 1 Gb/s sobre par trenzado.",
+      "por_que_importa": "Es el cableado más usado en redes LAN; elegir variante y categoría define velocidad y distancia.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Par de cobre – Tipos y características"
+      }
+    },
+    {
+      "id": "utp",
+      "nombre": "Cable UTP",
+      "unidad": "u2-fisica",
+      "definicion": "Par trenzado sin blindaje, económico y usado casi siempre en LAN de corta distancia.",
+      "definicion_extendida": "Entre los pares no hay separación física metálica. Soporta hasta 1/10 Gbps en LAN, pero al estar más expuesto la señal se degrada si no se coloca un repetidor. Su comportamiento depende del paso del trenzado y del calibre. Por norma existe en Cat 5e, 6 y 6A (U/UTP); Cat 7/7A/8 sin blindaje está prohibido.",
+      "ejemplo": "Cat 6A U/UTP: 10 Gbps a 100 m sin usar metal, gracias a un cable más grueso que aísla del Alien Crosstalk.",
+      "por_que_importa": "Es la opción por defecto para cablear una LAN por su bajo costo.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable UTP – Características y rendimiento"
+      }
+    },
+    {
+      "id": "fis-ftp",
+      "nombre": "Cable FTP",
+      "unidad": "u2-fisica",
+      "definicion": "Par trenzado con una pantalla de aluminio global que envuelve a todos los pares juntos.",
+      "definicion_extendida": "Los pares están separados entre sí por plástico o material no conductor y una lámina de aluminio envuelve al grupo completo (no a cada par). Mejora notablemente al UTP en distancia y aislamiento, pero no llega a las prestaciones del STP de blindaje individual.",
+      "ejemplo": "Cat 5e F/UTP: una sola lámina de aluminio sobre los 4 pares, 1 Gbps a 100 m; Cat 7 F/FTP agrega lámina por par.",
+      "por_que_importa": "Es un punto intermedio de costo y protección para entornos con algo de ruido externo.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable FTP – Par trenzado apantallado"
+      }
+    },
+    {
+      "id": "fis-stp",
+      "nombre": "Cable STP",
+      "unidad": "u2-fisica",
+      "definicion": "Par trenzado en el que cada par está rodeado por su propia cubierta de aluminio.",
+      "definicion_extendida": "El blindaje individual da excelente aislamiento contra interferencias electromagnéticas en entornos ruidosos. Se usa en redes de altas prestaciones (gran ancho de banda, baja latencia y bajas tasas de error). Es más caro, pero cubre mayores distancias sin repetidores. Cat 7, 7A y 8 lo exigen por norma (S/FTP).",
+      "ejemplo": "Cat 8 S/FTP: blindaje masivo para 2 GHz, 25 a 40 Gbps a 30 m.",
+      "por_que_importa": "Es el mejor par trenzado ante ruido y la única opción para las categorías más altas.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable STP – Par trenzado blindado individual"
+      }
+    },
+    {
+      "id": "fis-cable-coaxial",
+      "nombre": "Cable coaxial",
+      "unidad": "u2-fisica",
+      "definicion": "Medio guiado de cobre con alta protección contra interferencias, usado en TV, banda ancha y viejas LAN.",
+      "definicion_extendida": "Hay dos familias: banda base de 50 Ω, para transmisión digital (viejas LAN y antenas de radio, celulares, Yagi o parabólicas), y banda ancha de 75 Ω, para transmisión analógica como TV por cable, con ancho de banda de 500 MHz (hasta 1 GHz en cables modernos). Las primeras Ethernet usaban coaxial grueso (10Base5) y fino (10Base2).",
+      "ejemplo": "802.3a (10Base2): 10 Mb/s sobre coaxial fino.",
+      "por_que_importa": "Explica el origen de Ethernet y sigue vigente en distribución de TV y conexión de antenas.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable coaxial – Distintos tipos y aplicaciones"
+      }
+    },
+    {
+      "id": "fibra-optica",
+      "nombre": "Fibra óptica",
+      "unidad": "u2-fisica",
+      "definicion": "Medio guiado que transmite pulsos de luz por un núcleo de vidrio gracias a la reflexión total interna.",
+      "definicion_extendida": "Un transmisor convierte la señal eléctrica en óptica, la luz viaja confinada en el núcleo y un detector la convierte de nuevo en señal eléctrica. Tiene gran ancho de banda, es inmune al ruido electromagnético y alcanza largas distancias sin repetidores. Sus desventajas: despliegue en terrenos difíciles, corte de cables y costo frente a soluciones inalámbricas para grandes distancias.",
+      "ejemplo": "Los cables submarinos de ANTEL (por ejemplo Tannat) usan WDM y repetidores ópticos cada 60-100 km, con 400 Gbps por canal.",
+      "por_que_importa": "Es el medio del cableado vertical de LANs y de las redes nacionales e internacionales.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fibra óptica – Ventajas y desventajas"
+      }
+    },
+    {
+      "id": "fis-reflexion-total-interna",
+      "nombre": "Reflexión total interna",
+      "unidad": "u2-fisica",
+      "definicion": "Fenómeno por el que la luz que incide sobre la frontera núcleo-cubierta se refleja por completo y no se refracta hacia la cubierta.",
+      "definicion_extendida": "Ocurre porque el núcleo (n₁) tiene mayor índice de refracción que la cubierta (n₂). Por la ley de Snell, n₁ · sen(θc) = n₂ · sen(90°), donde θc es el ángulo crítico: el ángulo de incidencia mínimo para que haya reflexión total interna.",
+      "ejemplo": "Un haz que incide sobre la cubierta con un ángulo mayor o igual a θc rebota y sigue por el núcleo hasta el detector.",
+      "por_que_importa": "Es lo que mantiene la luz dentro de la fibra y permite transmitir a grandes distancias.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fenómeno de reflexión total interna"
+      }
+    },
+    {
+      "id": "fibra-multimodo",
+      "nombre": "Fibra multimodo",
+      "unidad": "u2-fisica",
+      "definicion": "Fibra de núcleo grande (62,5 o 50 μm) por la que se propagan muchos modos o caminos de luz a la vez.",
+      "definicion_extendida": "Es fácil de acoplar, usa LEDs de baja intensidad y su longitud máxima recomendada es 2 km (a 850 nm). Trabaja en la 1.ª ventana (850 nm) y en la 2.ª (1300 nm). Es más barata y fácil de instalar, por eso se usa en transmisiones de más corto alcance.",
+      "ejemplo": "400GBASE-SR8 alcanza 100 m sobre fibra multimodo.",
+      "por_que_importa": "Es la opción económica para enlaces cortos dentro de edificios o centros de datos.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fibras – Multimodo"
+      }
+    },
+    {
+      "id": "fibra-monomodo",
+      "nombre": "Fibra monomodo",
+      "unidad": "u2-fisica",
+      "definicion": "Fibra de núcleo pequeño (8 a 10 μm) por la que se propaga un solo modo o camino de luz.",
+      "definicion_extendida": "Usa LASER de alta intensidad y su longitud máxima teórica es 10 km sin repetidores. Trabaja en la 2.ª (1300 nm) y 3.ª ventana (1550 nm). Se usa para largo alcance y alta velocidad (hasta 800 Gbps). La cubierta mide 125 μm, igual que en multimodo.",
+      "ejemplo": "400GBASE-LR8 alcanza 10 km sobre fibra monomodo.",
+      "por_que_importa": "Es la fibra de los enlaces troncales y de larga distancia.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fibras – Monomodo"
+      }
+    },
+    {
+      "id": "medios-no-guiados",
+      "nombre": "Medios no guiados",
+      "unidad": "u2-fisica",
+      "definicion": "Medios que transmiten la señal por el espacio libre sin un cable que la guíe: infrarrojo, radiofrecuencia y microondas.",
+      "definicion_extendida": "Incluyen los radioenlaces terrestres (microondas digitales direccionales punto a punto y medios omnidireccionales como las redes celulares) y los radioenlaces satelitales (GEO, MEO, LEO). Las microondas punto a punto requieren línea de vista (LoS) y antenas alineadas; a frecuencias altas la lluvia y la humedad atenúan mucho la señal.",
+      "ejemplo": "Un radioenlace de microondas dedicado ofrece hasta 100 Mbps simétricos en zonas rurales donde no es viable tender fibra.",
+      "por_que_importa": "Permiten llegar donde el cableado no es viable y dar movilidad.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Medios no guiados"
+      }
+    },
+    {
+      "id": "fis-redes-celulares",
+      "nombre": "Redes celulares",
+      "unidad": "u2-fisica",
+      "definicion": "Redes de radio omnidireccionales que evolucionaron de 1G a 5G cambiando frecuencias y técnicas de acceso al medio.",
+      "definicion_extendida": "1G era analógica con FDMA y canales de 30 kHz; 2G digitalizó la voz con TDMA o CDMA y trajo el SMS; 3G introdujo banda ancha con WCDMA; 4G (LTE) es 100 % IP con OFDMA; 5G usa sub-6 GHz y mmWave, con latencia < 1 ms, massive MIMO y beamforming.",
+      "ejemplo": "4G usa 700 MHz para gran cobertura y 2,6 GHz para capacidad urbana.",
+      "por_que_importa": "Muestra cómo la multiplexación y el acceso al medio determinan la capacidad de una red inalámbrica.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Redes celulares"
+      }
+    },
+    {
+      "id": "enlace-satelital",
+      "nombre": "Enlace satelital",
+      "unidad": "u2-fisica",
+      "definicion": "Comunicación inalámbrica de gran alcance que usa satélites en órbita GEO, MEO o LEO.",
+      "definicion_extendida": "GEO (~35.786 km, 24 h, ~600 ms) queda fija sobre un punto y con 3 satélites cubre casi todo el planeta; MEO (2.000–35.000 km, 70–100 ms) es la órbita de GPS; LEO (200–2.000 km, 20–40 ms) necesita grandes constelaciones. Es ideal para zonas remotas y broadcast, pero tiene baja capacidad, alto costo y latencia elevada.",
+      "ejemplo": "Starlink usa una constelación LEO a ~550 km con 25 a 60 ms de latencia.",
+      "por_que_importa": "Es la solución para zonas rurales, alta mar, aviación y respaldo de redes de fibra.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Enlaces satelitales"
+      }
+    },
+    {
+      "id": "fis-snr",
+      "nombre": "Relación señal a ruido (SNR)",
+      "unidad": "u2-fisica",
+      "definicion": "Cociente S/N entre la potencia de la señal útil y la potencia del ruido.",
+      "definicion_extendida": "Conviene mantenerla lo más alta posible para evitar errores de transmisión. Determina la claridad de la señal frente al ruido al interpretar una señal digital y es uno de los dos factores del límite de Shannon junto con el ancho de banda.",
+      "ejemplo": "Con S/N = 15, el término log₂(1 + 15) vale 4 en la fórmula de Shannon.",
+      "por_que_importa": "Una SNR baja aumenta la probabilidad de que un 1 se lea como 0 y reduce la capacidad del canal.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ruido e interferencias"
+      }
+    },
+    {
+      "id": "repetidor",
+      "nombre": "Repetidor",
+      "unidad": "u2-fisica",
+      "definicion": "Dispositivo de capa física que se intercala en el medio para compensar la atenuación y extender el alcance.",
+      "definicion_extendida": "La atenuación se puede mejorar cambiando de medio o usando repetidores. En la transmisión digital, los puntos de regeneración reconstruyen los datos, por lo que el ruido no se acumula. El UTP los necesita antes que el STP o la fibra, que cubren mayores distancias sin ellos.",
+      "ejemplo": "Los cables submarinos de fibra tienen repetidores ópticos aproximadamente cada 60-100 km.",
+      "por_que_importa": "Permite superar la distancia máxima de un medio sin cambiarlo.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Durante la propagación las señales sufren…"
+      }
+    }
+  ],
+  "relaciones": [
+    {
+      "origen": "capa-fisica",
+      "destino": "modelo-hibrido",
+      "verbo": "es la capa inferior del",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Modelo de referencia – Capa física"
+      }
+    },
+    {
+      "origen": "capa-fisica",
+      "destino": "capa-de-enlace",
+      "verbo": "transmite los bits que le entrega la",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Modelo de referencia – Capa física"
+      }
+    },
+    {
+      "origen": "capa-fisica",
+      "destino": "codificacion",
+      "verbo": "usa",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Transmisión"
+      }
+    },
+    {
+      "origen": "capa-fisica",
+      "destino": "modulacion",
+      "verbo": "usa",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Transmisión"
+      }
+    },
+    {
+      "origen": "codificacion",
+      "destino": "senal-digital",
+      "verbo": "genera",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ejemplos: codificación / modulación"
+      }
+    },
+    {
+      "origen": "modulacion",
+      "destino": "codificacion",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Transmisión"
+      }
+    },
+    {
+      "origen": "senal-digital",
+      "destino": "senal-analogica",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Señal digital o discreta"
+      }
+    },
+    {
+      "origen": "ruido",
+      "destino": "senal-digital",
+      "verbo": "corrompe los bits de la",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ruido e interferencias"
+      }
+    },
+    {
+      "origen": "ruido",
+      "destino": "senal-analogica",
+      "verbo": "se suma a la",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ruido e interferencias"
+      }
+    },
+    {
+      "origen": "deteccion-de-errores",
+      "destino": "ruido",
+      "verbo": "detecta los bits alterados por",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ruido e interferencias"
+      }
+    },
+    {
+      "origen": "crc",
+      "destino": "ruido",
+      "verbo": "detecta tramas corrompidas por",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ruido e interferencias"
+      }
+    },
+    {
+      "origen": "fis-snr",
+      "destino": "ruido",
+      "verbo": "compara la señal útil con el",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Límite de Shannon"
+      }
+    },
+    {
+      "origen": "limite-de-shannon",
+      "destino": "fis-snr",
+      "verbo": "se calcula con",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Límite de Shannon"
+      }
+    },
+    {
+      "origen": "limite-de-shannon",
+      "destino": "ancho-de-banda",
+      "verbo": "se calcula con",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Límite de Shannon"
+      }
+    },
+    {
+      "origen": "fis-snr",
+      "destino": "senal-digital",
+      "verbo": "determina la claridad de la",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Interpretando señales digitales…"
+      }
+    },
+    {
+      "origen": "repetidor",
+      "destino": "atenuacion",
+      "verbo": "mitiga",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Durante la propagación las señales sufren…"
+      }
+    },
+    {
+      "origen": "repetidor",
+      "destino": "senal-digital",
+      "verbo": "regenera",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Transmisión de información digital"
+      }
+    },
+    {
+      "origen": "repetidor",
+      "destino": "capa-fisica",
+      "verbo": "opera en",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Durante la propagación las señales sufren…"
+      }
+    },
+    {
+      "origen": "hub",
+      "destino": "repetidor",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Redes LAN cableadas – Ejemplo"
+      }
+    },
+    {
+      "origen": "ethernet",
+      "destino": "par-trenzado",
+      "verbo": "usa",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Ethernet IEEE 802.3 – Características físicas de la transmisión"
+      }
+    },
+    {
+      "origen": "ethernet",
+      "destino": "fis-cable-coaxial",
+      "verbo": "usó originalmente",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Ethernet IEEE 802.3 – Características físicas de la transmisión"
+      }
+    },
+    {
+      "origen": "par-trenzado",
+      "destino": "capa-fisica",
+      "verbo": "es un medio de la",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Medios de transmisión"
+      }
+    },
+    {
+      "origen": "utp",
+      "destino": "par-trenzado",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Par de cobre – Tipos y características"
+      }
+    },
+    {
+      "origen": "fis-ftp",
+      "destino": "par-trenzado",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Par de cobre – Tipos y características"
+      }
+    },
+    {
+      "origen": "fis-stp",
+      "destino": "par-trenzado",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Par de cobre – Tipos y características"
+      }
+    },
+    {
+      "origen": "fis-ftp",
+      "destino": "utp",
+      "verbo": "mejora en distancia y aislamiento a",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable FTP – Par trenzado apantallado"
+      }
+    },
+    {
+      "origen": "fis-stp",
+      "destino": "fis-ftp",
+      "verbo": "supera en prestaciones a",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable FTP – Par trenzado apantallado"
+      }
+    },
+    {
+      "origen": "utp",
+      "destino": "atenuacion",
+      "verbo": "sufre más",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable UTP – Características y rendimiento"
+      }
+    },
+    {
+      "origen": "fis-stp",
+      "destino": "ruido",
+      "verbo": "mitiga",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable STP – Par trenzado blindado individual"
+      }
+    },
+    {
+      "origen": "fis-stp",
+      "destino": "repetidor",
+      "verbo": "reduce la necesidad de",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable STP – Par trenzado blindado individual"
+      }
+    },
+    {
+      "origen": "fis-cable-coaxial",
+      "destino": "senal-analogica",
+      "verbo": "transporta en banda ancha (75 Ω) una",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable coaxial – Distintos tipos y aplicaciones"
+      }
+    },
+    {
+      "origen": "fibra-optica",
+      "destino": "fis-reflexion-total-interna",
+      "verbo": "se basa en",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fenómeno de reflexión total interna"
+      }
+    },
+    {
+      "origen": "fibra-monomodo",
+      "destino": "fibra-optica",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Tipos de fibra"
+      }
+    },
+    {
+      "origen": "fibra-multimodo",
+      "destino": "fibra-optica",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Tipos de fibra"
+      }
+    },
+    {
+      "origen": "fibra-monomodo",
+      "destino": "fibra-multimodo",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Tipos de fibra"
+      }
+    },
+    {
+      "origen": "fibra-optica",
+      "destino": "ruido",
+      "verbo": "es inmune al",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fibra óptica – Ventajas y desventajas"
+      }
+    },
+    {
+      "origen": "fibra-optica",
+      "destino": "multiplexacion",
+      "verbo": "usa (WDM)",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fibra óptica – Cable submarino y mapa mundial"
+      }
+    },
+    {
+      "origen": "fibra-optica",
+      "destino": "repetidor",
+      "verbo": "alcanza largas distancias sin",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fibra óptica – Ventajas y desventajas"
+      }
+    },
+    {
+      "origen": "enlace-satelital",
+      "destino": "medios-no-guiados",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Medios no guiados"
+      }
+    },
+    {
+      "origen": "fis-redes-celulares",
+      "destino": "medios-no-guiados",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Medios no guiados"
+      }
+    },
+    {
+      "origen": "fis-redes-celulares",
+      "destino": "tdma",
+      "verbo": "usa (en 2G)",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Redes celulares"
+      }
+    },
+    {
+      "origen": "fis-redes-celulares",
+      "destino": "conmutacion-de-circuitos",
+      "verbo": "usaba en 1G y 2G",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Redes celulares 1G"
+      }
+    },
+    {
+      "origen": "tdma",
+      "destino": "multiplexacion",
+      "verbo": "es una forma de",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Redes celulares"
+      }
+    },
+    {
+      "origen": "enlace-satelital",
+      "destino": "fibra-optica",
+      "verbo": "complementa a",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Enlaces satelitales – Ventajas y desventajas"
+      }
+    },
+    {
+      "origen": "medios-no-guiados",
+      "destino": "atenuacion",
+      "verbo": "sufren por lluvia y humedad",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Microondas"
+      }
+    }
+  ],
+  "taxonomias": [
+    {
+      "id": "fis-tax-medios",
+      "nombre": "Clasificación de los medios de transmisión",
+      "unidad": "u2-fisica",
+      "raiz": {
+        "nombre": "Medios de transmisión",
+        "descripcion": "Cualquier medio capaz de llevar información de la fuente al destino.",
+        "hijos": [
+          {
+            "nombre": "Guiados",
+            "hijos": [
+              {
+                "nombre": "Cable coaxial",
+                "hijos": [
+                  {
+                    "nombre": "Banda base (Z = 50 Ω)",
+                    "descripcion": "Transmisión digital: viejas LAN, antenas.",
+                    "hijos": []
+                  },
+                  {
+                    "nombre": "Banda ancha (Z = 75 Ω)",
+                    "descripcion": "Transmisión analógica: TV por cable, 500 MHz–1 GHz.",
+                    "hijos": []
+                  }
+                ]
+              },
+              {
+                "nombre": "Par de cobre",
+                "hijos": [
+                  {
+                    "nombre": "Cable plano (telefonía)",
+                    "descripcion": "Sin trenzado: cortas distancias y mucho ruido.",
+                    "hijos": []
+                  },
+                  {
+                    "nombre": "Par trenzado",
+                    "hijos": [
+                      {
+                        "nombre": "UTP",
+                        "descripcion": "Sin blindaje.",
+                        "hijos": []
+                      },
+                      {
+                        "nombre": "FTP",
+                        "descripcion": "Pantalla de aluminio global.",
+                        "hijos": []
+                      },
+                      {
+                        "nombre": "STP",
+                        "descripcion": "Blindaje individual por par.",
+                        "hijos": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "nombre": "Fibra óptica",
+                "hijos": [
+                  {
+                    "nombre": "Multimodo",
+                    "descripcion": "Núcleo 62,5/50 μm, LED, hasta 2 km.",
+                    "hijos": []
+                  },
+                  {
+                    "nombre": "Monomodo",
+                    "descripcion": "Núcleo 8–10 μm, LASER, hasta 10 km.",
+                    "hijos": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "nombre": "No guiados",
+            "hijos": [
+              {
+                "nombre": "Infrarrojos (IR)",
+                "descripcion": "Conexiones de datos locales (PAN).",
+                "hijos": []
+              },
+              {
+                "nombre": "Radiofrecuencia (RF)",
+                "descripcion": "Radio AM/FM, TV, teléfonos inalámbricos.",
+                "hijos": []
+              },
+              {
+                "nombre": "Microondas",
+                "hijos": [
+                  {
+                    "nombre": "Radioenlace terrestre direccional",
+                    "descripcion": "Punto a punto con línea de vista.",
+                    "hijos": []
+                  },
+                  {
+                    "nombre": "Medios omnidireccionales",
+                    "descripcion": "Redes celulares 1G–5G.",
+                    "hijos": []
+                  },
+                  {
+                    "nombre": "Radioenlace satelital",
+                    "descripcion": "Órbitas GEO, MEO y LEO.",
+                    "hijos": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Clasificación de medios de transmisión"
+      }
+    },
+    {
+      "id": "fis-tax-perturbaciones",
+      "nombre": "Perturbaciones que sufre la señal",
+      "unidad": "u2-fisica",
+      "raiz": {
+        "nombre": "Perturbaciones de la señal",
+        "descripcion": "Factores que degradan la señal entre el Tx y el Rx.",
+        "hijos": [
+          {
+            "nombre": "Ruido e interferencia",
+            "descripcion": "Señales no deseadas que se agregan a la original.",
+            "hijos": [
+              {
+                "nombre": "Ruido térmico (blanco)",
+                "descripcion": "Uniforme en todo el espectro; inevitable pero poco significativo.",
+                "hijos": []
+              },
+              {
+                "nombre": "Ruido impulsivo",
+                "descripcion": "Impredecible, corto y de gran amplitud (interruptores, motores que arrancan).",
+                "hijos": []
+              },
+              {
+                "nombre": "Interferencia",
+                "descripcion": "Señales externas acopladas al medio (iluminación, motores, radio).",
+                "hijos": []
+              },
+              {
+                "nombre": "Diafonía",
+                "descripcion": "Acople entre líneas físicamente adyacentes.",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Efectos de la propagación",
+            "hijos": [
+              {
+                "nombre": "Atenuación",
+                "descripcion": "La amplitud disminuye con la distancia.",
+                "hijos": []
+              },
+              {
+                "nombre": "Distorsión",
+                "descripcion": "Velocidad y atenuación varían con la frecuencia: la señal se deforma.",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      },
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ruido e interferencias – Tipos"
+      }
+    },
+    {
+      "id": "fis-tax-familias-cable",
+      "nombre": "Familias y categorías de par trenzado",
+      "unidad": "u2-fisica",
+      "raiz": {
+        "nombre": "Par trenzado por blindaje",
+        "hijos": [
+          {
+            "nombre": "UTP (sin blindaje)",
+            "hijos": [
+              {
+                "nombre": "Cat 5e U/UTP",
+                "descripcion": "1 Gbps (100 m).",
+                "hijos": []
+              },
+              {
+                "nombre": "Cat 6 U/UTP",
+                "descripcion": "1 Gbps (100 m); 10 Gbps (< 55 m).",
+                "hijos": []
+              },
+              {
+                "nombre": "Cat 6A U/UTP",
+                "descripcion": "10 Gbps (100 m).",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "FTP (lámina global)",
+            "hijos": [
+              {
+                "nombre": "Cat 5e F/UTP",
+                "descripcion": "1 Gbps (100 m).",
+                "hijos": []
+              },
+              {
+                "nombre": "Cat 6 F/UTP",
+                "descripcion": "1 Gbps (100 m); 10 Gbps (< 55 m).",
+                "hijos": []
+              },
+              {
+                "nombre": "Cat 6A F/UTP o U/FTP",
+                "descripcion": "10 Gbps (100 m).",
+                "hijos": []
+              },
+              {
+                "nombre": "Cat 7 F/FTP",
+                "descripcion": "Doble lámina; 10 Gbps (100 m).",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "STP (malla + lámina)",
+            "hijos": [
+              {
+                "nombre": "Cat 6A S/FTP",
+                "descripcion": "Variante industrial rara; 10 Gbps (100 m).",
+                "hijos": []
+              },
+              {
+                "nombre": "Cat 7 S/FTP",
+                "descripcion": "10 Gbps (100 m).",
+                "hijos": []
+              },
+              {
+                "nombre": "Cat 7A S/FTP",
+                "descripcion": "Hasta 1 GHz; 10 Gbps (100 m).",
+                "hijos": []
+              },
+              {
+                "nombre": "Cat 8 S/FTP",
+                "descripcion": "2 GHz; 25 a 40 Gbps (30 m).",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      },
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Guía de referencia: familias y categorías de cables de red"
+      }
+    }
+  ],
+  "procesos": [
+    {
+      "id": "fis-proc-sistema-comunicacion",
+      "nombre": "Sistema de comunicación: del transmisor al receptor",
+      "unidad": "u2-fisica",
+      "descripcion": "Cómo viajan los bits desde un transmisor (PC) hasta un receptor (router) a través de un medio de transmisión.",
+      "pasos": [
+        {
+          "actor": "Transmisor (PC)",
+          "accion": "Expresa los datos binarios y los acondiciona al medio mediante codificación (banda base) o modulación (portadora).",
+          "por_que": "Los bits lógicos no viajan por sí solos: hay que convertirlos en pulsos eléctricos, luminosos u ondas electromagnéticas.",
+          "valores": [
+            {
+              "nombre": "Datos a enviar",
+              "valor": "1100011"
+            }
+          ]
+        },
+        {
+          "actor": "Transmisor (PC)",
+          "accion": "Genera la señal física adecuada al medio (eléctrica en cobre, óptica en fibra, de radio en el aire).",
+          "por_que": "Cada medio solo transporta un tipo de fenómeno físico."
+        },
+        {
+          "actor": "Medio de transmisión",
+          "accion": "Transporta la señal hasta el receptor; en el camino sufre atenuación, distorsión, ruido e interferencia.",
+          "por_que": "Ningún medio es ideal: la amplitud cae con la distancia y se suman señales no deseadas."
+        },
+        {
+          "actor": "Repetidor (si hace falta)",
+          "accion": "Regenera la señal digital en puntos intermedios del trayecto.",
+          "por_que": "La potencia recibida tiene que ser suficiente para ser detectada; al reconstruir los datos el ruido no se acumula."
+        },
+        {
+          "actor": "Receptor (router)",
+          "accion": "Toma la señal del medio, se sincroniza con el tiempo de bit/símbolo y aplica umbrales para identificar niveles y fases.",
+          "por_que": "Para decidir si llegó un 1 o un 0 necesita saber dónde empieza y termina cada bit y con qué nivel compararlo."
+        },
+        {
+          "actor": "Receptor (router)",
+          "accion": "Interpreta la señal y entrega los bits a su destinatario.",
+          "por_que": "El objetivo de la capa física es que lo recibido sea igual a lo enviado.",
+          "valores": [
+            {
+              "nombre": "Datos recibidos",
+              "valor": "1100011"
+            }
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Sistema de comunicación"
+      }
+    },
+    {
+      "id": "fis-proc-luz-en-fibra",
+      "nombre": "Propagación de la luz en la fibra óptica",
+      "unidad": "u2-fisica",
+      "descripcion": "Recorrido de la señal desde la entrada eléctrica del transceiver hasta el detector de luz, confinada por reflexión total interna.",
+      "pasos": [
+        {
+          "actor": "Transmisor (transceiver / fuente de luz)",
+          "accion": "Convierte la señal eléctrica de entrada en una señal óptica: LED en multimodo o LASER en monomodo.",
+          "por_que": "La fibra transporta pulsos de luz, no corriente eléctrica.",
+          "valores": [
+            {
+              "nombre": "1.ª ventana (MM)",
+              "valor": "850 nm"
+            },
+            {
+              "nombre": "2.ª ventana (MM, SM)",
+              "valor": "1300 nm"
+            },
+            {
+              "nombre": "3.ª ventana (SM)",
+              "valor": "1550 nm"
+            }
+          ]
+        },
+        {
+          "actor": "Conector (LC, SC, ST o FC)",
+          "accion": "Acopla la luz al hilo de fibra con una pérdida de inserción pequeña.",
+          "por_que": "Cada empalme o conexión resta potencia a la señal.",
+          "valores": [
+            {
+              "nombre": "Pérdida típica LC",
+              "valor": "~0,10 dB"
+            }
+          ]
+        },
+        {
+          "actor": "Núcleo (n₁) y cubierta (n₂)",
+          "accion": "La luz incide sobre la frontera núcleo-cubierta con un ángulo igual o mayor al ángulo crítico y se refleja por completo.",
+          "por_que": "El núcleo tiene mayor índice de refracción que la cubierta: n₁ · sen(θc) = n₂ · sen(90°)."
+        },
+        {
+          "actor": "Fibra óptica",
+          "accion": "La luz avanza rebotando: en multimodo por muchos modos (caminos) y en monomodo por uno solo.",
+          "por_que": "El tamaño del núcleo determina cuántos modos pueden propagarse.",
+          "valores": [
+            {
+              "nombre": "Alcance multimodo",
+              "valor": "2 km (850 nm)"
+            },
+            {
+              "nombre": "Alcance monomodo",
+              "valor": "10 km sin repetidores"
+            }
+          ]
+        },
+        {
+          "actor": "Repetidor óptico (enlaces muy largos)",
+          "accion": "En cables submarinos regenera la señal a intervalos regulares.",
+          "por_que": "Aun con baja atenuación, miles de kilómetros requieren regenerar la señal.",
+          "valores": [
+            {
+              "nombre": "Separación",
+              "valor": "≈ 60-100 km"
+            }
+          ]
+        },
+        {
+          "actor": "Receptor (detector de luz)",
+          "accion": "Convierte la luz recibida en una señal eléctrica de salida.",
+          "por_que": "Los equipos de red procesan señales eléctricas."
+        }
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fibra óptica – Funcionamiento"
+      }
+    }
+  ],
+  "comparaciones": [
+    {
+      "id": "fis-cmp-par-trenzado",
+      "nombre": "UTP vs FTP vs STP",
+      "unidad": "u2-fisica",
+      "columnas": [
+        "UTP",
+        "FTP",
+        "STP"
+      ],
+      "filas": [
+        {
+          "criterio": "Blindaje",
+          "celdas": [
+            "Ninguno",
+            "Pantalla de aluminio global",
+            "Aluminio en cada par (+ malla en S/FTP)"
+          ]
+        },
+        {
+          "criterio": "Separación de pares",
+          "celdas": [
+            "Sin separación física",
+            "Plástico o material no conductor",
+            "Cubierta individual por par"
+          ]
+        },
+        {
+          "criterio": "Protección ante interferencias",
+          "celdas": [
+            "La más baja",
+            "Intermedia",
+            "Excelente"
+          ]
+        },
+        {
+          "criterio": "Costo",
+          "celdas": [
+            "Muy bajo",
+            "Intermedio",
+            "El más alto"
+          ]
+        },
+        {
+          "criterio": "Distancia / repetidores",
+          "celdas": [
+            "Necesita repetidor antes",
+            "Mejor que UTP",
+            "Mayor distancia sin repetidores"
+          ]
+        },
+        {
+          "criterio": "Categorías posibles",
+          "celdas": [
+            "Cat 5e, 6, 6A",
+            "Cat 5e, 6, 6A, 7",
+            "Cat 6A, 7, 7A, 8"
+          ]
+        },
+        {
+          "criterio": "Uso típico",
+          "celdas": [
+            "LAN de corta distancia",
+            "Entornos con algo de ruido",
+            "Redes de altas prestaciones"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Guía de referencia: familias y categorías de cables de red"
+      }
+    },
+    {
+      "id": "fis-cmp-tipos-fibra",
+      "nombre": "Fibra multimodo vs monomodo",
+      "unidad": "u2-fisica",
+      "columnas": [
+        "Multimodo",
+        "Monomodo"
+      ],
+      "filas": [
+        {
+          "criterio": "Propagación",
+          "celdas": [
+            "Varios modos o caminos",
+            "Un solo modo"
+          ]
+        },
+        {
+          "criterio": "Núcleo",
+          "celdas": [
+            "62,5 μm o 50 μm",
+            "8 a 10 μm"
+          ]
+        },
+        {
+          "criterio": "Cubierta",
+          "celdas": [
+            "125 μm",
+            "125 μm"
+          ]
+        },
+        {
+          "criterio": "Fuente de luz",
+          "celdas": [
+            "LED de baja intensidad",
+            "LASER de alta intensidad"
+          ]
+        },
+        {
+          "criterio": "Alcance",
+          "celdas": [
+            "2 km recomendado (850 nm)",
+            "10 km teórico sin repetidores"
+          ]
+        },
+        {
+          "criterio": "Ventanas",
+          "celdas": [
+            "850 nm y 1300 nm",
+            "1300 nm y 1550 nm"
+          ]
+        },
+        {
+          "criterio": "Uso",
+          "celdas": [
+            "Corto alcance, barata y fácil de instalar",
+            "Largo alcance y alta velocidad (hasta 800 Gbps)"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Tipos de fibra"
+      }
+    },
+    {
+      "id": "fis-cmp-orbitas",
+      "nombre": "Órbitas satelitales GEO vs MEO vs LEO",
+      "unidad": "u2-fisica",
+      "columnas": [
+        "GEO",
+        "MEO",
+        "LEO"
+      ],
+      "filas": [
+        {
+          "criterio": "Altura aproximada",
+          "celdas": [
+            "35.786 km",
+            "2.000 a 35.000 km",
+            "200 a 2.000 km"
+          ]
+        },
+        {
+          "criterio": "Tiempo orbital",
+          "celdas": [
+            "24 horas",
+            "6 a 12 horas",
+            "90 a 120 min"
+          ]
+        },
+        {
+          "criterio": "Latencia",
+          "celdas": [
+            "~600 ms",
+            "70 a 100 ms",
+            "20 a 40 ms"
+          ]
+        },
+        {
+          "criterio": "Satélites para cobertura",
+          "celdas": [
+            "3 cubren casi todo el planeta",
+            "Menos que LEO",
+            "Grandes constelaciones"
+          ]
+        },
+        {
+          "criterio": "Costo por satélite",
+          "celdas": [
+            "Grande y caro",
+            "Intermedio",
+            "Más bajo"
+          ]
+        },
+        {
+          "criterio": "Ejemplos",
+          "celdas": [
+            "DirecTV, VSAT, GOES, Meteosat",
+            "GPS, GNSS",
+            "Starlink, OneWeb, Iridium"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Comparativa de órbitas"
+      }
+    },
+    {
+      "id": "fis-cmp-generaciones-celulares",
+      "nombre": "Generaciones celulares 1G a 5G",
+      "unidad": "u2-fisica",
+      "columnas": [
+        "1G",
+        "2G",
+        "3G",
+        "4G",
+        "5G"
+      ],
+      "filas": [
+        {
+          "criterio": "Año",
+          "celdas": [
+            "1980",
+            "1990",
+            "2000",
+            "2010",
+            "Desde 2020"
+          ]
+        },
+        {
+          "criterio": "Frecuencias",
+          "celdas": [
+            "800 MHz",
+            "900/1800/1900 MHz",
+            "2100 MHz",
+            "700 MHz – 2,6 GHz",
+            "Sub-6 GHz y mmWave"
+          ]
+        },
+        {
+          "criterio": "Acceso al medio",
+          "celdas": [
+            "FDMA",
+            "TDMA / CDMA",
+            "WCDMA",
+            "OFDMA",
+            "OFDMA + MIMO / BF"
+          ]
+        },
+        {
+          "criterio": "Tecnología",
+          "celdas": [
+            "Voz analógica",
+            "Voz digital y SMS",
+            "Voz y datos móviles",
+            "Datos de alta velocidad, 100 % IP",
+            "IoT masivo, VR/AR"
+          ]
+        },
+        {
+          "criterio": "Velocidad máx.",
+          "celdas": [
+            "~2,4 kbps",
+            "384 kbps (EDGE)",
+            "42 Mbps (HSPA+)",
+            "1 Gbps (LTE Advanced)",
+            "10 Gbps, latencia < 1 ms"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Redes celulares"
+      }
+    },
+    {
+      "id": "fis-cmp-conectores-fibra",
+      "nombre": "Conectores de fibra LC, ST, FC y SC",
+      "unidad": "u2-fisica",
+      "columnas": [
+        "LC",
+        "ST",
+        "FC",
+        "SC"
+      ],
+      "filas": [
+        {
+          "criterio": "Origen",
+          "celdas": [
+            "Lucent Technologies",
+            "AT&T (EE.UU.)",
+            "Nippon Telegraph and Telephone",
+            "Nippon Telegraph and Telephone"
+          ]
+        },
+        {
+          "criterio": "Fibra",
+          "celdas": [
+            "Monomodo y multimodo",
+            "Principalmente multimodo",
+            "Monomodo",
+            "Monomodo y multimodo"
+          ]
+        },
+        {
+          "criterio": "Pérdida típica",
+          "celdas": [
+            "~0,10 dB",
+            "~0,25 dB",
+            "~0,3 dB",
+            "~0,25 dB"
+          ]
+        },
+        {
+          "criterio": "Ajuste",
+          "celdas": [
+            "Push and pull (tipo RJ45)",
+            "Bayoneta (tipo BNC)",
+            "Roscado",
+            "Presión rápida"
+          ]
+        },
+        {
+          "criterio": "Uso destacado",
+          "celdas": [
+            "Alta densidad en racks, FTTH",
+            "Redes corporativas, militares",
+            "Vibraciones, instrumentos, CATV",
+            "El más popular: FTTH, CATV"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fibra óptica – Conectores"
+      }
+    },
+    {
+      "id": "fis-cmp-transmision-analogica-digital",
+      "nombre": "Transmisión analógica vs digital",
+      "unidad": "u2-fisica",
+      "columnas": [
+        "Analógica",
+        "Digital"
+      ],
+      "filas": [
+        {
+          "criterio": "Valores de la señal",
+          "celdas": [
+            "Continuos, conjunto infinito",
+            "Discretos, conjunto finito"
+          ]
+        },
+        {
+          "criterio": "Efecto del ruido",
+          "celdas": [
+            "Se suma a la onda y la degrada",
+            "Puede convertir un 1 en 0"
+          ]
+        },
+        {
+          "criterio": "Equipos intermedios",
+          "celdas": [
+            "Amplificadores: amplifican también el ruido",
+            "Regeneradores: reconstruyen los datos"
+          ]
+        },
+        {
+          "criterio": "Acumulación de ruido",
+          "celdas": [
+            "Se acumula en trayectos largos",
+            "No es acumulativo"
+          ]
+        },
+        {
+          "criterio": "Ventaja propia",
+          "celdas": [
+            "Reproducción fiel y compatible con canales existentes",
+            "Integridad, seguridad (cifrado) e integración de datos"
+          ]
+        },
+        {
+          "criterio": "Costo propio",
+          "celdas": [
+            "Se debilita sin reconstrucción",
+            "Ruido de cuantificación y necesidad de sincronismo"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "04 – Transmisión analógica y digital"
+      }
+    }
+  ],
+  "ejercicios": [
+    {
+      "id": "fis-e01-pendrive",
+      "titulo": "Pendrive de Montevideo a Buenos Aires",
+      "unidad": "u2-fisica",
+      "tipo": "Cálculo de ancho de banda de transmisión",
+      "enunciado": "Un pendrive de 128 GB viaja de Montevideo a Buenos Aires en 3 horas. Usando la misma fórmula del material (1 GB = 1024 · 1024 · 1024 bytes y 1 Mbps = 10⁶ bps), calculá la velocidad de transferencia equivalente y el tiempo que llevaría transferir el mismo contenido por un enlace de 10 Mbps.",
+      "pasos": [
+        {
+          "consigna": "¿Cuántos segundos dura el viaje?",
+          "respuesta": "10800",
+          "tipo_respuesta": "numero",
+          "tolerancia": 0,
+          "explicacion": "3 h · 3600 s/h = 10.800 s."
+        },
+        {
+          "consigna": "¿Cuál es la velocidad de transferencia equivalente, en Mbps (dos decimales)?",
+          "respuesta": "101,81",
+          "tipo_respuesta": "numero",
+          "tolerancia": 0.05,
+          "explicacion": "128 · 1024 · 1024 · 1024 · 8 = 1.099.511.627.776 bits; dividido 10.800 s ≈ 101.806.632 bps ≈ 101,81 Mbps."
+        },
+        {
+          "consigna": "¿Cuántos segundos tarda la transferencia con un enlace de 10 Mbps? (redondeá a segundos)",
+          "respuesta": "109951",
+          "tipo_respuesta": "numero",
+          "tolerancia": 2,
+          "explicacion": "1.099.511.627.776 bits / 10.000.000 bps ≈ 109.951 s."
+        },
+        {
+          "consigna": "Expresalo en horas (dos decimales).",
+          "respuesta": "30,54",
+          "tipo_respuesta": "numero",
+          "tolerancia": 0.05,
+          "explicacion": "109.951 s / 3600 ≈ 30,54 h: el pendrive en ómnibus es unas 10 veces más rápido que el enlace de 10 Mbps."
+        }
+      ],
+      "pistas": [
+        "Pasá todo a bits y a segundos antes de dividir.",
+        "Los bytes se multiplican por 8 para obtener bits, y 3 h son 3 · 3600 s.",
+        "Para el enlace de 10 Mbps, dividí la cantidad total de bits por 10 · 10⁶ bps."
+      ],
+      "errores_comunes": [
+        "Olvidar multiplicar por 8 y obtener ≈ 12,73 MBps en lugar de Mbps.",
+        "Dividir por minutos (3 · 60) en lugar de segundos.",
+        "Mezclar unidades: usar 10 · 1024 · 1024 bps para el enlace en vez de 10⁶ como en el resultado del material."
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ancho de banda de transmisión"
+      }
+    },
+    {
+      "id": "fis-e02-nomenclatura",
+      "titulo": "Decodificar la nomenclatura IEEE 802.3",
+      "unidad": "u2-fisica",
+      "tipo": "Interpretación de nomenclatura",
+      "enunciado": "Decodificá los nombres 100Base-T y 1000Base-LX según la nomenclatura de Ethernet 802.3 (velocidad – transmisión – medio/alcance).",
+      "pasos": [
+        {
+          "consigna": "¿Qué velocidad indica 100Base-T, en Mbps?",
+          "respuesta": "100",
+          "tipo_respuesta": "numero",
+          "explicacion": "El primer campo es la velocidad nominal: 100 Mbps (Fast Ethernet)."
+        },
+        {
+          "consigna": "¿Qué significa «Base»?",
+          "respuesta": "Transmisión en banda base: señal digital sin modular",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Transmisión en banda base: señal digital sin modular",
+            "Transmisión en banda ancha: canal multiplexado",
+            "Velocidad base de la que parte la autonegociación",
+            "Cable de cobre de categoría básica (Cat 5e)"
+          ],
+          "explicacion": "BASE = Baseband, el estándar absoluto en LAN; BROAD indicaría banda ancha, en desuso en Ethernet local."
+        },
+        {
+          "consigna": "¿Qué medio indica la «T» de 100Base-T?",
+          "respuesta": "Par trenzado",
+          "tipo_respuesta": "texto",
+          "alternativas": [
+            "par trenzado de cobre",
+            "twisted pair"
+          ],
+          "explicacion": "T = Twisted Pair, cableado de par trenzado de cobre."
+        },
+        {
+          "consigna": "¿Qué velocidad indica 1000Base-LX, en Mbps?",
+          "respuesta": "1000",
+          "tipo_respuesta": "numero",
+          "explicacion": "1000 = 1 Gbps (Gigabit); 1000Base-SX/LX es el estándar 802.3z."
+        },
+        {
+          "consigna": "¿Qué indica la «L» de 1000Base-LX?",
+          "respuesta": "Fibra óptica de largo alcance (Long)",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Fibra óptica de largo alcance (Long)",
+            "Fibra óptica de corto alcance (Short)",
+            "Par trenzado de baja latencia (Low)",
+            "Cable coaxial de línea (Line)"
+          ],
+          "explicacion": "S / L / E identifican fibra óptica con alcance Short, Long o Extended."
+        }
+      ],
+      "pistas": [
+        "El nombre se lee en tres partes: velocidad, tipo de transmisión y medio/alcance.",
+        "BASE se opone a BROAD; T, S, L y E describen el medio o el alcance.",
+        "Las letras S, L y E corresponden a fibra óptica según la distancia."
+      ],
+      "errores_comunes": [
+        "Creer que «Base» se refiere a una velocidad base o a una categoría de cable.",
+        "Interpretar la «L» como un tipo de cobre en lugar de fibra de largo alcance.",
+        "Leer 1000 como 1000 Gbps en lugar de 1000 Mbps (1 Gbps)."
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Ethernet 802.3 – Nomenclatura"
+      }
+    },
+    {
+      "id": "fis-e03-elegir-cable",
+      "titulo": "Elegir cable y categoría",
+      "unidad": "u2-fisica",
+      "tipo": "Aplicación de tabla de referencia",
+      "enunciado": "Usando la guía de familias y categorías de cables de red, resolvé: (a) un tendido de 90 m a 10 Gbps con cable sin blindaje metálico; (b) la distancia máxima para 10 Gbps con Cat 6; (c) un enlace de 40 Gbps en un rack.",
+      "pasos": [
+        {
+          "consigna": "(a) ¿Qué cable elegís para 10 Gbps a 90 m sin blindaje metálico?",
+          "respuesta": "Cat 6A U/UTP",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Cat 5e U/UTP",
+            "Cat 6 U/UTP",
+            "Cat 6A U/UTP",
+            "Cat 7 U/UTP"
+          ],
+          "explicacion": "Cat 6A U/UTP da 10 Gbps a 100 m; Cat 6 solo llega a 10 Gbps por debajo de 55 m, Cat 5e se queda en 1 Gbps y Cat 7 sin blindaje está prohibido por norma."
+        },
+        {
+          "consigna": "(b) ¿Hasta cuántos metros (aprox.) soporta 10 Gbps un cable Cat 6?",
+          "respuesta": "55",
+          "tipo_respuesta": "numero",
+          "tolerancia": 0,
+          "explicacion": "Cat 6 (U/UTP o F/UTP): 1 Gbps a 100 m y 10 Gbps a menos de 55 m."
+        },
+        {
+          "consigna": "(c) ¿Qué categoría soporta 25 a 40 Gbps?",
+          "respuesta": "Cat 8 S/FTP",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Cat 6A U/UTP",
+            "Cat 7 F/FTP",
+            "Cat 7A S/FTP",
+            "Cat 8 S/FTP"
+          ],
+          "explicacion": "Cat 8 S/FTP: blindaje masivo para 2 GHz, 25 a 40 Gbps."
+        },
+        {
+          "consigna": "(c) ¿Hasta cuántos metros llega Cat 8 a esa velocidad?",
+          "respuesta": "30",
+          "tipo_respuesta": "numero",
+          "tolerancia": 0,
+          "explicacion": "La tabla indica 25 a 40 Gbps a 30 m: el blindaje masivo reduce la distancia."
+        }
+      ],
+      "pistas": [
+        "Fijate primero en la columna de velocidad máxima y en la distancia entre paréntesis.",
+        "Sin blindaje metálico solo existen Cat 5e, 6 y 6A (U/UTP).",
+        "Cat 7, 7A y 8 exigen blindaje por norma; Cat 8 es la única que pasa de 10 Gbps."
+      ],
+      "errores_comunes": [
+        "Elegir Cat 6 para 10 Gbps a 90 m, sin ver la restricción de < 55 m.",
+        "Pedir Cat 7 U/UTP, que no existe porque la norma exige blindaje.",
+        "Suponer que Cat 8 mantiene los 100 m de las demás categorías."
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Guía de referencia: familias y categorías de cables de red"
+      }
+    },
+    {
+      "id": "fis-e04-shannon",
+      "titulo": "Capacidad de un canal con Shannon",
+      "unidad": "u2-fisica",
+      "tipo": "Cálculo con el límite de Shannon",
+      "enunciado": "Un canal tiene un ancho de banda B = 4 kHz y una relación señal a ruido S/N = 15. Calculá su capacidad máxima teórica con C = B · log₂(1 + S/N) y luego analizá qué pasa si se duplica el ancho de banda.",
+      "pasos": [
+        {
+          "consigna": "¿Cuánto vale 1 + S/N?",
+          "respuesta": "16",
+          "tipo_respuesta": "numero",
+          "explicacion": "1 + 15 = 16."
+        },
+        {
+          "consigna": "¿Cuánto vale log₂(1 + S/N)?",
+          "respuesta": "4",
+          "tipo_respuesta": "numero",
+          "explicacion": "2⁴ = 16, entonces log₂(16) = 4."
+        },
+        {
+          "consigna": "¿Cuál es la capacidad C, en kbps?",
+          "respuesta": "16",
+          "tipo_respuesta": "numero",
+          "alternativas": [
+            "16,0"
+          ],
+          "explicacion": "C = 4000 Hz · 4 = 16.000 bps = 16 kbps."
+        },
+        {
+          "consigna": "Si se duplica B a 8 kHz manteniendo S/N = 15, ¿cuál es la nueva capacidad en kbps?",
+          "respuesta": "32",
+          "tipo_respuesta": "numero",
+          "explicacion": "C crece linealmente con B: 8000 · 4 = 32.000 bps = 32 kbps."
+        }
+      ],
+      "pistas": [
+        "Resolvé primero el logaritmo y después multiplicá por el ancho de banda.",
+        "log₂(x) responde a la pregunta: ¿a qué potencia hay que elevar 2 para obtener x?",
+        "B está en kHz: 4 kHz = 4000 Hz."
+      ],
+      "errores_comunes": [
+        "Multiplicar B por S/N directamente (4 · 15 = 60 kbps), olvidando el logaritmo.",
+        "Usar log₂(15) en lugar de log₂(1 + 15).",
+        "Pensar que duplicar el ancho de banda duplica el logaritmo en lugar de la capacidad."
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Límite de Shannon"
+      }
+    }
+  ],
+  "preguntas": [
+    {
+      "id": "fis-p01",
+      "unidad": "u2-fisica",
+      "enunciado": "¿De qué se ocupa la capa física?",
+      "opciones": [
+        "De transmitir bits por un canal entre dispositivos directamente conectados",
+        "De armar tramas y detectar errores entre nodos adyacentes del enlace",
+        "De encaminar paquetes entre redes distintas eligiendo la mejor ruta",
+        "De garantizar la entrega confiable extremo a extremo entre host origen y destino"
+      ],
+      "correcta": 0,
+      "explicacion": "La capa física se ocupa de la transmisión de bits a lo largo de un canal de comunicación entre dispositivos directamente conectados, buscando que un 1 enviado se reciba como 1.",
+      "por_que_falla": [
+        "",
+        "Entramado y detección de errores son funciones de la capa de enlace, que usa los servicios de la física.",
+        "Elegir rutas entre redes es función de la capa de red.",
+        "La entrega extremo a extremo corresponde a la capa de transporte; los routers intermedios ni siquiera la implementan."
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "01 – Introducción"
+      }
+    },
+    {
+      "id": "fis-p02",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Qué caracteriza a una señal digital?",
+      "opciones": [
+        "Su intensidad varía de forma continua y toma infinitos valores en el tiempo",
+        "Siempre viaja sobre una portadora modulada en amplitud o en fase",
+        "Mantiene un nivel constante por un período y luego salta a otro nivel",
+        "Solo puede propagarse por medios ópticos como la fibra monomodo"
+      ],
+      "correcta": 2,
+      "explicacion": "La señal digital o discreta mantiene un nivel constante durante un período y luego cambia a otro nivel constante; toma valores de un conjunto finito.",
+      "por_que_falla": [
+        "Esa es la definición de señal analógica o continua.",
+        "La señal digital puede transmitirse en banda base, sin portadora (por ejemplo NRZ-L o Manchester).",
+        "",
+        "Las señales digitales viajan también por cobre (pulsos eléctricos) y por el aire."
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Señal digital o discreta"
+      }
+    },
+    {
+      "id": "fis-p03",
+      "unidad": "u2-fisica",
+      "enunciado": "Un canal tiene B = 3 kHz y S/N = 7. Según el límite de Shannon, ¿cuál es su capacidad máxima?",
+      "opciones": [
+        "21 kbps",
+        "9 kbps",
+        "24 kbps",
+        "3 kbps"
+      ],
+      "correcta": 1,
+      "explicacion": "C = B · log₂(1 + S/N) = 3000 · log₂(8) = 3000 · 3 = 9000 bps = 9 kbps.",
+      "por_que_falla": [
+        "Multiplica B por S/N (3 · 7) sin aplicar el logaritmo.",
+        "",
+        "Multiplica B por (1 + S/N) = 8 sin aplicar el logaritmo.",
+        "Confunde la capacidad con el ancho de banda: C también depende de la SNR."
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Límite de Shannon"
+      }
+    },
+    {
+      "id": "fis-p04",
+      "unidad": "u2-fisica",
+      "enunciado": "Cada vez que alguien acciona un interruptor eléctrico cerca del cable aparece un pico breve, impredecible y de gran amplitud. ¿Qué tipo de perturbación es?",
+      "opciones": [
+        "Ruido térmico, distribuido uniformemente en todo el espectro",
+        "Diafonía, por acople entre líneas físicamente adyacentes",
+        "Atenuación, por la pérdida de amplitud con la distancia",
+        "Ruido impulsivo"
+      ],
+      "correcta": 3,
+      "explicacion": "El ruido impulsivo es impredecible, de corta duración y gran amplitud; el material da como ejemplo los interruptores eléctricos y el encendido y apagado de motores.",
+      "por_que_falla": [
+        "El ruido térmico es constante y de baja amplitud relativa, no un pico ocasional.",
+        "La diafonía la provocan señales de otras líneas del mismo cableado, no un interruptor.",
+        "La atenuación es una pérdida gradual con la distancia, no un pico agregado.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ruido e interferencias – Tipos"
+      }
+    },
+    {
+      "id": "fis-p05",
+      "unidad": "u2-fisica",
+      "enunciado": "Según el material, ¿cómo se puede mejorar un enlace afectado por atenuación?",
+      "opciones": [
+        "Aumentando el ancho de banda del canal sin cambiar el medio",
+        "Usando codificación Manchester en lugar de NRZ-L",
+        "Cambiando de medio o intercalando repetidores",
+        "Reduciendo la relación señal a ruido en el receptor"
+      ],
+      "correcta": 2,
+      "explicacion": "La atenuación se puede mejorar cambiando de medio (cada medio se ve afectado de forma distinta) o utilizando repetidores.",
+      "por_que_falla": [
+        "Más ancho de banda no compensa la pérdida de amplitud con la distancia.",
+        "Cambiar la codificación no aumenta la potencia que llega al receptor.",
+        "",
+        "Bajar la SNR empeora la recepción; hay que mantenerla lo más alta posible."
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Durante la propagación las señales sufren…"
+      }
+    },
+    {
+      "id": "fis-p06",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Qué provoca la distorsión de una señal durante la propagación?",
+      "opciones": [
+        "Que la velocidad de propagación y la atenuación varían con la frecuencia",
+        "Que las señales de líneas adyacentes se acoplan entre sí dentro del cable",
+        "Que el ruido térmico se distribuye de forma uniforme en todo el espectro",
+        "Que la amplitud disminuye por igual en todas las frecuencias con la distancia"
+      ],
+      "correcta": 0,
+      "explicacion": "La distorsión aparece porque la velocidad de propagación y la atenuación varían con la frecuencia, de modo que la señal se deforma al atravesar el medio.",
+      "por_que_falla": [
+        "",
+        "Eso describe la diafonía, un tipo de interferencia.",
+        "Eso describe el ruido térmico, que se suma a la señal pero no la deforma por sí mismo.",
+        "Si todas las frecuencias se atenuaran igual, la forma se mantendría; la clave es que varía con la frecuencia."
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Durante la propagación las señales sufren…"
+      }
+    },
+    {
+      "id": "fis-p07",
+      "unidad": "u2-fisica",
+      "enunciado": "Un pendrive de 128 GB viaja de Montevideo a Buenos Aires en 3 horas. Con la fórmula del material, ¿qué velocidad de transferencia equivalente se obtiene?",
+      "opciones": [
+        "≈ 12,73 Mbps",
+        "≈ 101,81 Mbps",
+        "≈ 6108 Mbps",
+        "≈ 814,5 Mbps"
+      ],
+      "correcta": 1,
+      "explicacion": "128 · 1024 · 1024 · 1024 · 8 bits / (3 · 3600 s) ≈ 101,81 Mbps.",
+      "por_que_falla": [
+        "Olvida multiplicar por 8: es el valor en megabytes por segundo, no en megabits.",
+        "",
+        "Divide por 3 · 60 (minutos) en lugar de 3 · 3600 segundos.",
+        "Multiplica por 8 dos veces, convirtiendo bytes a bits por duplicado."
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ancho de banda de transmisión"
+      }
+    },
+    {
+      "id": "fis-p08",
+      "unidad": "u2-fisica",
+      "enunciado": "En el nombre 1000Base-LX, ¿qué indica «Base»?",
+      "opciones": [
+        "Que el medio es par trenzado de cobre",
+        "Que el canal está multiplexado en banda ancha",
+        "Que la velocidad base del enlace es de 1000 Mbps",
+        "Que se transmite en banda base, sin modular"
+      ],
+      "correcta": 3,
+      "explicacion": "BASE significa Baseband: la señal digital se transmite sin modular, el estándar absoluto en LAN.",
+      "por_que_falla": [
+        "El medio lo indica el último campo (T = par trenzado; LX = fibra de largo alcance).",
+        "Banda ancha multiplexada sería BROAD, en desuso en Ethernet local.",
+        "La velocidad la indica el primer campo (1000), no «Base».",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Ethernet 802.3 – Nomenclatura"
+      }
+    },
+    {
+      "id": "fis-p09",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Cuál de estas afirmaciones sobre el cable UTP es FALSA?",
+      "opciones": [
+        "Es económico y se usa casi siempre en LAN de corta distancia",
+        "Su comportamiento depende del paso del trenzado y del calibre",
+        "Cada par está rodeado por una cubierta individual de aluminio",
+        "Soporta tasas de hasta 1/10 Gbps en entornos LAN"
+      ],
+      "correcta": 2,
+      "explicacion": "El UTP no tiene blindaje: entre sus pares no hay separación física metálica. La cubierta de aluminio por par es propia del STP.",
+      "por_que_falla": [
+        "Es verdadera: el UTP es de bajo costo y se usa casi siempre en LAN de corta distancia.",
+        "Es verdadera: el material lo menciona como variable de calidad.",
+        "",
+        "Es verdadera: el material indica hasta 1/10 Gbps en LAN."
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable UTP – Características y rendimiento"
+      }
+    },
+    {
+      "id": "fis-p10",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Qué diferencia de diseño hay entre los cables FTP y STP?",
+      "opciones": [
+        "FTP tiene una pantalla global de aluminio; STP blinda cada par por separado",
+        "FTP blinda cada par por separado; STP no lleva ningún tipo de blindaje metálico",
+        "Son idénticos en su construcción y solo difieren en la categoría impresa en la cubierta",
+        "FTP lleva fibra en el núcleo; STP usa cobre con malla exterior"
+      ],
+      "correcta": 0,
+      "explicacion": "En FTP una pantalla de aluminio envuelve a todo el grupo de pares; en STP cada par está rodeado por su propia cubierta de aluminio, por eso ofrece mejores prestaciones.",
+      "por_que_falla": [
+        "",
+        "Invierte los diseños y además el STP sí está blindado.",
+        "Tienen construcciones distintas y el STP ofrece mejores prestaciones que el FTP.",
+        "Ambos son pares trenzados de cobre; ninguno lleva fibra."
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Cable FTP – Par trenzado apantallado"
+      }
+    },
+    {
+      "id": "fis-p11",
+      "unidad": "u2-fisica",
+      "enunciado": "Necesitás 10 Gbps a 100 m con un cable sin blindaje metálico. Según la guía de categorías, ¿qué elegís?",
+      "opciones": [
+        "Cat 5e U/UTP",
+        "Cat 6A U/UTP",
+        "Cat 6 U/UTP",
+        "Cat 7 U/UTP"
+      ],
+      "correcta": 1,
+      "explicacion": "Cat 6A U/UTP es más grueso y su plástico interno aísla del Alien Crosstalk sin metal: 10 Gbps a 100 m.",
+      "por_que_falla": [
+        "Cat 5e llega a 1 Gbps (100 m).",
+        "",
+        "Cat 6 da 10 Gbps solo por debajo de 55 m.",
+        "Cat 7 sin blindaje no existe: la norma exige blindaje metálico."
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Guía de referencia: familias y categorías de cables de red"
+      }
+    },
+    {
+      "id": "fis-p12",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Cuál de estas características corresponde a la fibra monomodo?",
+      "opciones": [
+        "Núcleo de 62,5 o 50 μm y luz generada por LEDs",
+        "Longitud máxima recomendada de 2 km a 850 nm",
+        "Propaga muchos modos, cada uno por su propio camino",
+        "Núcleo de 8 a 10 μm y fuente LASER"
+      ],
+      "correcta": 3,
+      "explicacion": "La fibra monomodo tiene un núcleo de 8 a 10 μm, propaga un único modo y usa LASER de alta intensidad.",
+      "por_que_falla": [
+        "Núcleo de 62,5/50 μm con LEDs es la fibra multimodo.",
+        "El límite de 2 km a 850 nm corresponde a la multimodo; la monomodo llega a 10 km teóricos.",
+        "Propagar muchos modos es justamente lo que define a la multimodo.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Tipos de fibra"
+      }
+    },
+    {
+      "id": "fis-p13",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Por qué la luz no se escapa del núcleo de una fibra óptica?",
+      "opciones": [
+        "Porque la armadura de Kevlar refleja la luz hacia el centro del cable",
+        "Porque el núcleo tiene menor índice de refracción que la cubierta",
+        "Porque el núcleo tiene mayor índice que la cubierta y hay reflexión total",
+        "Porque la luz viaja en línea recta y nunca toca la cubierta"
+      ],
+      "correcta": 2,
+      "explicacion": "Núcleo y cubierta son vidrios de distinto índice; el núcleo (n₁) es mayor que la cubierta (n₂), lo que produce reflexión total interna en la frontera.",
+      "por_que_falla": [
+        "El Kevlar es una armadura mecánica contra la rotura; no interviene en la propagación de la luz.",
+        "Invierte la relación: para que haya reflexión total el núcleo debe tener mayor índice.",
+        "",
+        "La luz incide constantemente sobre la frontera núcleo-cubierta y se refleja."
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fenómeno de reflexión total interna"
+      }
+    },
+    {
+      "id": "fis-p14",
+      "unidad": "u2-fisica",
+      "enunciado": "En la ley de Snell aplicada a la fibra, n₁ · sen(θc) = n₂ · sen(90°), ¿qué representa θc?",
+      "opciones": [
+        "El ángulo de incidencia mínimo para que haya reflexión total interna",
+        "El ángulo con el que la luz se refracta completamente hacia la cubierta",
+        "El ángulo de inclinación del conector LC respecto de la férula",
+        "El ángulo con el que el LED acopla la luz al núcleo monomodo"
+      ],
+      "correcta": 0,
+      "explicacion": "θc es el ángulo crítico: el ángulo de incidencia mínimo necesario para que ocurra la reflexión total interna.",
+      "por_que_falla": [
+        "",
+        "Es lo contrario: a partir de θc la luz deja de refractarse hacia la cubierta.",
+        "La ley de Snell describe la interfaz núcleo-cubierta, no la geometría de los conectores.",
+        "La monomodo usa LASER, no LED, y θc no es un ángulo de acople de la fuente."
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fenómeno de reflexión total interna"
+      }
+    },
+    {
+      "id": "fis-p15",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Qué conector de fibra tiene ajuste push and pull tipo RJ45, es compacto para alta densidad en racks y presenta pérdidas de ~0,10 dB?",
+      "opciones": [
+        "SC",
+        "LC",
+        "ST",
+        "FC"
+      ],
+      "correcta": 1,
+      "explicacion": "El LC (Lucent / Little Connector) tiene ajuste push and pull similar a RJ45, es más compacto que el SC y tiene pérdidas promedio de 0,10 dB.",
+      "por_que_falla": [
+        "El SC es de ajuste rápido a presión y pierde ~0,25 dB.",
+        "",
+        "El ST usa bayoneta tipo BNC y pierde ~0,25 dB.",
+        "El FC es roscado y pierde ~0,3 dB."
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fibra óptica – Conectores"
+      }
+    },
+    {
+      "id": "fis-p16",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Qué longitud de onda se usa en la 3.ª ventana óptica, exclusiva de la fibra monomodo?",
+      "opciones": [
+        "850 nm",
+        "1300 nm",
+        "550 nm",
+        "1550 nm"
+      ],
+      "correcta": 3,
+      "explicacion": "La 3.ª ventana (SM) va de 1500 a 1600 nm y se utiliza en 1550 nm.",
+      "por_que_falla": [
+        "850 nm es la 1.ª ventana, usada en multimodo.",
+        "1300 nm es la 2.ª ventana, compartida por multimodo y monomodo.",
+        "550 nm es luz verde visible; las fibras trabajan en infrarrojo.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Fibra óptica – Funcionamiento"
+      }
+    },
+    {
+      "id": "fis-p17",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Cuál de estas afirmaciones sobre las órbitas satelitales es correcta?",
+      "opciones": [
+        "GEO necesita grandes constelaciones porque cada satélite cubre muy poco",
+        "MEO tiene la menor latencia de las tres, entre 20 y 40 ms",
+        "LEO tiene latencia de 20 a 40 ms y requiere grandes constelaciones",
+        "LEO tarda 24 horas en completar una órbita, igual que la Tierra"
+      ],
+      "correcta": 2,
+      "explicacion": "LEO (200–2.000 km) ofrece 20 a 40 ms de latencia pero, por su cobertura reducida, necesita grandes constelaciones como Starlink.",
+      "por_que_falla": [
+        "Con GEO bastan 3 satélites para cubrir casi todo el planeta.",
+        "MEO tiene latencia intermedia (70 a 100 ms); la menor es la de LEO.",
+        "",
+        "LEO completa su órbita en 90 a 120 min; las 24 h corresponden a GEO."
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Comparativa de órbitas"
+      }
+    },
+    {
+      "id": "fis-p18",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Cuántos satélites GEO se necesitan para cubrir casi todo el planeta y con qué latencia aproximada?",
+      "opciones": [
+        "3 satélites, con latencia de ~600 ms",
+        "3 satélites, con latencia de 20 a 40 ms",
+        "Más de 10.600 satélites, con latencia de ~600 ms",
+        "6 órbitas polares, con latencia de 70 a 100 ms"
+      ],
+      "correcta": 0,
+      "explicacion": "Los satélites GEO están a ~35.786 km y fijos sobre un punto: con 3 se cubre casi todo el planeta, a costa de una latencia de ~600 ms.",
+      "por_que_falla": [
+        "",
+        "La cantidad es correcta, pero 20 a 40 ms es la latencia de LEO.",
+        "Más de 10.600 satélites es la constelación LEO de Starlink.",
+        "Las 6 órbitas polares son de Iridium (LEO) y 70 a 100 ms es la latencia de MEO."
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "GEO (Geostationary Earth Orbit)"
+      }
+    },
+    {
+      "id": "fis-p19",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Qué técnica de acceso al medio usaba la telefonía celular 1G?",
+      "opciones": [
+        "TDMA, compartiendo el canal por ranuras de tiempo",
+        "FDMA, con un canal exclusivo de 30 kHz",
+        "OFDMA, con subportadoras ortogonales en paralelo",
+        "WCDMA, con acceso por código en banda ancha"
+      ],
+      "correcta": 1,
+      "explicacion": "1G (AMPS) era analógica y usaba FDMA: cada usuario tenía un canal exclusivo y estrecho de 30 kHz.",
+      "por_que_falla": [
+        "TDMA aparece en 2G (GSM).",
+        "",
+        "OFDMA es la técnica de 4G y 5G.",
+        "WCDMA es la base de 3G (UMTS)."
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Redes celulares 1G"
+      }
+    },
+    {
+      "id": "fis-p20",
+      "unidad": "u2-fisica",
+      "enunciado": "Para un radioenlace de microondas punto a punto en bandas bajas, ¿qué condición y alcance práctico indica el material?",
+      "opciones": [
+        "No requiere línea de vista y llega a unos 500 km",
+        "Requiere línea de vista y alcanza 1 km en cualquier banda",
+        "Usa antenas omnidireccionales sin alinear y alcanza de 30 a 50 km",
+        "Requiere línea de vista y alcanza de 30 a 50 km"
+      ],
+      "correcta": 3,
+      "explicacion": "Las microondas punto a punto requieren una trayectoria libre de obstáculos (LoS), limitada por la curvatura terrestre: de 30 a 50 km en bandas bajas.",
+      "por_que_falla": [
+        "La línea de vista es obligatoria y la curvatura de la Tierra limita el alcance.",
+        "El límite de ~1 km se da en 60 GHz por absorción del oxígeno, no en cualquier banda.",
+        "Exige antenas direccionales sumamente alineadas, como las parabólicas.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Microondas"
+      }
+    },
+    {
+      "id": "fis-p21",
+      "unidad": "u2-fisica",
+      "enunciado": "¿Por qué en la transmisión digital el ruido no se acumula a lo largo del trayecto?",
+      "opciones": [
+        "Porque los amplificadores intermedios amplifican la señal junto con el ruido",
+        "Porque la señal digital no sufre atenuación en ningún medio de transmisión",
+        "Porque en los puntos de regeneración se reconstruyen los datos",
+        "Porque las señales digitalizadas no tienen ruido de cuantificación"
+      ],
+      "correcta": 2,
+      "explicacion": "En la transmisión digital el ruido no es acumulativo en los puntos de regeneración, porque allí se reconstruyen los datos originales.",
+      "por_que_falla": [
+        "Eso describe la transmisión analógica, y es justamente lo que hace que el ruido se acumule.",
+        "Todo medio atenúa la señal, sea analógica o digital.",
+        "",
+        "Al contrario: el material indica que existe ruido de cuantificación al digitalizar señales analógicas."
+      ],
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Transmisión de información digital"
+      }
+    }
+  ],
+  "glosario": [
+    {
+      "termino": "UTP",
+      "sigla": "Unshielded Twisted Pair",
+      "definicion": "Par trenzado sin blindaje; económico y usado en LAN de corta distancia.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "FTP",
+      "sigla": "Foiled Twisted Pair",
+      "definicion": "Par trenzado con una pantalla de aluminio global que envuelve a todos los pares.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "STP (par trenzado blindado)",
+      "sigla": "Shielded Twisted Pair",
+      "definicion": "Par trenzado con cubierta de aluminio individual en cada par; el de mejor aislamiento.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "SNR",
+      "sigla": "Signal-to-Noise Ratio",
+      "definicion": "Relación entre la potencia de la señal útil y la del ruido (S/N); conviene mantenerla alta.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "LoS",
+      "sigla": "Line of Sight",
+      "definicion": "Línea de vista: trayectoria libre de obstáculos entre emisor y receptor, exigida por las microondas punto a punto.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "GEO",
+      "sigla": "Geostationary Earth Orbit",
+      "definicion": "Órbita a ~35.786 km, sincronizada con la rotación terrestre (24 h); latencia ~600 ms.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "MEO",
+      "sigla": "Medium Earth Orbit",
+      "definicion": "Órbita de 2.000 a 35.000 km, período de 6 a 12 h y latencia de 70 a 100 ms; usada por GPS.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "LEO",
+      "sigla": "Low Earth Orbit",
+      "definicion": "Órbita de 200 a 2.000 km, período de 90 a 120 min y latencia de 20 a 40 ms; Starlink, Iridium.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "OFDMA",
+      "sigla": "Orthogonal Frequency Division Multiple Access",
+      "definicion": "Acceso por subportadoras ortogonales en paralelo; base de 4G y 5G.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "WDM",
+      "sigla": "Wavelength Division Multiplexing",
+      "definicion": "Multiplexación por división de longitud de onda: varios canales de datos por una misma fibra.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "ASK / FSK / PSK",
+      "sigla": "Amplitude / Frequency / Phase Shift Keying",
+      "definicion": "Modulaciones digitales que varían la amplitud, la frecuencia o la fase de la portadora.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "QAM",
+      "sigla": "Quadrature Amplitude Modulation",
+      "definicion": "Modulación que combina amplitudes y fases; 8-QAM (2 amplitudes, 4 fases) lleva 3 bits por símbolo.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "NRZ-L",
+      "sigla": "Non-Return to Zero – Level",
+      "definicion": "Codificación en banda base que representa cada bit con uno de dos niveles constantes.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "Manchester",
+      "definicion": "Codificación en banda base con una transición en mitad de cada bit, que combina reloj y datos; usada en 10BASE-T.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "Banda base",
+      "definicion": "Transmisión de la señal con los datos en su banda de frecuencias original, sin modular (BASE en 802.3).",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "Distorsión",
+      "definicion": "Deformación de la señal porque la velocidad de propagación y la atenuación varían con la frecuencia.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "Diafonía",
+      "definicion": "Acople de señales entre líneas físicamente adyacentes; el trenzado la reduce.",
+      "unidad": "u2-fisica"
+    },
+    {
+      "termino": "Ángulo crítico",
+      "definicion": "Ángulo de incidencia mínimo para que haya reflexión total interna: n₁ · sen(θc) = n₂ · sen(90°).",
+      "unidad": "u2-fisica"
+    }
+  ],
+  "dudas": [
+    {
+      "texto": "El ejemplo del pendrive mezcla prefijos: usa GB binarios (128 · 1024³ bytes) pero el resultado ≈ 101,81 Mbps solo sale con Mbps decimales (10⁶ bps). El ejercicio del enlace de 10 Mbps no indica cuál usar; se tomó 10 · 10⁶ bps (≈ 30,54 h), mientras que con 10 · 2²⁰ bps daría ≈ 29,13 h.",
+      "fuente": {
+        "archivo": "capa1_fisica.md",
+        "seccion": "Ancho de banda de transmisión"
+      }
+    },
+    {
+      "texto": "Las velocidades y períodos de las generaciones celulares difieren entre láminas: 1G figura en 1980 (tabla) y 1970-1980 (detalle); 2G hasta 384 kbps (EDGE) en la tabla y 14-64 kbps en el detalle; 3G hasta 42 Mbps (HSPA+) vs 384 kbps a 2 Mbps; la multiplexación de 5G aparece como OFDMA + MIMO/BF y como CDMA y BDM. Se usó la tabla comparativa.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Redes celulares"
+      }
+    },
+    {
+      "texto": "La lámina de medios no guiados da para LEO y MEO alturas de 750 km y 15.000 km, mientras que la comparativa de órbitas da rangos de 200 a 2.000 km y 2.000 a 35.000 km. Se usaron los rangos de la comparativa.",
+      "fuente": {
+        "archivo": "capa1_medios_transmision.md",
+        "seccion": "Medios no guiados"
+      }
+    }
+  ]
+}

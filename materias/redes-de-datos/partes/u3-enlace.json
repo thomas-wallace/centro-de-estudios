@@ -1,0 +1,2075 @@
+{
+  "conceptos": [
+    {
+      "id": "capa-de-enlace",
+      "nombre": "Capa de enlace",
+      "unidad": "u3-enlace",
+      "definicion": "Capa 2 del modelo OSI que logra una comunicación eficiente entre dos equipos adyacentes, ocultando a la capa de red los problemas de la capa física.",
+      "definicion_extendida": "Prepara los paquetes de la capa de red encapsulándolos en tramas y controla el acceso al medio físico. Sus funciones son brindar servicios a la capa de red, el entramado, el control y detección de errores, el control de flujo y el acceso al medio. También agrega el direccionamiento físico (direcciones MAC).",
+      "ejemplo": "Un paquete IP que baja desde la capa 3 recibe un encabezado (con direcciones MAC) y un tráiler (con detección de errores) antes de pasar a la capa física como trama.",
+      "por_que_importa": "Resuelve los errores del medio físico, el retardo de los canales y la diferencia de velocidades entre equipos, para que la capa de red no tenga que ocuparse de eso.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "01 – Introducción a la capa de enlace"
+      }
+    },
+    {
+      "id": "trama",
+      "nombre": "Trama (frame)",
+      "unidad": "u3-enlace",
+      "definicion": "PDU de la capa de enlace: el paquete de capa 3 encapsulado entre un header y un trailer.",
+      "definicion_extendida": "La trama se compone de un header (encabezado del protocolo de enlace), los datos que vienen de la capa 3 y un trailer (cola). El encabezado puede incluir inicio de trama, dirección, tipo y control; el tráiler incluye la detección de errores y el fin de trama. En el material se resume como PDU = TRAMA = FRAME.",
+      "ejemplo": "[Inicio de trama | Dirección | Tipo | Control] + [Paquete IP] + [Detección de errores | Detener trama].",
+      "por_que_importa": "Es la unidad sobre la que trabajan todas las funciones de capa 2: delimitación, detección de errores, control de flujo y acceso al medio.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "04 – Entramado (Framing) – Estructura de la trama"
+      }
+    },
+    {
+      "id": "entramado",
+      "nombre": "Entramado (framing)",
+      "unidad": "u3-enlace",
+      "definicion": "Función de la capa de enlace que arma las tramas y delimita dónde empieza y termina cada una.",
+      "definicion_extendida": "Encapsula los datos de la capa 3 agregándoles header y trailer. Para delimitar las tramas se usan principalmente dos técnicas: la cuenta de caracteres (un campo del encabezado indica cuántos caracteres siguen) y la inserción de caracteres o patrones (secuencias de bits o caracteres especiales de control que marcan inicio y fin).",
+      "ejemplo": "Una trama que empieza y termina con la bandera 01111110 está delimitada por inserción de patrones.",
+      "por_que_importa": "Sin delimitación, el receptor vería un flujo continuo de bits y no sabría dónde termina una trama y empieza la siguiente.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "04 – Entramado (Framing) – Delimitación de tramas"
+      }
+    },
+    {
+      "id": "bit-stuffing",
+      "nombre": "Bit stuffing (inserción de bits)",
+      "unidad": "u3-enlace",
+      "definicion": "Técnica de delimitación en la que el transmisor inserta un 0 después de cinco 1 consecutivos y el receptor lo quita.",
+      "definicion_extendida": "Todas las tramas comienzan y terminan con el patrón delimitador 01111110. Para que ese patrón no aparezca dentro de los datos, el transmisor inserta un bit 0 de relleno cada vez que encuentra cinco bits 1 consecutivos. El receptor, al recibir cinco 1 seguidos de un 0, borra ese 0 y recupera los datos originales.",
+      "ejemplo": "Los datos 0110 + quince 1 + 0010 se transmiten como 0110 11111 0 11111 0 11111 0 0010 (tres ceros de relleno).",
+      "por_que_importa": "Garantiza que la bandera 01111110 solo aparezca como delimitador, aunque los datos contengan largas secuencias de unos.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Inserción de patrones de inicio y fin (Bit Stuffing)"
+      }
+    },
+    {
+      "id": "deteccion-de-errores",
+      "nombre": "Detección de errores",
+      "unidad": "u3-enlace",
+      "definicion": "Conjunto de técnicas para determinar si un bloque de datos sufrió alteraciones por las perturbaciones del medio.",
+      "definicion_extendida": "Las perturbaciones (atenuación, distorsión y ruido) pueden provocar errores de bits individuales o errores de ráfaga. Los métodos de comprobación del material son los bits de paridad, el CRC y el checksum. Se aplica en la capa de enlace tanto en servicios confiables como no confiables: en ambos se detectan y descartan las tramas erróneas.",
+      "ejemplo": "El receptor recalcula el CRC de la trama 1101001 con G=1011; como el residuo es 000, la acepta.",
+      "por_que_importa": "Evita entregar a la capa de red datos corrompidos; es la base para descartar o retransmitir tramas.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "05 – Control y detección de errores"
+      }
+    },
+    {
+      "id": "crc",
+      "nombre": "CRC (Redundancia Cíclica)",
+      "unidad": "u3-enlace",
+      "definicion": "Método de detección de errores basado en la división binaria con XOR de los datos por un polinomio generador.",
+      "definicion_extendida": "Se agregan a los datos tantos ceros como el grado del generador G, se divide en módulo 2 (XOR) y el residuo es el CRC, que reemplaza a los ceros agregados. El receptor divide la trama recibida por el mismo G: si el residuo es cero, no hubo errores. Es de fácil implementación y el método más utilizado en telecomunicaciones.",
+      "ejemplo": "D=1101, G=1011 (grado 3): 1101000 ÷ 1011 da residuo 001, se transmite 1101001 y el receptor obtiene residuo 000.",
+      "por_que_importa": "Es el método de detección más usado en telecomunicaciones por su simplicidad de implementación.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ejemplo 2: CRC (Redundancia Cíclica) – versión 2 (paso a paso)"
+      }
+    },
+    {
+      "id": "checksum",
+      "nombre": "Checksum (suma de verificación)",
+      "unidad": "u3-enlace",
+      "definicion": "Método de detección de errores que suma bloques de 8 bits y envía el complemento a 1 del resultado.",
+      "definicion_extendida": "El emisor suma los bloques de datos y obtiene el checksum invirtiendo los bits de la suma (complemento a 1). El receptor suma los datos más el checksum: si el resultado es todo unos (11111111), no se detectaron errores.",
+      "ejemplo": "00001011 + 00000110 = 00010001; checksum = 11101110; en el receptor 00010001 + 11101110 = 11111111.",
+      "por_que_importa": "Es una suma ampliamente utilizada para validar la integridad de los frames con un cálculo muy simple.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ejemplo 1: Checksum (suma de verificación)"
+      }
+    },
+    {
+      "id": "codigo-hamming",
+      "nombre": "Código de Hamming",
+      "unidad": "u3-enlace",
+      "definicion": "Código de corrección de errores que inserta bits de paridad en posiciones estratégicas para detectar y ubicar el bit erróneo.",
+      "definicion_extendida": "En Hamming(7,4) los 4 bits de datos ocupan las posiciones 3, 5, 6 y 7, y las paridades P1, P2 y P4 las posiciones 1, 2 y 4. Con paridad par, P1 cubre los bits 1, 3, 5, 7; P2 los bits 2, 3, 6, 7; y P4 los bits 4, 5, 6, 7. El receptor recalcula las paridades: si coinciden no hubo error; si no, identifica y corrige la posición exacta.",
+      "ejemplo": "Datos 1011 → P1=0, P2=1, P4=0 → se transmite 0110011.",
+      "por_que_importa": "Permite corregir el error en el destino sin pedir retransmisión (corrección hacia adelante, FEC).",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Corrección de errores"
+      }
+    },
+    {
+      "id": "control-de-flujo",
+      "nombre": "Control de flujo",
+      "unidad": "u3-enlace",
+      "definicion": "Mecanismo que regula cuánto y cuándo transmite el emisor para no saturar al receptor.",
+      "definicion_extendida": "El problema surge cuando el transmisor genera tramas más rápido de lo que el receptor puede procesar. Los protocolos de enlace pueden incorporar reglas que adaptan el envío a la capacidad del receptor. Los métodos del material son parada y espera, y ventana deslizante.",
+      "ejemplo": "Con parada y espera, el receptor frena al emisor simplemente demorando el ACK de cada trama.",
+      "por_que_importa": "Evita que el receptor pierda tramas por no poder procesarlas a tiempo (por ejemplo, por memoria limitada).",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "06 – Control de flujo"
+      }
+    },
+    {
+      "id": "parada-y-espera",
+      "nombre": "Parada y espera",
+      "unidad": "u3-enlace",
+      "definicion": "Protocolo de control de flujo en el que el emisor envía una trama y no envía la siguiente hasta recibir su ACK.",
+      "definicion_extendida": "Es el protocolo más sencillo. El receptor mantiene el control absoluto del flujo reteniendo o demorando las confirmaciones según su capacidad. Es eficiente si se envían pocas tramas de gran tamaño, pero en general las tramas son pequeñas por la memoria limitada del receptor, la mayor probabilidad de error en tramas largas y la necesidad de no demorar a otros nodos en un medio compartido.",
+      "ejemplo": "El emisor manda la trama 1, espera el ACK 1, recién entonces manda la trama 2.",
+      "por_que_importa": "Es la forma más simple de que el receptor imponga su ritmo, aunque desaprovecha el canal mientras se espera cada ACK.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Parada y Espera"
+      }
+    },
+    {
+      "id": "ventana-deslizante",
+      "nombre": "Ventana deslizante",
+      "unidad": "u3-enlace",
+      "definicion": "Protocolo de control de flujo que permite enviar N tramas sin haber recibido confirmación.",
+      "definicion_extendida": "El tamaño de ventana N define cuántas tramas pueden estar sin confirmar; requiere un vínculo full dúplex. La confirmación es acumulativa: el ACK lleva el número del último frame recibido correctamente. Las tramas sin confirmar quedan en buffer y, si expira el temporizador individual de una, se la retransmite.",
+      "ejemplo": "Con N=8 la ventana abarca las tramas 1 a 8; al llegar el ACK de la trama 1 se desliza a 2–9 y se transmite de inmediato la trama 9.",
+      "por_que_importa": "Mejora significativamente el desempeño respecto de parada y espera porque aprovecha el ancho de banda mientras llegan los ACK.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ventana Deslizante"
+      }
+    },
+    {
+      "id": "acceso-al-medio",
+      "nombre": "Acceso al medio",
+      "unidad": "u3-enlace",
+      "definicion": "Función de la capa de enlace que determina quién puede usar un medio compartido y cuándo.",
+      "definicion_extendida": "En redes multiacceso varios nodos comparten el canal físico. Los métodos de acceso buscan regular el acceso para impedir o reducir al mínimo las colisiones y aprovechar al máximo la capacidad del canal. Hay dos métodos básicos: controlado (TDMA, FDMA, CDMA) y por contención (CSMA).",
+      "ejemplo": "En Ethernet compartido por cable los nodos compiten por el medio (contención); en redes celulares cada nodo tiene su turno o canal (controlado).",
+      "por_que_importa": "Sin una regla de acceso, las transmisiones simultáneas colisionan y se pierde toda la información transmitida.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "07 – Acceso al medio en redes MultiAcceso (MA)"
+      }
+    },
+    {
+      "id": "colision",
+      "nombre": "Colisión",
+      "unidad": "u3-enlace",
+      "definicion": "Mezcla de señales que ocurre cuando varios nodos transmiten a la vez sobre el mismo medio físico.",
+      "definicion_extendida": "Cuando múltiples nodos transmiten simultáneamente en un medio compartido, las señales se mezclan y dejan de ser interpretables. El resultado es la pérdida completa de la información transmitida por las tramas involucradas.",
+      "ejemplo": "Dos PCs en un mismo segmento Ethernet compartido empiezan a transmitir al mismo tiempo: ambas tramas se pierden.",
+      "por_que_importa": "Es el problema central que resuelven los métodos de acceso al medio (evitarla, detectarla o recuperarse de ella).",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Problema de acceso al medio – Colisiones en el medio"
+      }
+    },
+    {
+      "id": "csma-cd",
+      "nombre": "CSMA/CD",
+      "unidad": "u3-enlace",
+      "definicion": "Método de acceso por contención de Ethernet 802.3 que escucha el medio, transmite si está libre y detecta colisiones.",
+      "definicion_extendida": "La estación escucha la portadora (carrier sense) y, si el medio está libre, envía. Si detecta una colisión detiene la transmisión y envía una señal de congestión (jamming). Luego espera un tiempo aleatorio (backoff) e intenta retransmitir.",
+      "ejemplo": "Dos estaciones Ethernet colisionan: ambas emiten jamming, cada una sortea un backoff distinto y la que termina antes retransmite primero.",
+      "por_que_importa": "Permite compartir un cable entre varias estaciones recuperándose rápidamente de las colisiones.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CD – Ethernet 802.3 (Collision Detection)"
+      }
+    },
+    {
+      "id": "csma-ca",
+      "nombre": "CSMA/CA",
+      "unidad": "u3-enlace",
+      "definicion": "Método de acceso por contención de las redes wireless 802.11 que busca evitar las colisiones en lugar de detectarlas.",
+      "definicion_extendida": "Se diseñó para entornos donde la detección directa de colisiones no es posible. La estación escucha el medio y, si está libre, espera un backoff aleatorio antes de transmitir. Después de transmitir espera un ACK; si no llega, interpreta que hubo un problema y espera otro tiempo aleatorio para retransmitir.",
+      "ejemplo": "Una notebook WiFi encuentra el canal libre, espera su backoff, transmite y queda esperando el ACK del punto de acceso.",
+      "por_que_importa": "Hace posible el acceso compartido en redes inalámbricas, donde una estación no puede detectar colisiones mientras transmite.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CA – Redes Wireless 802.11 (Collision Avoidance)"
+      }
+    },
+    {
+      "id": "tdma",
+      "nombre": "TDMA",
+      "unidad": "u3-enlace",
+      "definicion": "Método de acceso controlado en el que el medio se reparte por turnos de tiempo y solo transmite una estación a la vez.",
+      "definicion_extendida": "Time-Division Multiple Access (multiplexión por división en el tiempo). Los dispositivos esperan estrictamente su turno, por lo que la transmisión es ordenada y sin colisiones. El material lo asocia con redes deterministas que usan paso de tokens, como Token Ring y FDDI.",
+      "ejemplo": "\"Tengo que enviar un paquete pero no es mi turno. Esperaré.\" — cada PC transmite solo en su turno.",
+      "por_que_importa": "Elimina las colisiones y hace predecible el acceso, a costa de que un nodo espere su turno aunque el medio esté libre.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Acceso controlado – TDMA"
+      }
+    },
+    {
+      "id": "enl-servicio-no-confiable-no-orientado",
+      "nombre": "Servicio no confiable, no orientado a conexión",
+      "unidad": "u3-enlace",
+      "definicion": "Servicio de enlace que detecta y descarta tramas erróneas pero no retransmite, no confirma ni controla el flujo.",
+      "definicion_extendida": "No garantiza entrega confiable: las tramas perdidas o erróneas no se reenvían, las correctas no se confirman y no se detectan duplicados. Se entregan en el orden en que se reciben y no hay fases de conexión: cada trama es independiente. Se recomienda en redes con tasas de error muy bajas donde se prioriza la velocidad.",
+      "ejemplo": "Ethernet: una trama con error de CRC simplemente se descarta y la recuperación queda en manos de capas superiores.",
+      "por_que_importa": "Es el servicio más común hoy porque los medios actuales tienen muy pocos errores y así se gana velocidad.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "03 – Servicios hacia la capa de red"
+      }
+    },
+    {
+      "id": "enl-servicio-confiable-no-orientado",
+      "nombre": "Servicio confiable, no orientado a conexión",
+      "unidad": "u3-enlace",
+      "definicion": "Servicio de enlace que garantiza la entrega con confirmaciones y retransmisión, pero sin establecer conexión.",
+      "definicion_extendida": "Detecta y descarta tramas erróneas, retransmite las perdidas o erróneas, detecta y descarta duplicados y realiza control de flujo. Usa numeración de tramas y confirmación de las tramas recibidas OK. Entrega en el orden en que se reciben y no tiene fase de establecimiento de conexión.",
+      "ejemplo": "WiFi: cada trama recibida bien se confirma con un ACK y, si el ACK no llega, se retransmite.",
+      "por_que_importa": "Conviene en medios con más errores, donde recuperar la trama en la propia capa 2 es más eficiente que delegarlo.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Servicio confiable, no orientado a conexión"
+      }
+    },
+    {
+      "id": "enl-servicio-confiable-orientado",
+      "nombre": "Servicio confiable, orientado a conexión",
+      "unidad": "u3-enlace",
+      "definicion": "Servicio de enlace confiable que además establece una conexión y entrega las tramas ordenadas.",
+      "definicion_extendida": "Tiene todas las garantías del servicio confiable (detección, retransmisión, eliminación de duplicados, control de flujo, confirmaciones) y agrega el establecimiento de conexión. A diferencia de los otros dos, entrega las tramas a la capa superior ordenadas, no simplemente en el orden de llegada.",
+      "ejemplo": "IoT y redes de sensores.",
+      "por_que_importa": "Ofrece a la capa de red el servicio más completo cuando se necesita entrega ordenada y garantizada.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Servicio confiable, orientado a conexión"
+      }
+    },
+    {
+      "id": "enl-ack",
+      "nombre": "ACK (confirmación)",
+      "unidad": "u3-enlace",
+      "definicion": "Mensaje que el receptor envía al emisor para confirmar que una trama llegó correctamente.",
+      "definicion_extendida": "En parada y espera el emisor no envía la siguiente trama hasta recibir el ACK. En ventana deslizante el ACK es acumulativo: lleva el número del último frame recibido correctamente. En CSMA/CA, si el ACK no llega, la estación interpreta que hubo un problema y retransmite tras un backoff.",
+      "ejemplo": "Con ventana N=8, el ACK de la trama 1 hace deslizar la ventana a 2–9.",
+      "por_que_importa": "Es la señal que permite tanto la entrega confiable (retransmitir si falta) como el control de flujo (demorarlo frena al emisor).",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "06 – Control de flujo"
+      }
+    },
+    {
+      "id": "enl-backoff",
+      "nombre": "Backoff",
+      "unidad": "u3-enlace",
+      "definicion": "Tiempo de espera aleatorio que una estación aguarda antes de transmitir o retransmitir en CSMA.",
+      "definicion_extendida": "En CSMA/CD la estación espera un backoff aleatorio después de una colisión y del jamming, antes de reintentar. En CSMA/CA se espera un backoff aleatorio antes de transmitir aunque el medio esté libre, y otro si no llega el ACK. Al ser aleatorio, es poco probable que dos estaciones vuelvan a coincidir.",
+      "ejemplo": "Tras una colisión en Ethernet, cada estación sortea su propio tiempo de espera y así no retransmiten a la vez.",
+      "por_que_importa": "Evita que las mismas estaciones vuelvan a colisionar una y otra vez al reintentar simultáneamente.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "08 – Protocolos CSMA/CD – CSMA/CA"
+      }
+    },
+    {
+      "id": "enl-arq",
+      "nombre": "ARQ (Automatic Repeat Request)",
+      "unidad": "u3-enlace",
+      "definicion": "Estrategia de control de errores en la que el destino detecta el error y el origen retransmite la trama.",
+      "definicion_extendida": "Corresponde a la detección de errores: el destino sabe que ocurrió un error pero no sabe cuál. Puede o no comunicárselo al origen, y el origen retransmite. Se contrapone a FEC (Forward Error Correction), donde el destino corrige el error de forma autónoma.",
+      "ejemplo": "Un receptor obtiene un residuo CRC distinto de cero, descarta la trama y no envía ACK; el emisor la retransmite.",
+      "por_que_importa": "Permite entrega confiable usando códigos de detección simples, a cambio de gastar tiempo en retransmisiones.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Detección vs. corrección"
+      }
+    }
+  ],
+  "relaciones": [
+    {
+      "origen": "capa-de-enlace",
+      "destino": "capa-fisica",
+      "verbo": "oculta a la capa de red los problemas de la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Objetivo principal"
+      }
+    },
+    {
+      "origen": "capa-de-enlace",
+      "destino": "direccion-mac",
+      "verbo": "agrega direccionamiento físico mediante la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "¿Para qué sirve la capa de enlace? (detalle)"
+      }
+    },
+    {
+      "origen": "capa-de-enlace",
+      "destino": "capa-de-red",
+      "verbo": "brinda servicios a la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "02 – Funciones de la capa de enlace"
+      }
+    },
+    {
+      "origen": "entramado",
+      "destino": "trama",
+      "verbo": "genera",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "04 – Entramado (Framing)"
+      }
+    },
+    {
+      "origen": "trama",
+      "destino": "pdu",
+      "verbo": "es la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "04 – Entramado (Framing) – Estructura de la trama"
+      }
+    },
+    {
+      "origen": "trama",
+      "destino": "encapsulamiento",
+      "verbo": "se forma por",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "04 – Entramado (Framing) – Estructura de la trama"
+      }
+    },
+    {
+      "origen": "entramado",
+      "destino": "capa-de-enlace",
+      "verbo": "es una función de la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "02 – Funciones de la capa de enlace"
+      }
+    },
+    {
+      "origen": "bit-stuffing",
+      "destino": "entramado",
+      "verbo": "es una técnica de",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Inserción de patrones de inicio y fin (Bit Stuffing)"
+      }
+    },
+    {
+      "origen": "deteccion-de-errores",
+      "destino": "capa-de-enlace",
+      "verbo": "es una función de la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "02 – Funciones de la capa de enlace"
+      }
+    },
+    {
+      "origen": "control-de-flujo",
+      "destino": "capa-de-enlace",
+      "verbo": "es una función de la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "02 – Funciones de la capa de enlace"
+      }
+    },
+    {
+      "origen": "acceso-al-medio",
+      "destino": "capa-de-enlace",
+      "verbo": "es una función de la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "02 – Funciones de la capa de enlace"
+      }
+    },
+    {
+      "origen": "crc",
+      "destino": "deteccion-de-errores",
+      "verbo": "es una técnica de",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Detección – Métodos de comprobación"
+      }
+    },
+    {
+      "origen": "checksum",
+      "destino": "deteccion-de-errores",
+      "verbo": "es una técnica de",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Detección – Métodos de comprobación"
+      }
+    },
+    {
+      "origen": "crc",
+      "destino": "fcs",
+      "verbo": "se transporta en el campo",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Estructura de formateo de datos para la transmisión con patrones de inicio y fin"
+      }
+    },
+    {
+      "origen": "deteccion-de-errores",
+      "destino": "ruido",
+      "verbo": "detecta alteraciones causadas por el",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Tipos de errores (ej. por ruido)"
+      }
+    },
+    {
+      "origen": "deteccion-de-errores",
+      "destino": "atenuacion",
+      "verbo": "detecta alteraciones causadas por la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Perturbaciones de la señal"
+      }
+    },
+    {
+      "origen": "codigo-hamming",
+      "destino": "deteccion-de-errores",
+      "verbo": "agrega corrección a la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Corrección de errores"
+      }
+    },
+    {
+      "origen": "enl-arq",
+      "destino": "deteccion-de-errores",
+      "verbo": "depende de la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Detección vs. corrección"
+      }
+    },
+    {
+      "origen": "enl-arq",
+      "destino": "codigo-hamming",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Detección vs. corrección"
+      }
+    },
+    {
+      "origen": "parada-y-espera",
+      "destino": "control-de-flujo",
+      "verbo": "es un método de",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "06 – Control de flujo – Métodos implementados"
+      }
+    },
+    {
+      "origen": "ventana-deslizante",
+      "destino": "control-de-flujo",
+      "verbo": "es un método de",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "06 – Control de flujo – Métodos implementados"
+      }
+    },
+    {
+      "origen": "ventana-deslizante",
+      "destino": "parada-y-espera",
+      "verbo": "supera en desempeño a",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ventana Deslizante"
+      }
+    },
+    {
+      "origen": "parada-y-espera",
+      "destino": "enl-ack",
+      "verbo": "espera un",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Parada y Espera"
+      }
+    },
+    {
+      "origen": "ventana-deslizante",
+      "destino": "enl-ack",
+      "verbo": "usa confirmación acumulativa con",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ventana Deslizante – Funcionamiento y parámetros"
+      }
+    },
+    {
+      "origen": "ventana-deslizante",
+      "destino": "full-duplex",
+      "verbo": "requiere un vínculo",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ventana Deslizante – Funcionamiento y parámetros"
+      }
+    },
+    {
+      "origen": "acceso-al-medio",
+      "destino": "colision",
+      "verbo": "busca impedir o reducir la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Problema de acceso al medio – Objetivos de control"
+      }
+    },
+    {
+      "origen": "csma-cd",
+      "destino": "colision",
+      "verbo": "detecta la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CD – Ethernet 802.3 (Collision Detection)"
+      }
+    },
+    {
+      "origen": "csma-ca",
+      "destino": "colision",
+      "verbo": "evita la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CA – Redes Wireless 802.11 (Collision Avoidance)"
+      }
+    },
+    {
+      "origen": "csma-cd",
+      "destino": "ethernet",
+      "verbo": "es el método de acceso de",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CD – Ethernet 802.3 (Collision Detection)"
+      }
+    },
+    {
+      "origen": "colision",
+      "destino": "dominio-de-colision",
+      "verbo": "se produce dentro de un",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Problema de acceso al medio – Colisiones en el medio"
+      }
+    },
+    {
+      "origen": "csma-cd",
+      "destino": "enl-backoff",
+      "verbo": "usa",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CD – Ethernet 802.3 (Collision Detection)"
+      }
+    },
+    {
+      "origen": "csma-ca",
+      "destino": "enl-backoff",
+      "verbo": "usa",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CA – Redes Wireless 802.11 (Collision Avoidance)"
+      }
+    },
+    {
+      "origen": "csma-ca",
+      "destino": "enl-ack",
+      "verbo": "espera un",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CA – Redes Wireless 802.11 (Collision Avoidance)"
+      }
+    },
+    {
+      "origen": "csma-cd",
+      "destino": "csma-ca",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "08 – Protocolos CSMA/CD – CSMA/CA"
+      }
+    },
+    {
+      "origen": "tdma",
+      "destino": "acceso-al-medio",
+      "verbo": "es un método controlado de",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Métodos básicos – ¿Cómo controlo el acceso?"
+      }
+    },
+    {
+      "origen": "tdma",
+      "destino": "colision",
+      "verbo": "evita la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Acceso controlado – TDMA"
+      }
+    },
+    {
+      "origen": "csma-cd",
+      "destino": "acceso-al-medio",
+      "verbo": "es un método por contención de",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Acceso por contención"
+      }
+    },
+    {
+      "origen": "tdma",
+      "destino": "multiplexacion",
+      "verbo": "es una forma de",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Acceso controlado – TDMA"
+      }
+    },
+    {
+      "origen": "enl-servicio-no-confiable-no-orientado",
+      "destino": "ethernet",
+      "verbo": "se ejemplifica con",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Servicio no confiable, no orientado a conexión"
+      }
+    },
+    {
+      "origen": "enl-servicio-no-confiable-no-orientado",
+      "destino": "deteccion-de-errores",
+      "verbo": "aplica la",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Servicios confiables y no confiables"
+      }
+    },
+    {
+      "origen": "enl-servicio-confiable-no-orientado",
+      "destino": "servicio-confiable",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Servicio confiable, no orientado a conexión"
+      }
+    },
+    {
+      "origen": "enl-servicio-confiable-no-orientado",
+      "destino": "enl-arq",
+      "verbo": "usa retransmisión tipo",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Servicio confiable, no orientado a conexión"
+      }
+    },
+    {
+      "origen": "enl-servicio-confiable-orientado",
+      "destino": "servicio-orientado-a-conexion",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Servicio confiable, orientado a conexión"
+      }
+    },
+    {
+      "origen": "enl-servicio-confiable-orientado",
+      "destino": "control-de-flujo",
+      "verbo": "incluye",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Servicio confiable, orientado a conexión"
+      }
+    },
+    {
+      "origen": "enl-servicio-confiable-orientado",
+      "destino": "enl-servicio-confiable-no-orientado",
+      "verbo": "agrega establecimiento de conexión respecto del",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Resumen comparativo"
+      }
+    }
+  ],
+  "taxonomias": [
+    {
+      "id": "enl-tax-servicios",
+      "nombre": "Servicios de la capa de enlace hacia la capa de red",
+      "unidad": "u3-enlace",
+      "raiz": {
+        "nombre": "Servicios hacia la capa de red",
+        "descripcion": "Todos detectan y descartan tramas erróneas.",
+        "hijos": [
+          {
+            "nombre": "No confiable, no orientado a conexión",
+            "descripcion": "Sin retransmisión, sin ACK, sin control de flujo, sin conexión. Ejemplo: Ethernet.",
+            "hijos": []
+          },
+          {
+            "nombre": "Confiables",
+            "descripcion": "Retransmisión, ACK, detección de duplicados y control de flujo.",
+            "hijos": [
+              {
+                "nombre": "Confiable, no orientado a conexión",
+                "descripcion": "Entrega en el orden de llegada, sin establecimiento de conexión. Ejemplo: WiFi.",
+                "hijos": []
+              },
+              {
+                "nombre": "Confiable, orientado a conexión",
+                "descripcion": "Establece conexión y entrega ordenada. Ejemplo: IoT / redes de sensores.",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      },
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "03 – Servicios hacia la capa de red"
+      }
+    },
+    {
+      "id": "enl-tax-acceso-al-medio",
+      "nombre": "Métodos de acceso al medio",
+      "unidad": "u3-enlace",
+      "raiz": {
+        "nombre": "Acceso al medio en redes multiacceso",
+        "hijos": [
+          {
+            "nombre": "Controlado",
+            "descripcion": "Cada nodo tiene su propio tiempo o canal para usar el medio; no hay colisiones. Ejemplo: redes celulares.",
+            "hijos": [
+              {
+                "nombre": "TDMA",
+                "descripcion": "División en el tiempo: una estación por vez, por turnos (Token Ring, FDDI).",
+                "hijos": []
+              },
+              {
+                "nombre": "FDMA",
+                "descripcion": "División en frecuencia: cada estación en su banda exclusiva (radio, satélite).",
+                "hijos": []
+              },
+              {
+                "nombre": "CDMA",
+                "descripcion": "División por código: todos en la misma frecuencia con códigos únicos.",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Contención (CSMA)",
+            "descripcion": "Todos compiten por el medio compartido; hay riesgo de colisión.",
+            "hijos": [
+              {
+                "nombre": "CSMA/CD",
+                "descripcion": "Detección de colisiones: jamming + backoff. Ethernet 802.3.",
+                "hijos": []
+              },
+              {
+                "nombre": "CSMA/CA",
+                "descripcion": "Evitación de colisiones: backoff previo + ACK. Wireless 802.11.",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      },
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Métodos básicos – ¿Cómo controlo el acceso?"
+      }
+    },
+    {
+      "id": "enl-tax-errores",
+      "nombre": "Técnicas de control de errores",
+      "unidad": "u3-enlace",
+      "raiz": {
+        "nombre": "Control de errores en capa 2",
+        "hijos": [
+          {
+            "nombre": "Detección (ARQ)",
+            "descripcion": "El destino sabe que hubo un error pero no cuál; el origen retransmite.",
+            "hijos": [
+              {
+                "nombre": "Bits de paridad",
+                "descripcion": "Técnica básica, solo para errores de bit individuales.",
+                "hijos": []
+              },
+              {
+                "nombre": "CRC",
+                "descripcion": "División binaria con XOR; la más usada en telecomunicaciones.",
+                "hijos": []
+              },
+              {
+                "nombre": "Checksum",
+                "descripcion": "Suma de bloques de 8 bits y complemento a 1.",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Corrección (FEC)",
+            "descripcion": "El destino detecta el error y lo corrige de forma autónoma.",
+            "hijos": [
+              {
+                "nombre": "Código de Hamming",
+                "descripcion": "Bits de paridad en posiciones 1, 2, 4… que ubican el bit erróneo.",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      },
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "05 – Control y detección de errores"
+      }
+    }
+  ],
+  "procesos": [
+    {
+      "id": "enl-proc-bit-stuffing",
+      "nombre": "Bit stuffing: inserción y extracción de bits de relleno",
+      "unidad": "u3-enlace",
+      "descripcion": "Cómo el transmisor evita que la bandera 01111110 aparezca dentro de los datos y cómo el receptor recupera los datos originales.",
+      "pasos": [
+        {
+          "actor": "Transmisor",
+          "accion": "Envía la bandera de inicio 01111110.",
+          "por_que": "Marca el comienzo de la trama con un patrón conocido.",
+          "valores": [
+            {
+              "nombre": "Bandera",
+              "valor": "01111110"
+            }
+          ]
+        },
+        {
+          "actor": "Transmisor",
+          "accion": "Recorre los datos y, cada vez que encuentra cinco bits 1 consecutivos, inserta un bit 0 de relleno.",
+          "por_que": "Así nunca aparecen seis 1 seguidos en los datos y la bandera no puede confundirse con datos.",
+          "valores": [
+            {
+              "nombre": "Datos originales",
+              "valor": "0110 11111111111111 10010 (quince 1 seguidos)"
+            },
+            {
+              "nombre": "Datos transmitidos",
+              "valor": "0110 11111 0 11111 0 11111 0 0010"
+            },
+            {
+              "nombre": "Ceros insertados",
+              "valor": "3"
+            }
+          ]
+        },
+        {
+          "actor": "Transmisor",
+          "accion": "Envía la bandera de fin 01111110.",
+          "por_que": "Marca el final de la trama.",
+          "valores": [
+            {
+              "nombre": "Bandera",
+              "valor": "01111110"
+            }
+          ]
+        },
+        {
+          "actor": "Receptor",
+          "accion": "Cada vez que recibe cinco 1 seguidos de un 0, borra ese 0.",
+          "por_que": "Ese 0 es relleno agregado por el transmisor, no parte de los datos.",
+          "valores": [
+            {
+              "nombre": "Datos recuperados",
+              "valor": "0110 11111111111111 10010"
+            }
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Inserción de patrones de inicio y fin (Bit Stuffing)"
+      }
+    },
+    {
+      "id": "enl-proc-csma-cd",
+      "nombre": "Transmisión con CSMA/CD (Ethernet 802.3)",
+      "unidad": "u3-enlace",
+      "descripcion": "Pasos de una estación Ethernet en un medio compartido, con detección de colisiones.",
+      "pasos": [
+        {
+          "actor": "Estación",
+          "accion": "Escucha el medio (detección de portadora).",
+          "por_que": "Solo debe transmitir si nadie más está usando el medio."
+        },
+        {
+          "actor": "Estación",
+          "accion": "Si el medio está libre, envía los datos.",
+          "por_que": "Es un acceso por contención: cualquiera puede transmitir cuando tiene datos y el medio está libre."
+        },
+        {
+          "actor": "Estación",
+          "accion": "Si detecta una colisión, detiene la transmisión y envía una señal de congestión (jamming).",
+          "por_que": "Seguir transmitiendo es inútil porque la trama ya se perdió; el jamming avisa a todos de la colisión."
+        },
+        {
+          "actor": "Estación",
+          "accion": "Espera un tiempo aleatorio (backoff) e intenta la retransmisión.",
+          "por_que": "Al ser aleatorio, es poco probable que las mismas estaciones vuelvan a colisionar."
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CD – Ethernet 802.3 (Collision Detection)"
+      }
+    },
+    {
+      "id": "enl-proc-csma-ca",
+      "nombre": "Transmisión con CSMA/CA (Wireless 802.11)",
+      "unidad": "u3-enlace",
+      "descripcion": "Pasos de una estación inalámbrica que busca evitar colisiones porque no puede detectarlas directamente.",
+      "pasos": [
+        {
+          "actor": "Estación",
+          "accion": "Escucha el medio.",
+          "por_que": "Verifica que nadie esté transmitiendo."
+        },
+        {
+          "actor": "Estación",
+          "accion": "Si está libre, espera un tiempo de backoff aleatorio antes de transmitir.",
+          "por_que": "Reduce la probabilidad de que dos estaciones que esperaban el medio libre transmitan a la vez."
+        },
+        {
+          "actor": "Estación",
+          "accion": "Transmite la trama y espera un ACK.",
+          "por_que": "Como no puede detectar colisiones, usa el ACK para saber si la trama llegó."
+        },
+        {
+          "actor": "Estación",
+          "accion": "Si el ACK no llega, espera un backoff aleatorio y retransmite.",
+          "por_que": "La falta de ACK se interpreta como un problema (por ejemplo, una colisión)."
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CA – Redes Wireless 802.11 (Collision Avoidance)"
+      }
+    },
+    {
+      "id": "enl-proc-ventana-deslizante",
+      "nombre": "Ventana deslizante con N=8 y ACK acumulativo",
+      "unidad": "u3-enlace",
+      "descripcion": "Cómo avanza la ventana del emisor a medida que llegan las confirmaciones.",
+      "pasos": [
+        {
+          "actor": "Emisor",
+          "accion": "Envía las tramas 1 a 8 sin esperar confirmación.",
+          "por_que": "El tamaño de ventana N indica cuántas tramas pueden estar sin confirmar.",
+          "valores": [
+            {
+              "nombre": "N",
+              "valor": "8"
+            },
+            {
+              "nombre": "Ventana inicial",
+              "valor": "1–8"
+            }
+          ]
+        },
+        {
+          "actor": "Emisor",
+          "accion": "Guarda en buffer las tramas no confirmadas y arranca un temporizador por cada una.",
+          "por_que": "Si alguna se pierde, debe poder retransmitirla."
+        },
+        {
+          "actor": "Receptor",
+          "accion": "Envía un ACK con el número del último frame recibido correctamente.",
+          "por_que": "La confirmación es acumulativa; requiere un vínculo full dúplex para que datos y ACK circulen a la vez.",
+          "valores": [
+            {
+              "nombre": "ACK",
+              "valor": "1"
+            }
+          ]
+        },
+        {
+          "actor": "Emisor",
+          "accion": "Al recibir el ACK de la trama 1, desliza la ventana y transmite de inmediato la trama 9.",
+          "por_que": "La trama 1 ya no necesita quedar en buffer y queda lugar para una nueva.",
+          "valores": [
+            {
+              "nombre": "Ventana deslizada",
+              "valor": "2–9"
+            }
+          ]
+        },
+        {
+          "actor": "Emisor",
+          "accion": "Si expira el temporizador de una trama sin confirmar, la retransmite.",
+          "por_que": "Es el control de errores del protocolo: la falta de confirmación indica pérdida o error."
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ventana Deslizante"
+      }
+    }
+  ],
+  "comparaciones": [
+    {
+      "id": "enl-comp-servicios",
+      "nombre": "Servicios de la capa de enlace hacia la capa de red",
+      "unidad": "u3-enlace",
+      "columnas": [
+        "No confiable, no orientado",
+        "Confiable, no orientado",
+        "Confiable, orientado"
+      ],
+      "filas": [
+        {
+          "criterio": "Detección y descarte de tramas erróneas",
+          "celdas": [
+            "Sí",
+            "Sí",
+            "Sí"
+          ]
+        },
+        {
+          "criterio": "Retransmisión",
+          "celdas": [
+            "No",
+            "Sí",
+            "Sí"
+          ]
+        },
+        {
+          "criterio": "Confirmación (ACK)",
+          "celdas": [
+            "No",
+            "Sí",
+            "Sí"
+          ]
+        },
+        {
+          "criterio": "Detección de duplicados",
+          "celdas": [
+            "No",
+            "Sí",
+            "Sí"
+          ]
+        },
+        {
+          "criterio": "Entrega en orden",
+          "celdas": [
+            "En el orden en que se reciben",
+            "En el orden en que se reciben",
+            "Ordenada"
+          ]
+        },
+        {
+          "criterio": "Control de flujo",
+          "celdas": [
+            "No",
+            "Sí",
+            "Sí"
+          ]
+        },
+        {
+          "criterio": "Establecimiento de conexión",
+          "celdas": [
+            "No",
+            "No",
+            "Sí"
+          ]
+        },
+        {
+          "criterio": "Ejemplo",
+          "celdas": [
+            "Ethernet",
+            "WiFi",
+            "IoT / redes de sensores"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Resumen comparativo"
+      }
+    },
+    {
+      "id": "enl-comp-csma",
+      "nombre": "CSMA/CD vs CSMA/CA",
+      "unidad": "u3-enlace",
+      "columnas": [
+        "CSMA/CD",
+        "CSMA/CA"
+      ],
+      "filas": [
+        {
+          "criterio": "Red",
+          "celdas": [
+            "Ethernet 802.3",
+            "Wireless 802.11"
+          ]
+        },
+        {
+          "criterio": "Estrategia",
+          "celdas": [
+            "Detección de colisiones",
+            "Evitación de colisiones"
+          ]
+        },
+        {
+          "criterio": "Antes de transmitir",
+          "celdas": [
+            "Escucha; si está libre, envía",
+            "Escucha; si está libre, espera un backoff"
+          ]
+        },
+        {
+          "criterio": "Cómo sabe que falló",
+          "celdas": [
+            "Detecta la colisión",
+            "No recibe el ACK"
+          ]
+        },
+        {
+          "criterio": "Reacción",
+          "celdas": [
+            "Jamming + backoff aleatorio",
+            "Backoff aleatorio y retransmisión"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "08 – Protocolos CSMA/CD – CSMA/CA"
+      }
+    },
+    {
+      "id": "enl-comp-arq-fec",
+      "nombre": "Detección (ARQ) vs corrección (FEC)",
+      "unidad": "u3-enlace",
+      "columnas": [
+        "ARQ",
+        "FEC"
+      ],
+      "filas": [
+        {
+          "criterio": "Sigla",
+          "celdas": [
+            "Automatic Repeat Request",
+            "Forward Error Correction"
+          ]
+        },
+        {
+          "criterio": "Qué sabe el destino",
+          "celdas": [
+            "Que hubo un error, pero no cuál",
+            "Qué bit está mal"
+          ]
+        },
+        {
+          "criterio": "Cómo se recupera",
+          "celdas": [
+            "El origen retransmite",
+            "El destino corrige solo"
+          ]
+        },
+        {
+          "criterio": "Técnicas del material",
+          "celdas": [
+            "Paridad, CRC, checksum",
+            "Código de Hamming"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Detección vs. corrección"
+      }
+    },
+    {
+      "id": "enl-comp-flujo",
+      "nombre": "Parada y espera vs ventana deslizante",
+      "unidad": "u3-enlace",
+      "columnas": [
+        "Parada y espera",
+        "Ventana deslizante"
+      ],
+      "filas": [
+        {
+          "criterio": "Tramas sin confirmar",
+          "celdas": [
+            "1",
+            "Hasta N (ej. 8)"
+          ]
+        },
+        {
+          "criterio": "Confirmación",
+          "celdas": [
+            "Un ACK por trama",
+            "ACK acumulativo (último frame OK)"
+          ]
+        },
+        {
+          "criterio": "Vínculo",
+          "celdas": [
+            "No especificado",
+            "Requiere full dúplex"
+          ]
+        },
+        {
+          "criterio": "Cómo frena el receptor",
+          "celdas": [
+            "Retiene o demora el ACK",
+            "Con el tamaño de ventana y los ACK"
+          ]
+        },
+        {
+          "criterio": "Desempeño",
+          "celdas": [
+            "Eficiente solo con pocas tramas grandes",
+            "Mejor aprovechamiento del ancho de banda"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "06 – Control de flujo"
+      }
+    },
+    {
+      "id": "enl-comp-acceso-controlado",
+      "nombre": "TDMA vs FDMA vs CDMA",
+      "unidad": "u3-enlace",
+      "columnas": [
+        "TDMA",
+        "FDMA",
+        "CDMA"
+      ],
+      "filas": [
+        {
+          "criterio": "Qué se divide",
+          "celdas": [
+            "El tiempo (turnos)",
+            "La frecuencia (bandas)",
+            "Por código único"
+          ]
+        },
+        {
+          "criterio": "Transmisión simultánea",
+          "celdas": [
+            "No: una estación a la vez",
+            "Sí, cada una en su banda",
+            "Sí, en la misma frecuencia"
+          ]
+        },
+        {
+          "criterio": "Colisiones",
+          "celdas": [
+            "No hay",
+            "No hay interferencia entre canales",
+            "Se evitan separando señales por código"
+          ]
+        },
+        {
+          "criterio": "Uso / ejemplo",
+          "celdas": [
+            "Redes deterministas, paso de tokens (Token Ring, FDDI)",
+            "Radio y satélite",
+            "No indicado (el material cita redes celulares para el acceso controlado en general)"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Acceso controlado"
+      }
+    }
+  ],
+  "ejercicios": [
+    {
+      "id": "enl-ej-checksum",
+      "titulo": "Checksum con complemento a 1",
+      "unidad": "u3-enlace",
+      "tipo": "Detección de errores",
+      "enunciado": "Se envían dos bytes: 00001011 (11) y 00000110 (6). Calculá el checksum con el criterio del material (suma de bloques de 8 bits y complemento a 1) y verificá la recepción.",
+      "pasos": [
+        {
+          "consigna": "¿Cuánto da la suma binaria de los dos bytes (8 bits)?",
+          "respuesta": "00010001",
+          "tipo_respuesta": "binario",
+          "explicacion": "00001011 + 00000110 = 00010001, que es 17 en decimal (11 + 6)."
+        },
+        {
+          "consigna": "¿Cuál es el checksum (complemento a 1 de la suma)?",
+          "respuesta": "11101110",
+          "tipo_respuesta": "binario",
+          "explicacion": "El complemento a 1 invierte cada bit: 00010001 → 11101110."
+        },
+        {
+          "consigna": "En el receptor, ¿cuánto da la suma de la suma de datos más el checksum?",
+          "respuesta": "11111111",
+          "tipo_respuesta": "binario",
+          "explicacion": "00010001 + 11101110 = 11111111. Todo unos significa que no se detectaron errores."
+        }
+      ],
+      "pistas": [
+        "Primero sumá los dos bytes como números binarios de 8 bits.",
+        "El complemento a 1 se obtiene cambiando cada 0 por 1 y cada 1 por 0.",
+        "Un número sumado con su complemento a 1 siempre da todos los bits en 1."
+      ],
+      "errores_comunes": [
+        "Confundir complemento a 1 con complemento a 2 y sumarle 1 al resultado invertido.",
+        "Esperar que la verificación del receptor dé 00000000 en lugar de 11111111.",
+        "Perder el acarreo al sumar 1011 + 0110."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ejemplo 1: Checksum (suma de verificación)"
+      }
+    },
+    {
+      "id": "enl-ej-crc",
+      "titulo": "CRC con D=1101 y G=1011",
+      "unidad": "u3-enlace",
+      "tipo": "Detección de errores",
+      "enunciado": "Los datos son D = 1101 y el generador es G = 1011 (grado 3). Calculá el CRC con división binaria (XOR), la trama a transmitir y la verificación en el receptor.",
+      "pasos": [
+        {
+          "consigna": "¿Cuáles son los datos extendidos (datos más tantos ceros como el grado de G)?",
+          "respuesta": "1101000",
+          "tipo_respuesta": "binario",
+          "explicacion": "G=1011 es de grado 3, así que se agregan tres ceros: 1101 → 1101000."
+        },
+        {
+          "consigna": "¿Cuánto da el primer XOR, 1101 ⊕ 1011?",
+          "respuesta": "0110",
+          "tipo_respuesta": "binario",
+          "explicacion": "Bit a bit: 1⊕1=0, 1⊕0=1, 0⊕1=1, 1⊕1=0 → 0110. Se baja el siguiente 0 y queda 1100."
+        },
+        {
+          "consigna": "Continuando la división (1100 ⊕ 1011, 1110 ⊕ 1011, 1010 ⊕ 1011), ¿cuál es el residuo (CRC) de 3 bits?",
+          "respuesta": "001",
+          "tipo_respuesta": "binario",
+          "explicacion": "1100⊕1011=0111 → 1110; 1110⊕1011=0101 → 1010; 1010⊕1011=0001. El residuo de 3 bits es 001."
+        },
+        {
+          "consigna": "¿Cuál es la trama transmitida (datos + CRC)?",
+          "respuesta": "1101001",
+          "tipo_respuesta": "binario",
+          "explicacion": "Se reemplazan los tres ceros agregados por el residuo: 1101 + 001 = 1101001."
+        },
+        {
+          "consigna": "¿Qué residuo obtiene el receptor al dividir 1101001 entre 1011 si no hubo errores?",
+          "respuesta": "000",
+          "tipo_respuesta": "binario",
+          "explicacion": "La trama con el CRC es divisible exactamente por G: residuo 000, transmisión sin errores."
+        }
+      ],
+      "pistas": [
+        "Agregá a los datos tantos ceros como el grado del generador (cantidad de bits de G menos 1).",
+        "La resta en módulo 2 es un XOR: no hay acarreos ni préstamos.",
+        "Después de cada XOR, descartá el primer bit (que queda en 0) y bajá el siguiente bit de los datos extendidos."
+      ],
+      "errores_comunes": [
+        "Agregar 4 ceros (la longitud de G) en lugar de 3 (el grado de G).",
+        "Hacer resta decimal con préstamos en lugar de XOR.",
+        "Transmitir solo el residuo o concatenarlo a los datos extendidos (1101000001) en lugar de reemplazar los ceros."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ejemplo 2: CRC (Redundancia Cíclica) – versión 2 (paso a paso)"
+      }
+    },
+    {
+      "id": "enl-ej-hamming",
+      "titulo": "Hamming(7,4) con datos 1011",
+      "unidad": "u3-enlace",
+      "tipo": "Corrección de errores",
+      "enunciado": "Codificá los datos 1011 (D1=1, D2=0, D3=1, D4=1) con Hamming(7,4) y paridad par. La trama con huecos es _ _ 1 _ 0 1 1 (posiciones 1 a 7; las paridades van en las posiciones 1, 2 y 4).",
+      "pasos": [
+        {
+          "consigna": "P1 cubre las posiciones 1, 3, 5 y 7. ¿Cuánto vale P1?",
+          "respuesta": "0",
+          "tipo_respuesta": "binario",
+          "explicacion": "Posiciones 3, 5, 7 = D1, D2, D4 = 1, 0, 1 → dos unos, ya es par → P1 = 0."
+        },
+        {
+          "consigna": "P2 cubre las posiciones 2, 3, 6 y 7. ¿Cuánto vale P2?",
+          "respuesta": "1",
+          "tipo_respuesta": "binario",
+          "explicacion": "Posiciones 3, 6, 7 = D1, D3, D4 = 1, 1, 1 → tres unos, impar → P2 = 1 para que quede par."
+        },
+        {
+          "consigna": "P4 cubre las posiciones 4, 5, 6 y 7. ¿Cuánto vale P4?",
+          "respuesta": "0",
+          "tipo_respuesta": "binario",
+          "explicacion": "Posiciones 5, 6, 7 = D2, D3, D4 = 0, 1, 1 → dos unos, ya es par → P4 = 0."
+        },
+        {
+          "consigna": "¿Cuál es la trama de 7 bits que se transmite (posiciones 1 a 7)?",
+          "respuesta": "0110011",
+          "tipo_respuesta": "binario",
+          "explicacion": "P1 P2 D1 P4 D2 D3 D4 = 0 1 1 0 0 1 1 → 0110011."
+        }
+      ],
+      "pistas": [
+        "Las paridades ocupan las posiciones potencia de 2 (1, 2, 4) y los datos el resto (3, 5, 6, 7).",
+        "Con paridad par, la paridad vale 1 solo si los datos que cubre tienen una cantidad impar de unos.",
+        "Ubicá D1 en la posición 3, D2 en la 5, D3 en la 6 y D4 en la 7 antes de contar."
+      ],
+      "errores_comunes": [
+        "Poner las paridades al principio (P1 P2 P4 D1 D2 D3 D4) en lugar de en las posiciones 1, 2 y 4.",
+        "Usar paridad impar cuando el criterio es paridad par.",
+        "Contar los bits de posición equivocados para P2 (por ejemplo, 2, 3, 5, 7)."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Corrección de errores"
+      }
+    },
+    {
+      "id": "enl-ej-bit-stuffing",
+      "titulo": "Bit stuffing sobre una secuencia de unos",
+      "unidad": "u3-enlace",
+      "tipo": "Entramado",
+      "enunciado": "Entre las banderas 01111110 se deben transmitir los datos 0110 11111111111111 10010 (es decir, 0110 seguido de quince 1 consecutivos y luego 0010). Aplicá bit stuffing.",
+      "pasos": [
+        {
+          "consigna": "¿Cuántos bits 0 de relleno inserta el transmisor?",
+          "respuesta": "3",
+          "tipo_respuesta": "numero",
+          "explicacion": "Hay quince 1 seguidos: se inserta un 0 después de cada grupo de cinco → 15 / 5 = 3 ceros."
+        },
+        {
+          "consigna": "¿Cuál es el campo de datos transmitido (sin las banderas)?",
+          "respuesta": "01101111101111101111100010",
+          "tipo_respuesta": "binario",
+          "alternativas": [
+            "0110 11111 0 11111 0 11111 0 0010"
+          ],
+          "explicacion": "0110 + 11111 0 + 11111 0 + 11111 0 + 0010. Ya no aparecen seis 1 seguidos que se confundan con la bandera."
+        },
+        {
+          "consigna": "El receptor recibe 0110 11111 0 11111 0 11111 0 0010. ¿Qué datos entrega luego de quitar el relleno?",
+          "respuesta": "01101111111111111110010",
+          "tipo_respuesta": "binario",
+          "alternativas": [
+            "0110 11111111111111 10010"
+          ],
+          "explicacion": "Cada 0 que sigue a cinco 1 se borra, recuperando 0110 + quince 1 + 0010."
+        }
+      ],
+      "pistas": [
+        "Contá los 1 consecutivos: el último 1 del bloque de catorce se une con el 1 inicial de 10010.",
+        "El 0 de relleno se inserta justo después del quinto 1, y el contador de unos vuelve a cero.",
+        "Después del tercer 0 de relleno no quedan más unos en la racha: siguen los bits 0010."
+      ],
+      "errores_comunes": [
+        "Insertar el 0 después de seis 1 en lugar de cinco.",
+        "No contar el 1 inicial de 10010 como parte de la racha de unos.",
+        "Aplicar el relleno también a las banderas 01111110."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Inserción de patrones de inicio y fin (Bit Stuffing)"
+      }
+    }
+  ],
+  "preguntas": [
+    {
+      "id": "enl-p01",
+      "unidad": "u3-enlace",
+      "enunciado": "¿Cuál es el objetivo principal de la capa de enlace según el material?",
+      "opciones": [
+        "Encontrar el mejor camino entre redes distintas usando direcciones IP",
+        "Comunicar eficientemente dos equipos adyacentes, ocultando a la capa de red los problemas de la capa física",
+        "Convertir los bits en señales eléctricas, ópticas o de radio adecuadas al medio",
+        "Garantizar la entrega confiable extremo a extremo entre los procesos de aplicación del origen y del destino final"
+      ],
+      "correcta": 1,
+      "explicacion": "La capa de enlace logra una comunicación eficiente entre dos equipos adyacentes y oculta a la capa de red los errores del medio, los retardos y la diferencia de velocidades.",
+      "por_que_falla": [
+        "Elegir el camino entre redes es tarea de la capa de red (capa 3).",
+        "",
+        "Generar señales sobre el medio es tarea de la capa física (capa 1).",
+        "La entrega extremo a extremo entre procesos es propia de la capa de transporte, no de un enlace entre adyacentes."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Objetivo principal"
+      }
+    },
+    {
+      "id": "enl-p02",
+      "unidad": "u3-enlace",
+      "enunciado": "¿Qué componente de la NIC permite transferir datos entre la placa y la RAM sin que la CPU realice cada transferencia?",
+      "opciones": [
+        "El búfer FIFO",
+        "La interrupción (IRQ)",
+        "El DMA",
+        "El controlador MAC"
+      ],
+      "correcta": 2,
+      "explicacion": "El DMA es el mecanismo que transfiere datos entre la NIC y la RAM sin que la CPU haga directamente cada transferencia.",
+      "por_que_falla": [
+        "El búfer FIFO almacena tramas para no perder datos en picos de tráfico; no mueve datos a la RAM.",
+        "La IRQ solo avisa a la CPU que llegó una trama y ya está copiada en RAM.",
+        "",
+        "El controlador MAC encapsula/desencapsula, maneja direcciones MAC y el acceso al medio."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Capa de Enlace en Dispositivos Finales (NIC)"
+      }
+    },
+    {
+      "id": "enl-p03",
+      "unidad": "u3-enlace",
+      "enunciado": "Durante un pico de tráfico entrante, ¿qué elemento de la NIC evita que se pierdan datos?",
+      "opciones": [
+        "El búfer FIFO",
+        "El firmware de la NIC",
+        "El driver del sistema operativo",
+        "La interrupción (IRQ)"
+      ],
+      "correcta": 0,
+      "explicacion": "El búfer FIFO es una memoria de almacenamiento rápido que previene la pérdida de datos durante picos de tráfico entrante.",
+      "por_que_falla": [
+        "",
+        "El firmware gestiona colas y buffers e inicializa la NIC, pero la memoria que absorbe el pico es el FIFO.",
+        "El driver es el software con el que el sistema operativo interactúa con la NIC; no almacena tramas.",
+        "La IRQ avisa a la CPU de una trama recibida; no almacena datos."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Capa de Enlace en Dispositivos Finales (NIC)"
+      }
+    },
+    {
+      "id": "enl-p04",
+      "unidad": "u3-enlace",
+      "enunciado": "¿Cuál de estas características NO corresponde al servicio no confiable, no orientado a conexión?",
+      "opciones": [
+        "Detecta los errores de transmisión y descarta las tramas erróneas",
+        "Entrega las tramas en el orden en que se reciben",
+        "No establece ni finaliza una conexión antes de enviar",
+        "Detecta y descarta las tramas duplicadas"
+      ],
+      "correcta": 3,
+      "explicacion": "En el servicio no confiable no se detectan ni se descartan posibles duplicados; eso lo hacen los servicios confiables.",
+      "por_que_falla": [
+        "Sí corresponde: todos los servicios detectan errores y descartan tramas erróneas.",
+        "Sí corresponde: entrega en el orden en que se reciben.",
+        "Sí corresponde: no tiene fases de conexión; cada trama es independiente.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Servicio no confiable, no orientado a conexión"
+      }
+    },
+    {
+      "id": "enl-p05",
+      "unidad": "u3-enlace",
+      "enunciado": "¿Qué ejemplo da el material para el servicio confiable, no orientado a conexión?",
+      "opciones": [
+        "Ethernet",
+        "IoT / redes de sensores",
+        "WiFi",
+        "Token Ring"
+      ],
+      "correcta": 2,
+      "explicacion": "WiFi confirma las tramas y retransmite, pero no establece conexión: es el ejemplo de servicio confiable no orientado a conexión.",
+      "por_que_falla": [
+        "Ethernet es el ejemplo del servicio no confiable, no orientado a conexión.",
+        "IoT y redes de sensores son el ejemplo del servicio confiable orientado a conexión.",
+        "",
+        "Token Ring aparece como ejemplo de acceso controlado (paso de tokens), no de tipo de servicio."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Resumen comparativo"
+      }
+    },
+    {
+      "id": "enl-p06",
+      "unidad": "u3-enlace",
+      "enunciado": "¿Qué distingue al servicio confiable orientado a conexión del confiable no orientado a conexión?",
+      "opciones": [
+        "Establece una conexión y entrega las tramas ordenadas",
+        "Retransmite las tramas perdidas o erróneas",
+        "Confirma con ACK las tramas recibidas correctamente",
+        "Realiza control de flujo entre emisor y receptor"
+      ],
+      "correcta": 0,
+      "explicacion": "Ambos servicios confiables retransmiten, confirman y controlan el flujo; solo el orientado a conexión establece la conexión y entrega ordenado.",
+      "por_que_falla": [
+        "",
+        "Los dos servicios confiables retransmiten tramas perdidas o erróneas.",
+        "Los dos servicios confiables usan confirmación (ACK).",
+        "Los dos servicios confiables hacen control de flujo."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Resumen comparativo"
+      }
+    },
+    {
+      "id": "enl-p07",
+      "unidad": "u3-enlace",
+      "enunciado": "En bit stuffing con bandera 01111110, ¿qué hace el transmisor?",
+      "opciones": [
+        "Inserta un 1 después de cinco 0 consecutivos en los datos",
+        "Inserta un 0 después de cinco 1 consecutivos en los datos",
+        "Inserta un 0 después de seis 1 consecutivos en los datos",
+        "Agrega un campo con la cantidad de bits que siguen en la trama"
+      ],
+      "correcta": 1,
+      "explicacion": "Al encontrar cinco 1 consecutivos el transmisor inserta un 0 de relleno, así nunca aparecen seis 1 seguidos como en la bandera.",
+      "por_que_falla": [
+        "Invierte la regla: el problema son las rachas de unos, no de ceros.",
+        "",
+        "Si esperara seis 1, la secuencia 0111111 0 ya reproduciría la bandera dentro de los datos.",
+        "Eso describe la técnica de cuenta de caracteres, no la inserción de patrones."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Inserción de patrones de inicio y fin (Bit Stuffing)"
+      }
+    },
+    {
+      "id": "enl-p08",
+      "unidad": "u3-enlace",
+      "enunciado": "¿Qué técnica de delimitación usa un campo del encabezado para indicar cuántos caracteres le siguen en la trama?",
+      "opciones": [
+        "Inserción de caracteres o patrones",
+        "Bit stuffing",
+        "Checksum",
+        "Cuenta de caracteres"
+      ],
+      "correcta": 3,
+      "explicacion": "La cuenta de caracteres especifica en el encabezado la cantidad de caracteres que siguen, y así se sabe dónde termina la trama.",
+      "por_que_falla": [
+        "La inserción de patrones delimita con secuencias especiales de inicio y fin, no con un contador.",
+        "El bit stuffing es la variante de inserción de patrones con bandera 01111110.",
+        "El checksum es una técnica de detección de errores, no de delimitación.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Delimitación de tramas"
+      }
+    },
+    {
+      "id": "enl-p09",
+      "unidad": "u3-enlace",
+      "enunciado": "El emisor envía 00001011 y 00000110 con checksum 11101110. En el receptor, la suma de los datos más el checksum da 11111111. ¿Qué significa?",
+      "opciones": [
+        "Hubo un error, porque el resultado correcto debería ser 00000000",
+        "Hubo un error en el último bit, que hay que corregir",
+        "No se detectaron errores en la transmisión",
+        "Hay que invertir el resultado y compararlo con el CRC"
+      ],
+      "correcta": 2,
+      "explicacion": "Con complemento a 1, la suma de los datos más el checksum da todo unos (11111111) cuando no se detectan errores.",
+      "por_que_falla": [
+        "Con este criterio el resultado esperado es todo unos, no todo ceros (el residuo 0 es el criterio del CRC).",
+        "El checksum solo detecta; no ubica ni corrige bits (eso lo hace Hamming).",
+        "",
+        "Checksum y CRC son métodos distintos; no se combinan así."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ejemplo 1: Checksum (suma de verificación)"
+      }
+    },
+    {
+      "id": "enl-p10",
+      "unidad": "u3-enlace",
+      "enunciado": "Con datos D = 1101 y generador G = 1011, ¿cuál es el CRC que se agrega a los datos?",
+      "opciones": [
+        "001",
+        "000",
+        "0001",
+        "011"
+      ],
+      "correcta": 0,
+      "explicacion": "1101000 ÷ 1011 en módulo 2 da residuo 001 (G de grado 3 → 3 bits); se transmite 1101001.",
+      "por_que_falla": [
+        "",
+        "000 es el residuo que obtiene el receptor al verificar la trama 1101001, no el CRC.",
+        "El CRC tiene tantos bits como el grado de G (3), no como su longitud (4).",
+        "Resulta de un error en algún XOR intermedio; el último paso es 1010 ⊕ 1011 = 0001 → 001."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ejemplo 2: CRC (Redundancia Cíclica) – versión 2 (paso a paso)"
+      }
+    },
+    {
+      "id": "enl-p11",
+      "unidad": "u3-enlace",
+      "enunciado": "En Hamming(7,4), ¿en qué posiciones de la trama se ubican los bits de paridad?",
+      "opciones": [
+        "1, 2 y 3",
+        "1, 2 y 4",
+        "5, 6 y 7",
+        "3, 5 y 6"
+      ],
+      "correcta": 1,
+      "explicacion": "P1, P2 y P4 ocupan las posiciones 1, 2 y 4; los datos van en 3, 5, 6 y 7 (trama _ _ 1 _ 0 1 1).",
+      "por_que_falla": [
+        "La posición 3 la ocupa D1, no una paridad.",
+        "",
+        "Las posiciones 5, 6 y 7 son de datos (D2, D3, D4).",
+        "Son posiciones de datos (D1, D2, D3)."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Corrección de errores"
+      }
+    },
+    {
+      "id": "enl-p12",
+      "unidad": "u3-enlace",
+      "enunciado": "Según el material, ¿cuál es la limitación de los bits de paridad como técnica de detección?",
+      "opciones": [
+        "Requieren un generador polinómico de grado alto",
+        "Necesitan un vínculo full dúplex para funcionar",
+        "Solo pueden usarse en servicios orientados a conexión",
+        "Solo se pueden aplicar a errores de bits individuales"
+      ],
+      "correcta": 3,
+      "explicacion": "Los bits de paridad son una técnica básica que solo sirve para errores individuales, no para errores de ráfaga.",
+      "por_que_falla": [
+        "El generador polinómico es propio del CRC.",
+        "El full dúplex es requisito de la ventana deslizante, no de la paridad.",
+        "La detección de errores se aplica en servicios confiables y no confiables, con o sin conexión.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Detección – Métodos de comprobación"
+      }
+    },
+    {
+      "id": "enl-p13",
+      "unidad": "u3-enlace",
+      "enunciado": "¿Qué diferencia a FEC de ARQ?",
+      "opciones": [
+        "En FEC el origen retransmite cuando el destino avisa del error",
+        "En FEC el destino sabe que hubo un error pero no cuál",
+        "En FEC el destino detecta el error y lo corrige de forma autónoma",
+        "En FEC solo se descartan las tramas erróneas sin avisar al origen"
+      ],
+      "correcta": 2,
+      "explicacion": "FEC (Forward Error Correction) permite al destino corregir el error por sí mismo, como con el código de Hamming.",
+      "por_que_falla": [
+        "Eso describe ARQ: el origen retransmite.",
+        "Eso también describe ARQ (solo detección).",
+        "",
+        "Descartar sin retransmitir es el comportamiento del servicio no confiable, no la corrección."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Detección vs. corrección"
+      }
+    },
+    {
+      "id": "enl-p14",
+      "unidad": "u3-enlace",
+      "enunciado": "En parada y espera, ¿cómo frena el receptor a un emisor demasiado rápido?",
+      "opciones": [
+        "Reteniendo o demorando el envío de los ACK",
+        "Enviando una señal de congestión (jamming)",
+        "Achicando el tamaño de ventana N a la mitad",
+        "Pidiendo que el emisor aplique bit stuffing"
+      ],
+      "correcta": 0,
+      "explicacion": "Como el emisor no envía la siguiente trama sin el ACK, el receptor controla el flujo reteniendo o demorando las confirmaciones.",
+      "por_que_falla": [
+        "",
+        "El jamming es la señal de CSMA/CD ante una colisión.",
+        "El tamaño de ventana es un parámetro de la ventana deslizante; parada y espera tiene una sola trama pendiente.",
+        "El bit stuffing es una técnica de delimitación, no de control de flujo."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Parada y Espera"
+      }
+    },
+    {
+      "id": "enl-p15",
+      "unidad": "u3-enlace",
+      "enunciado": "Una ventana deslizante con N = 8 abarca las tramas 1 a 8. Llega el ACK de la trama 1. ¿Qué ocurre?",
+      "opciones": [
+        "La ventana pasa a 9–16 y se envían ocho tramas nuevas",
+        "La ventana pasa a 2–9 y se transmite de inmediato la trama 9",
+        "Se retransmiten las tramas 2 a 8 porque aún no fueron confirmadas",
+        "La ventana queda en 1–8 hasta que lleguen los ACK de todas"
+      ],
+      "correcta": 1,
+      "explicacion": "Con el ACK de la trama 1 la ventana se desliza una posición, a 2–9, y la trama 9 se transmite de inmediato.",
+      "por_que_falla": [
+        "Solo se confirmó la trama 1, así que la ventana avanza una posición, no ocho.",
+        "",
+        "Solo se retransmite una trama si expira su temporizador; el ACK de la 1 no implica error en las demás.",
+        "La ventana se desliza con cada confirmación; no espera a que se confirmen todas."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ventana Deslizante – Funcionamiento y parámetros"
+      }
+    },
+    {
+      "id": "enl-p16",
+      "unidad": "u3-enlace",
+      "enunciado": "¿Qué requisito del vínculo menciona el material para la ventana deslizante?",
+      "opciones": [
+        "Que el medio sea inalámbrico 802.11",
+        "Que use acceso controlado por TDMA",
+        "Que sea un vínculo half dúplex",
+        "Que sea un vínculo full dúplex"
+      ],
+      "correcta": 3,
+      "explicacion": "El tamaño de ventana N define las tramas sin confirmar y requiere un vínculo full dúplex: mientras se envían tramas, vuelven los ACK.",
+      "por_que_falla": [
+        "La ventana deslizante no depende del tipo de medio; 802.11 se asocia a CSMA/CA.",
+        "TDMA es un método de acceso al medio, no un requisito de la ventana deslizante.",
+        "En half dúplex no se podrían recibir ACK mientras se transmiten tramas.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Ventana Deslizante – Funcionamiento y parámetros"
+      }
+    },
+    {
+      "id": "enl-p17",
+      "unidad": "u3-enlace",
+      "enunciado": "Varias estaciones transmiten al mismo tiempo sobre la misma frecuencia y cada receptor separa la señal deseada con un código exclusivo. ¿Qué método es?",
+      "opciones": [
+        "TDMA",
+        "FDMA",
+        "CDMA",
+        "CSMA/CA"
+      ],
+      "correcta": 2,
+      "explicacion": "En CDMA cada transmisor usa un código único; muchas estaciones transmiten a la vez en la misma frecuencia y el receptor decodifica con el mismo código.",
+      "por_que_falla": [
+        "TDMA reparte turnos de tiempo: transmite una estación a la vez.",
+        "FDMA asigna a cada estación su propia banda de frecuencia, no la misma.",
+        "",
+        "CSMA/CA es un método por contención con backoff y ACK, no usa códigos."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Acceso controlado – CDMA"
+      }
+    },
+    {
+      "id": "enl-p18",
+      "unidad": "u3-enlace",
+      "enunciado": "Una estación Ethernet 802.3 detecta una colisión mientras transmite. ¿Qué hace?",
+      "opciones": [
+        "Detiene la transmisión, envía jamming y espera un backoff aleatorio",
+        "Sigue transmitiendo hasta terminar y espera el ACK del destino",
+        "Espera su turno asignado y retransmite sin colisiones",
+        "Cambia a otra banda de frecuencia y retransmite"
+      ],
+      "correcta": 0,
+      "explicacion": "En CSMA/CD, al detectar colisión se detiene la transmisión, se envía la señal de congestión (jamming) y se reintenta tras un backoff aleatorio.",
+      "por_que_falla": [
+        "",
+        "Esperar un ACK para saber si hubo problema es el comportamiento de CSMA/CA.",
+        "Los turnos asignados son de acceso controlado (TDMA), no de Ethernet por contención.",
+        "Separar por bandas de frecuencia es FDMA."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CD – Ethernet 802.3 (Collision Detection)"
+      }
+    },
+    {
+      "id": "enl-p19",
+      "unidad": "u3-enlace",
+      "enunciado": "¿Por qué las redes wireless 802.11 usan CSMA/CA en lugar de CSMA/CD?",
+      "opciones": [
+        "Porque en wireless no puede haber colisiones",
+        "Porque la detección directa de colisiones no es posible en ese entorno",
+        "Porque CSMA/CA asigna turnos fijos y elimina la contención",
+        "Porque 802.11 usa división por código como las redes celulares"
+      ],
+      "correcta": 1,
+      "explicacion": "CSMA/CA se diseñó para prevenir colisiones donde la detección directa no es posible; por eso espera backoff antes de enviar y confirma con ACK.",
+      "por_que_falla": [
+        "Sí puede haber colisiones; justamente CSMA/CA intenta evitarlas.",
+        "",
+        "CSMA/CA sigue siendo acceso por contención; los turnos fijos son de TDMA.",
+        "La división por código es CDMA, un método de acceso controlado distinto."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "CSMA/CA – Redes Wireless 802.11 (Collision Avoidance)"
+      }
+    },
+    {
+      "id": "enl-p20",
+      "unidad": "u3-enlace",
+      "enunciado": "¿Cuál es un ejemplo de acceso al medio por contención según el material?",
+      "opciones": [
+        "TDMA en redes deterministas con paso de tokens",
+        "FDMA en sistemas de radio y satélite",
+        "CDMA en redes celulares",
+        "Ethernet con acceso compartido por cable"
+      ],
+      "correcta": 3,
+      "explicacion": "En la contención todos los nodos compiten por el medio compartido con riesgo de interferencia; el ejemplo es Ethernet compartido por cable (CSMA).",
+      "por_que_falla": [
+        "TDMA es acceso controlado: cada nodo espera su turno y no hay colisiones.",
+        "FDMA es acceso controlado: cada estación tiene su banda exclusiva.",
+        "CDMA es acceso controlado: separa a las estaciones por código.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Métodos básicos – ¿Cómo controlo el acceso?"
+      }
+    },
+    {
+      "id": "enl-p21",
+      "unidad": "u3-enlace",
+      "enunciado": "Por ruido en el canal cambian dos o más bits de un frame, no necesariamente consecutivos. ¿Cómo se llama este error?",
+      "opciones": [
+        "Error de bit individual",
+        "Atenuación",
+        "Error de ráfaga (burst)",
+        "Colisión"
+      ],
+      "correcta": 2,
+      "explicacion": "Un error de ráfaga es cuando dos o más bits cambian en el frame, aunque no sean consecutivos.",
+      "por_que_falla": [
+        "El error de bit individual afecta un único bit.",
+        "La atenuación es una perturbación (pérdida de potencia) que puede causar errores, no el tipo de error.",
+        "",
+        "Una colisión es la mezcla de señales por transmisiones simultáneas, no un tipo de error de bits por ruido."
+      ],
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Tipos de errores (ej. por ruido)"
+      }
+    }
+  ],
+  "glosario": [
+    {
+      "termino": "CSMA/CD",
+      "sigla": "Carrier Sense Multiple Access with Collision Detection",
+      "definicion": "Acceso por contención de Ethernet 802.3: escucha, transmite si está libre y ante colisión envía jamming y aplica backoff.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "CSMA/CA",
+      "sigla": "Carrier Sense Multiple Access with Collision Avoidance",
+      "definicion": "Acceso por contención de wireless 802.11: espera un backoff antes de transmitir y confirma con ACK.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "CRC",
+      "sigla": "Cyclic Redundancy Check (redundancia cíclica)",
+      "definicion": "Detección de errores por división binaria XOR con un generador; el residuo se agrega a los datos.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "ARQ",
+      "sigla": "Automatic Repeat Request",
+      "definicion": "Control de errores por detección: el destino sabe que hubo error y el origen retransmite.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "FEC",
+      "sigla": "Forward Error Correction",
+      "definicion": "Control de errores por corrección: el destino detecta y corrige el error por sí mismo.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "ACK",
+      "sigla": "Acknowledgement (acuse de recibo)",
+      "definicion": "Confirmación que envía el receptor cuando una trama llegó correctamente.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "DMA",
+      "sigla": "Direct Memory Access",
+      "definicion": "Mecanismo que transfiere datos entre la NIC y la RAM sin que la CPU haga cada transferencia.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "FIFO",
+      "sigla": "First In, First Out",
+      "definicion": "Búfer de almacenamiento rápido de la NIC que evita perder datos en picos de tráfico.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "IRQ",
+      "sigla": "Interrupt Request",
+      "definicion": "Interrupción que avisa a la CPU que llegó una trama y ya fue copiada a la RAM.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "TDMA",
+      "sigla": "Time-Division Multiple Access",
+      "definicion": "Acceso controlado por turnos de tiempo: una estación transmite a la vez, sin colisiones.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "FDMA",
+      "sigla": "Frequency-Division Multiple Access",
+      "definicion": "Acceso controlado que divide el canal en bandas de frecuencia, una exclusiva por estación.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "CDMA",
+      "sigla": "Code-Division Multiple Access",
+      "definicion": "Acceso controlado en el que todas las estaciones usan la misma frecuencia con códigos únicos.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "ASIC",
+      "sigla": "Application-Specific Integrated Circuit",
+      "definicion": "Chip dedicado que procesa y conmuta tramas a la velocidad del cable sin saturar la CPU.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "Jamming",
+      "definicion": "Señal de congestión que envía una estación CSMA/CD al detectar una colisión.",
+      "unidad": "u3-enlace"
+    },
+    {
+      "termino": "Backoff",
+      "definicion": "Tiempo de espera aleatorio antes de transmitir o retransmitir en CSMA/CD y CSMA/CA.",
+      "unidad": "u3-enlace"
+    }
+  ],
+  "dudas": [
+    {
+      "texto": "En la visualización de bit stuffing, el flujo original tiene catorce 1 seguidos más el 1 inicial de 10010 (quince 1 en total), pero el flujo transmitido muestra tres grupos 11111 0 y luego otra vez 10010, es decir, dieciséis 1. Lo consistente con la regla es 0110 11111 0 11111 0 11111 0 0010. Se usa esta versión en el ejercicio y en el proceso.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Inserción de patrones de inicio y fin (Bit Stuffing) – Visualización del flujo de datos"
+      }
+    },
+    {
+      "texto": "La tabla general de acceso controlado da como ejemplo las redes celulares, pero la tabla de TDMA da Token Ring y FDDI (paso de tokens), que no es estrictamente división del tiempo en ranuras. Se mantiene la asociación tal como la presenta el material.",
+      "fuente": {
+        "archivo": "capa2_enlace.md",
+        "seccion": "Acceso controlado – TDMA"
+      }
+    }
+  ]
+}

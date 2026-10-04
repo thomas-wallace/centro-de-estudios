@@ -1,0 +1,10 @@
+{
+  "_comentario": "Ids fijos de conceptos clave por unidad. Cada parte DEBE crear los de su unidad y puede relacionarse con los de otras unidades.",
+  "u1-intro": ["modelo-en-capas", "modelo-osi", "modelo-hibrido", "protocolo", "pdu", "encapsulamiento", "conmutacion-de-paquetes", "conmutacion-de-circuitos", "multiplexacion", "topologia-estrella", "topologia-malla", "lan", "unicast", "broadcast", "multicast", "servicio-confiable", "servicio-orientado-a-conexion"],
+  "u2-fisica": ["capa-fisica", "senal-digital", "senal-analogica", "ancho-de-banda", "ruido", "atenuacion", "limite-de-shannon", "codificacion", "modulacion", "par-trenzado", "utp", "fibra-optica", "fibra-monomodo", "fibra-multimodo", "medios-no-guiados", "enlace-satelital", "repetidor"],
+  "u3-enlace": ["capa-de-enlace", "trama", "entramado", "bit-stuffing", "deteccion-de-errores", "crc", "checksum", "codigo-hamming", "control-de-flujo", "parada-y-espera", "ventana-deslizante", "acceso-al-medio", "colision", "csma-cd", "csma-ca", "tdma"],
+  "u4-ethernet": ["ethernet", "subcapa-llc", "subcapa-mac", "direccion-mac", "trama-ethernet-ii", "ethertype", "fcs", "mtu", "hub", "switch", "tabla-mac", "flooding", "bridge", "dominio-de-colision", "dominio-de-broadcast", "full-duplex", "half-duplex"],
+  "u5-vlan-stp": ["vlan", "ieee-802-1q", "enlace-trunk", "puerto-de-acceso", "stp", "loop-capa-2", "broadcast-storm", "root-switch", "bpdu", "lacp", "stacking"],
+  "u6-ip": ["capa-de-red", "protocolo-ip", "red-de-datagramas", "circuito-virtual", "direccion-ipv4", "encabezado-ipv4", "ttl", "fragmentacion", "mascara-de-red", "subnetting", "vlsm", "cidr", "direccion-de-red", "direccion-de-broadcast", "direcciones-privadas", "nat", "pat"],
+  "u7-ruteo": ["router", "tabla-de-ruteo", "longest-prefix-match", "ruteo-estatico", "ruteo-dinamico", "vector-distancia", "rip", "estado-de-enlace", "gateway-por-defecto", "ruta-por-defecto", "loopback", "arp", "icmp", "ping", "traceroute", "dhcp"]
+}

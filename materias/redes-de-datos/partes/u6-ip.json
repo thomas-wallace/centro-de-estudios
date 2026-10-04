@@ -1,0 +1,2938 @@
+{
+  "conceptos": [
+    {
+      "id": "capa-de-red",
+      "nombre": "Capa de red (capa 3)",
+      "unidad": "u6-ip",
+      "definicion": "Capa que direcciona y encamina paquetes entre el host origen y el host destino, aunque atraviesen varias redes.",
+      "definicion_extendida": "Brinda una comunicación lógica de extremo a extremo y usa los servicios por salto de la capa de acceso (2–1). Sus tareas son direccionamiento, enrutamiento, forwarding y fragmentación. Los hosts procesan todas las capas; los routers solo red y acceso.",
+      "ejemplo": "Un paquete de un host origen pasa por Router A, Router B y Router D: la capa de red resuelve el camino completo, mientras la capa de acceso hace tres transmisiones independientes, una por enlace.",
+      "por_que_importa": "Permite comunicar hosts de redes distintas: la red resuelve el camino completo y el acceso, cada salto.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Capa de red: comunicación entre hosts"
+      }
+    },
+    {
+      "id": "protocolo-ip",
+      "nombre": "Protocolo IP (Internet Protocol)",
+      "unidad": "u6-ip",
+      "definicion": "Protocolo de capa 3 que es el estándar de direccionamiento lógico sobre el que converge todo el tráfico de Internet.",
+      "definicion_extendida": "Definido por la IETF (RFC 791 y RFC 8200), está implementado en todos los equipos de la red y su PDU es el paquete. Es no orientado a conexión (red de datagramas), de mejor esfuerzo y no confiable: no garantiza entrega, delay ni throughput. La versión estándar actual es IPv4, coexistiendo con IPv6.",
+      "ejemplo": "En el modelo \"reloj de arena\", IP es la cintura: arriba están TCP/UDP y HTTP/FTP/SMTP, abajo los protocolos de enlace y física.",
+      "por_que_importa": "Es el punto común de toda Internet; como es simple y sin garantías, la confiabilidad queda a cargo de las capas superiores.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Protocolo IP – Características Principales"
+      }
+    },
+    {
+      "id": "red-de-datagramas",
+      "nombre": "Red de datagramas",
+      "unidad": "u6-ip",
+      "definicion": "Red no orientada a conexión donde cada paquete lleva la dirección de destino y se encamina de forma independiente.",
+      "definicion_extendida": "Los conmutadores deciden el próximo nodo con la dirección de destino del datagrama y su tabla de conmutación. Cada decisión es independiente de un datagrama a otro, por lo que dos paquetes del mismo flujo pueden tomar caminos distintos. Ante una falla, los paquetes siguientes eligen solos un camino alternativo, pero la QoS y el control de congestión son complejos.",
+      "ejemplo": "Las redes IP: el Equipo A envía el Paquete 1 y el Paquete 2 al Equipo B y cada uno toma un camino distinto.",
+      "por_que_importa": "Es el modelo de Internet: tolera fallas sin reestablecer nada, a costa de no garantizar orden ni calidad de servicio.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Redes de Datagramas"
+      }
+    },
+    {
+      "id": "circuito-virtual",
+      "nombre": "Circuito virtual (CV)",
+      "unidad": "u6-ip",
+      "definicion": "Conexión lógica que se establece antes de transmitir y que hace que todos los paquetes sigan el mismo camino.",
+      "definicion_extendida": "Cada nodo decide el próximo salto con el identificador del CV y su tabla de conmutación de CV. El establecimiento sigue la secuencia solicitud, llamada entrante, aceptación y conexión establecida; recién después fluyen los datos. Ante una falla, todos los circuitos que pasan por el equipo afectado deben restablecerse.",
+      "ejemplo": "Redes MPLS, ATM y Frame Relay rutean según el identificador del circuito virtual.",
+      "por_que_importa": "Al predefinir el camino es más sencillo garantizar QoS y evitar congestión que en una red de datagramas.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Redes de Circuitos Virtuales (CV)"
+      }
+    },
+    {
+      "id": "ip-best-effort",
+      "nombre": "Mejor esfuerzo (best effort)",
+      "unidad": "u6-ip",
+      "definicion": "Modelo de servicio en el que IP intenta entregar los datos pero no garantiza que todos los paquetes lleguen.",
+      "definicion_extendida": "IP no realiza ninguna acción ante la pérdida de paquetes y no asegura un límite de delay ni un throughput específico. Por esa simplicidad y falta de garantías, resolver esos problemas queda a cargo de las capas superiores.",
+      "ejemplo": "Si un router descarta un paquete, IP no lo retransmite: es la capa de transporte la que debe detectar la pérdida.",
+      "por_que_importa": "Explica por qué IP es simple y escalable y por qué existen mecanismos de confiabilidad por encima de la capa de red.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Protocolo IP – Características del Servicio y Confiabilidad"
+      }
+    },
+    {
+      "id": "encabezado-ipv4",
+      "nombre": "Encabezado IPv4",
+      "unidad": "u6-ip",
+      "definicion": "Cabecera de control que IP agrega a cada paquete, con campos para versión, servicio, largo, fragmentación, TTL, protocolo, checksum y direcciones.",
+      "definicion_extendida": "Sin opciones mide 20 bytes; las opciones agregan de 0 a 40 bytes. Incluye Version, HLen, Type of Service (8 bits), Total length (16), Identification (16), flags DF/MF, Fragment Offset (13), TTL (8), Protocol (8), Header checksum (16) y las direcciones de origen y destino (32 bits cada una).",
+      "ejemplo": "En el ejemplo de fragmentación, la cabecera IP aporta 20 B a un datagrama de 4028 B (20 B IP + 8 B ICMP + 4000 B de datos).",
+      "por_que_importa": "Cada router lee estos campos para encaminar, decrementar el TTL, fragmentar o descartar el paquete.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Encabezado IP"
+      }
+    },
+    {
+      "id": "ttl",
+      "nombre": "TTL (Time To Live)",
+      "unidad": "u6-ip",
+      "definicion": "Campo de 8 bits del encabezado IPv4 que evita que los paquetes circulen infinitamente por la red.",
+      "definicion_extendida": "El transmisor lo fija al enviar el paquete; cada router que atraviesa lo decrementa en uno y, cuando llega a 0, el paquete se descarta automáticamente.",
+      "ejemplo": "Un paquete enviado con TTL = 3 que debe atravesar 4 routers se descarta en el tercer router, cuando su TTL llega a 0.",
+      "por_que_importa": "Impide que un error de ruteo deje paquetes dando vueltas para siempre y consumiendo recursos.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Time To Live (TTL)"
+      }
+    },
+    {
+      "id": "ip-dscp",
+      "nombre": "DSCP / DiffServ",
+      "unidad": "u6-ip",
+      "definicion": "Código que se marca en el campo ToS del encabezado IP para clasificar el tráfico según su calidad de servicio (DiffServ).",
+      "definicion_extendida": "DiffServ clasifica y marca el tráfico, luego lo encola y prioriza (policing, shaping, CBWFQ + LLQ). Los valores DSCP tienen nombres como CS0 (best effort, 0), AF11–AF43 (clases de datos y multimedia), CS6 (control de red, 48) o EF (telefonía, 46).",
+      "ejemplo": "Un paquete de voz se marca con EF (decimal 46, binario 101 110) y el tráfico común con CS0 (0, Default/Best Effort).",
+      "por_que_importa": "Permite dar prioridad a tráfico sensible (telefonía, conferencias) dentro de una red IP que de por sí es best effort.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "DiffServ"
+      }
+    },
+    {
+      "id": "fragmentacion",
+      "nombre": "Fragmentación IP",
+      "unidad": "u6-ip",
+      "definicion": "División de un paquete IP que supera la MTU del enlace en fragmentos más chicos, cada uno con su propia cabecera IP.",
+      "definicion_extendida": "Puede hacerse en el origen o en el trayecto y el reensamblado ocurre en el destino final. Usa los campos Identification (mismo valor en todos los fragmentos), los flags DF y MF y el Fragment Offset, medido en unidades de 8 bytes.",
+      "ejemplo": "Un datagrama de 4028 B con MTU 1500 se divide en tres fragmentos con ID 98765 y offsets 0, 185 y 370.",
+      "por_que_importa": "Permite que un paquete atraviese enlaces con MTU distintas; es una de las cuatro tareas de la capa de red.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Fragmentación"
+      }
+    },
+    {
+      "id": "ip-flags-df-mf",
+      "nombre": "Flags DF y MF",
+      "unidad": "u6-ip",
+      "definicion": "Bits del encabezado IPv4 que controlan la fragmentación: DF la impide y MF indica que quedan fragmentos por recibir.",
+      "definicion_extendida": "DF (Don't Fragment) en 1 prohíbe fragmentar el paquete. MF (More Fragments) vale 1 en todos los fragmentos salvo el último, donde vale 0, lo que le indica al destino que ya tiene el final del datagrama.",
+      "ejemplo": "En el ejemplo de 4028 B, los fragmentos 1 y 2 llevan MF = 1 y el fragmento final lleva MF = 0.",
+      "por_que_importa": "Sin MF el destino no sabría cuándo terminó de recibir un datagrama fragmentado.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Fragmentación – Campos involucrados"
+      }
+    },
+    {
+      "id": "ip-fragment-offset",
+      "nombre": "Fragment Offset",
+      "unidad": "u6-ip",
+      "definicion": "Campo de 13 bits que indica la posición de los datos de un fragmento dentro del datagrama original, en unidades de 8 bytes.",
+      "definicion_extendida": "El destino lo usa para ubicar cada fragmento al reensamblar. Como se mide en bloques de 8 bytes, el tamaño de datos de cada fragmento (salvo el último) debe ser múltiplo de 8. El primer fragmento siempre tiene offset 0.",
+      "ejemplo": "El segundo fragmento empieza en el byte 1480 de los datos, así que su offset es 1480 / 8 = 185; el tercero empieza en el byte 2960, offset 370.",
+      "por_que_importa": "Permite reensamblar en orden aunque los fragmentos lleguen desordenados o por caminos distintos.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Fragmentación de Paquetes IP – Ejemplo práctico"
+      }
+    },
+    {
+      "id": "direccion-ipv4",
+      "nombre": "Dirección IPv4",
+      "unidad": "u6-ip",
+      "definicion": "Identificador único de 32 bits asignado a una interfaz de red de un host, servidor o router.",
+      "definicion_extendida": "Se escribe en notación de punto decimal: 4 bytes separados por puntos. Se divide en porción de red (identifica el segmento lógico) y porción de host (identifica el dispositivo). Dos equipos con la misma porción de red están en la misma red IP y se comunican sin enrutamiento.",
+      "ejemplo": "Los bytes 00001100.00001011.00001010.00001001 forman la dirección 12.11.10.9.",
+      "por_que_importa": "Es lo que usan los routers para encaminar: no necesitan conocer cada host, solo cómo llegar a cada red.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Direcciones IPv4"
+      }
+    },
+    {
+      "id": "ip-clases-ipv4",
+      "nombre": "Clases de direcciones IPv4 (A, B, C, D, E)",
+      "unidad": "u6-ip",
+      "definicion": "Clasificación original de las direcciones IPv4 según sus primeros bits, que fijaba cuántos bits son de red y cuántos de host.",
+      "definicion_extendida": "Clase A empieza con 0 (8 bits de red, 1er octeto 1–127), B con 10 (16 bits de red, 128–191), C con 110 (24 bits de red, 192–223); A, B y C son unicast. Clase D (1110, 224–239) es multicast y clase E (11110, desde 240) está reservada para investigación.",
+      "ejemplo": "12.0.0.0 es clase A (red 12.0.0.0, broadcast 12.255.255.255); 192.168.5.0 es clase C (broadcast 192.168.5.255).",
+      "por_que_importa": "Permite reconocer rápidamente el tipo de una dirección; su rigidez desperdiciaba direcciones y llevó a CIDR.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Clases de Direcciones IPv4"
+      }
+    },
+    {
+      "id": "ip-rir",
+      "nombre": "Registros Regionales de Internet (RIR)",
+      "unidad": "u6-ip",
+      "definicion": "Organismos regionales en los que IANA delega la distribución de bloques de direcciones IP.",
+      "definicion_extendida": "IANA, como parte de ICANN, asigna globalmente bloques a cinco RIR: LACNIC (América Latina y el Caribe), ARIN (América del Norte), RIPE NCC (Eurasia/Medio Oriente), AFRINIC (África) y APNIC (Asia/Pacífico). Debajo pueden existir registros nacionales.",
+      "ejemplo": "LACNIC coordina la región y tiene registros nacionales como NIC México o NIC Brasil; APNIC tiene JPNIC, KRNIC o CNNIC.",
+      "por_que_importa": "Explica de dónde salen las direcciones públicas y por qué no se pueden elegir arbitrariamente, a diferencia de las privadas.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Tipo de Direcciones IP – Organismos de Asignación"
+      }
+    },
+    {
+      "id": "direccion-de-red",
+      "nombre": "Dirección de red",
+      "unidad": "u6-ip",
+      "definicion": "Primera dirección de una red o subred, con todos ceros en la porción de host, que representa a la red completa.",
+      "definicion_extendida": "Se calcula como IP AND máscara. No se asigna a ningún host. A partir de ella los equipos determinan en qué red están ubicados.",
+      "ejemplo": "Para 193.1.1.77/27: 01001101 AND 11100000 = 01000000, así que la dirección de red es 193.1.1.64.",
+      "por_que_importa": "Es el identificador que aparece en las tablas de ruteo y el punto de partida de todo cálculo de subnetting.",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Direcciones de red y de broadcast"
+      }
+    },
+    {
+      "id": "direccion-de-broadcast",
+      "nombre": "Dirección de broadcast",
+      "unidad": "u6-ip",
+      "definicion": "Última dirección de una red o subred, con todos unos en la porción de host, usada para llegar a todos sus equipos.",
+      "definicion_extendida": "Un mensaje enviado a ella llega a todos los dispositivos de la red simultáneamente. No se asigna a ningún host, por eso cada red tiene 2 direcciones menos disponibles (red y broadcast).",
+      "ejemplo": "En 192.168.5.0/24 la dirección de broadcast es 192.168.5.255; en 193.1.1.0/25 es 193.1.1.127.",
+      "por_que_importa": "Hay que reservarla al calcular rangos: el último host válido es broadcast − 1.",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Direcciones de red y de broadcast"
+      }
+    },
+    {
+      "id": "mascara-de-red",
+      "nombre": "Máscara de red",
+      "unidad": "u6-ip",
+      "definicion": "Número de 32 bits con formato de dirección IP que marca con 1 los bits de red y con 0 los de host.",
+      "definicion_extendida": "Todos los 1 se agrupan a la izquierda y los 0 a la derecha. Con VLSM, las clases ya no indican dónde termina la red, y la máscara lo resuelve. En notación CIDR se escribe como /n, donde n es la cantidad de unos consecutivos.",
+      "ejemplo": "11111111.11111111.11111111.10000000 = 255.255.255.128 = /25; /26 = 255.255.255.192; /30 = 255.255.255.252.",
+      "por_que_importa": "Sin ella no se puede saber a qué subred pertenece un equipo ni calcular su dirección de red.",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Concepto – Máscara de Red"
+      }
+    },
+    {
+      "id": "subnetting",
+      "nombre": "Subnetting",
+      "unidad": "u6-ip",
+      "definicion": "División de una red (clase A, B o C) en subredes más chicas tomando bits de la porción de host.",
+      "definicion_extendida": "Cada bit prestado duplica la cantidad de subredes (2ⁿ subredes) y los bits de host restantes h dan 2ʰ − 2 hosts por subred. El prefijo se alarga: tomar 1 bit de una /24 da dos /25.",
+      "ejemplo": "Dividir 193.1.1.0/24 en dos subredes: 1 bit prestado, máscara 255.255.255.128, subredes 193.1.1.0/25 y 193.1.1.128/25 con 126 hosts cada una.",
+      "por_que_importa": "Usa con mayor eficiencia las direcciones y fue una de las soluciones a su escasez.",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Subnetting"
+      }
+    },
+    {
+      "id": "vlsm",
+      "nombre": "VLSM (Variable Length Subnet Mask)",
+      "unidad": "u6-ip",
+      "definicion": "Subnetting con máscaras de distinta longitud dentro del mismo bloque, ajustando cada subred a su necesidad.",
+      "definicion_extendida": "Surge del subnetting sucesivo: se divide una red y luego se vuelve a dividir solo alguna de las subredes. Con VLSM las reglas rígidas de las clases dejan de valer y la máscara indica dónde termina la red.",
+      "ejemplo": "Dividir 193.1.1.0/24 en /25 y luego subdividir la segunda /25: queda 193.1.1.0/25, 193.1.1.128/26 y 193.1.1.192/26.",
+      "por_que_importa": "Evita desperdiciar direcciones cuando los segmentos tienen cantidades de hosts muy distintas.",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Subnetting sucesivo: resultado VLSM"
+      }
+    },
+    {
+      "id": "cidr",
+      "nombre": "CIDR (Classless Inter-Domain Routing)",
+      "unidad": "u6-ip",
+      "definicion": "Método que reemplazó a las clases A, B y C usando prefijos para asignar direcciones y agregar rutas a escala de Internet.",
+      "definicion_extendida": "Mientras subnetting y VLSM dividen un bloque dentro de una organización, CIDR aplica los prefijos sin clases al direccionamiento global. Permite asignar bloques flexibles y agrupar redes (supernetting) bajo un prefijo común.",
+      "ejemplo": "/24 indica que los primeros 24 bits son de red, sin importar la clase de la dirección.",
+      "por_que_importa": "Hizo más eficiente la asignación de direcciones y redujo las tablas de ruteo globales.",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Classless Inter-Domain Routing (CIDR)"
+      }
+    },
+    {
+      "id": "ip-supernetting",
+      "nombre": "Supernetting (agregación de rutas)",
+      "unidad": "u6-ip",
+      "definicion": "Camino inverso al subnetting: agregar varias redes contiguas en una sola declaración de ruta.",
+      "definicion_extendida": "Es el uso de CIDR para colapsar las tablas de ruteo globales. Optimiza el tráfico de Internet y reduce drásticamente el tamaño de las tablas de ruteo.",
+      "ejemplo": "Varias redes continuas de una organización se anuncian hacia Internet como un único prefijo común.",
+      "por_que_importa": "Sin agregación, las tablas de los routers de Internet tendrían una entrada por cada red chica.",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Supernetting: el camino inverso"
+      }
+    },
+    {
+      "id": "direcciones-privadas",
+      "nombre": "Direcciones privadas (RFC 1918)",
+      "unidad": "u6-ip",
+      "definicion": "Bloques de direcciones reservados para uso exclusivo en redes internas, no accesibles desde Internet.",
+      "definicion_extendida": "RFC 1918 reserva 10.0.0.0–10.255.255.255, 172.16.0.0–172.31.255.255 y 192.168.0.0–192.168.255.255. Su asignación dentro de la red local es arbitraria y se reutilizan en millones de redes gracias a NAT. Aparte, 169.254.0.0–169.254.255.255 es el bloque de enlace local (RFC 3927).",
+      "ejemplo": "La salida de ipconfig muestra 192.168.1.2 con máscara 255.255.255.0: es una dirección privada.",
+      "por_que_importa": "Junto con NAT permitió seguir creciendo pese a la escasez de direcciones públicas; además actúan como barrera desde el exterior.",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Direcciones IP privadas"
+      }
+    },
+    {
+      "id": "nat",
+      "nombre": "NAT (Network Address Translation)",
+      "unidad": "u6-ip",
+      "definicion": "Mecanismo, ejecutado por routers, que traduce direcciones internas (privadas) a direcciones externas para comunicarse con otras redes.",
+      "definicion_extendida": "Define dos direcciones para un mismo equipo: interior (dentro de la red privada) y exterior (hacia afuera). Tiene dos formas: NAT básico (1 a 1, estático o dinámico) y PAT (por puerto). Tiene problemas con VoIP, P2P y protocolos que no toleran cambios de IP o puerto.",
+      "ejemplo": "Un router NAT con interfaz privada 10.0.0.4 e interfaz pública 138.76.29.7 conecta la red 10.0.0.0/24 con Internet.",
+      "por_que_importa": "Es la solución clave a la escasez de IPv4: muchas redes reutilizan los mismos rangos privados.",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Protocolo NAT"
+      }
+    },
+    {
+      "id": "ip-nat-basico",
+      "nombre": "NAT básico (1 a 1)",
+      "unidad": "u6-ip",
+      "definicion": "Forma de NAT que asocia cada dirección interna a una dirección externa exclusiva, de forma estática o dinámica.",
+      "definicion_extendida": "A la ida el router traduce la IP de origen y a la vuelta la IP de destino, usando la misma asociación. Como cada interno tiene su IP pública, se pueden iniciar conexiones desde Internet hacia los equipos internos.",
+      "ejemplo": "La PC 192.168.1.2 sale como 200.10.0.5 (del pool 200.10.0.4–200.10.0.10) hacia el servidor 99.12.1.36.",
+      "por_que_importa": "Sirve cuando un equipo interno debe ser accesible desde afuera, pero consume una IP pública por equipo.",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "02 – NAT Básico"
+      }
+    },
+    {
+      "id": "pat",
+      "nombre": "PAT (Port Address Translation)",
+      "unidad": "u6-ip",
+      "definicion": "Forma de NAT que mapea muchas direcciones privadas a una única IP pública, diferenciando sesiones por número de puerto.",
+      "definicion_extendida": "A los paquetes salientes el router les cambia (IP origen, puerto) por (IP de NAT, puerto) y registra la asociación en la tabla NAT; a los entrantes les cambia el destino consultando esa tabla. En general no permite iniciar conexiones entrantes desde Internet.",
+      "ejemplo": "10.0.0.1:3345 sale como 138.76.29.7:3345 hacia 128.119.40.186:80; la respuesta a 138.76.29.7:3345 vuelve a 10.0.0.1:3345.",
+      "por_que_importa": "Es lo que hace el router hogareño: toda la casa navega con una sola IP pública.",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "03 – Port Address Translation (PAT)"
+      }
+    }
+  ],
+  "relaciones": [
+    {
+      "origen": "protocolo-ip",
+      "destino": "capa-de-red",
+      "verbo": "opera en",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Protocolo IP – Características Principales"
+      }
+    },
+    {
+      "origen": "protocolo-ip",
+      "destino": "red-de-datagramas",
+      "verbo": "funciona como una",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Protocolo IP – Características del Servicio y Confiabilidad"
+      }
+    },
+    {
+      "origen": "red-de-datagramas",
+      "destino": "circuito-virtual",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "01 – Circuitos Virtuales y Datagramas"
+      }
+    },
+    {
+      "origen": "protocolo-ip",
+      "destino": "ip-best-effort",
+      "verbo": "brinda un servicio de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Protocolo IP – Características del Servicio y Confiabilidad"
+      }
+    },
+    {
+      "origen": "protocolo-ip",
+      "destino": "direccion-ipv4",
+      "verbo": "identifica las interfaces con",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Direcciones IPv4"
+      }
+    },
+    {
+      "origen": "encabezado-ipv4",
+      "destino": "protocolo-ip",
+      "verbo": "es parte de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Encabezado IP"
+      }
+    },
+    {
+      "origen": "ttl",
+      "destino": "encabezado-ipv4",
+      "verbo": "es un campo de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Time To Live (TTL)"
+      }
+    },
+    {
+      "origen": "ip-dscp",
+      "destino": "encabezado-ipv4",
+      "verbo": "se marca en el campo ToS de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "ToS (Type of Service)"
+      }
+    },
+    {
+      "origen": "ip-flags-df-mf",
+      "destino": "encabezado-ipv4",
+      "verbo": "son campos de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Encabezado IP"
+      }
+    },
+    {
+      "origen": "ip-fragment-offset",
+      "destino": "encabezado-ipv4",
+      "verbo": "es un campo de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Encabezado IP"
+      }
+    },
+    {
+      "origen": "encabezado-ipv4",
+      "destino": "direccion-ipv4",
+      "verbo": "contiene la",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Dirección IP de Origen y Destino"
+      }
+    },
+    {
+      "origen": "fragmentacion",
+      "destino": "ip-flags-df-mf",
+      "verbo": "usa",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Fragmentación – Campos involucrados"
+      }
+    },
+    {
+      "origen": "fragmentacion",
+      "destino": "ip-fragment-offset",
+      "verbo": "usa",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Fragmentación – Campos involucrados"
+      }
+    },
+    {
+      "origen": "fragmentacion",
+      "destino": "capa-de-red",
+      "verbo": "es una tarea de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Tareas de la capa de red"
+      }
+    },
+    {
+      "origen": "ip-dscp",
+      "destino": "ip-best-effort",
+      "verbo": "codifica con CS0 el tráfico",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "DiffServ"
+      }
+    },
+    {
+      "origen": "ip-clases-ipv4",
+      "destino": "direccion-ipv4",
+      "verbo": "clasifica",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Clases de Direcciones IPv4"
+      }
+    },
+    {
+      "origen": "ip-rir",
+      "destino": "direccion-ipv4",
+      "verbo": "distribuye bloques de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Tipo de Direcciones IP – Organismos de Asignación"
+      }
+    },
+    {
+      "origen": "mascara-de-red",
+      "destino": "direccion-ipv4",
+      "verbo": "separa la porción de red y de host de",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Concepto – Máscara de Red"
+      }
+    },
+    {
+      "origen": "direccion-de-red",
+      "destino": "mascara-de-red",
+      "verbo": "se calcula con",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Direcciones de red y de broadcast"
+      }
+    },
+    {
+      "origen": "direccion-de-broadcast",
+      "destino": "direccion-de-red",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Direcciones reservadas en cada red"
+      }
+    },
+    {
+      "origen": "subnetting",
+      "destino": "mascara-de-red",
+      "verbo": "alarga el prefijo de",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Subnetting: cómo se crean subredes"
+      }
+    },
+    {
+      "origen": "vlsm",
+      "destino": "subnetting",
+      "verbo": "es un subnetting sucesivo de",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Subnetting sucesivo: resultado VLSM"
+      }
+    },
+    {
+      "origen": "vlsm",
+      "destino": "ip-clases-ipv4",
+      "verbo": "deja sin efecto las reglas rígidas de",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Variable Length Subnet Mask (VLSM)"
+      }
+    },
+    {
+      "origen": "cidr",
+      "destino": "ip-clases-ipv4",
+      "verbo": "reemplaza a",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "¿Qué es CIDR?"
+      }
+    },
+    {
+      "origen": "cidr",
+      "destino": "vlsm",
+      "verbo": "lleva al ruteo global los prefijos de",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Classless Inter-Domain Routing (CIDR)"
+      }
+    },
+    {
+      "origen": "ip-supernetting",
+      "destino": "cidr",
+      "verbo": "es una aplicación de",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "¿Qué es CIDR?"
+      }
+    },
+    {
+      "origen": "ip-supernetting",
+      "destino": "subnetting",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Supernetting: el camino inverso"
+      }
+    },
+    {
+      "origen": "cidr",
+      "destino": "mascara-de-red",
+      "verbo": "expresa con /n la",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejemplo: Cálculo de la máscara de red"
+      }
+    },
+    {
+      "origen": "direcciones-privadas",
+      "destino": "direccion-ipv4",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Tipo de Direcciones IP – Otra clasificación"
+      }
+    },
+    {
+      "origen": "direcciones-privadas",
+      "destino": "ip-clases-ipv4",
+      "verbo": "reservan un bloque de cada una de las",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Direcciones IP privadas"
+      }
+    },
+    {
+      "origen": "nat",
+      "destino": "direcciones-privadas",
+      "verbo": "traduce a direcciones públicas las",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Solución 02 (clave): NAT"
+      }
+    },
+    {
+      "origen": "ip-nat-basico",
+      "destino": "nat",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Formas de NAT"
+      }
+    },
+    {
+      "origen": "pat",
+      "destino": "nat",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Formas de NAT"
+      }
+    },
+    {
+      "origen": "pat",
+      "destino": "ip-nat-basico",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "03 – Port Address Translation (PAT)"
+      }
+    },
+    {
+      "origen": "nat",
+      "destino": "subnetting",
+      "verbo": "complementa a",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Soluciones de Mitigación"
+      }
+    },
+    {
+      "origen": "fragmentacion",
+      "destino": "mtu",
+      "verbo": "ocurre cuando el paquete supera la",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Límite de Transmisión (MTU)"
+      }
+    },
+    {
+      "origen": "red-de-datagramas",
+      "destino": "conmutacion-de-paquetes",
+      "verbo": "es una forma de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "La capa de Red – Temas"
+      }
+    },
+    {
+      "origen": "circuito-virtual",
+      "destino": "servicio-orientado-a-conexion",
+      "verbo": "brinda un",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Redes de Circuitos Virtuales (CV)"
+      }
+    },
+    {
+      "origen": "ttl",
+      "destino": "router",
+      "verbo": "se decrementa en uno en cada",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Time To Live (TTL)"
+      }
+    },
+    {
+      "origen": "ttl",
+      "destino": "traceroute",
+      "verbo": "es aprovechado por",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Time To Live (TTL)"
+      }
+    },
+    {
+      "origen": "icmp",
+      "destino": "protocolo-ip",
+      "verbo": "se encapsula en",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Protocol (Protocolo)"
+      }
+    },
+    {
+      "origen": "direccion-de-broadcast",
+      "destino": "broadcast",
+      "verbo": "implementa el envío",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Tipo de Direcciones IP – Tipos de Direccionamiento"
+      }
+    },
+    {
+      "origen": "ip-clases-ipv4",
+      "destino": "multicast",
+      "verbo": "reserva la clase D para",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Tipo de Direcciones IP – Clases de Direcciones IPv4"
+      }
+    },
+    {
+      "origen": "router",
+      "destino": "capa-de-red",
+      "verbo": "opera en",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "La capa de red: procesamiento y selección de ruta"
+      }
+    },
+    {
+      "origen": "capa-de-red",
+      "destino": "capa-de-enlace",
+      "verbo": "usa los servicios por salto de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Capa de red: comunicación entre hosts"
+      }
+    },
+    {
+      "origen": "capa-de-red",
+      "destino": "modelo-hibrido",
+      "verbo": "es parte de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Capa de red: comunicación entre hosts"
+      }
+    },
+    {
+      "origen": "mascara-de-red",
+      "destino": "longest-prefix-match",
+      "verbo": "es usada por",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Concepto – Máscara de Red"
+      }
+    },
+    {
+      "origen": "ip-supernetting",
+      "destino": "tabla-de-ruteo",
+      "verbo": "reduce el tamaño de la",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Supernetting: el camino inverso"
+      }
+    },
+    {
+      "origen": "nat",
+      "destino": "router",
+      "verbo": "es ejecutado por",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Protocolo NAT"
+      }
+    },
+    {
+      "origen": "encabezado-ipv4",
+      "destino": "checksum",
+      "verbo": "se protege con",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Encabezado IP"
+      }
+    }
+  ],
+  "taxonomias": [
+    {
+      "id": "ip-tax-direcciones",
+      "nombre": "Tipos de direcciones IPv4",
+      "unidad": "u6-ip",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Tipo de Direcciones IP"
+      },
+      "raiz": {
+        "nombre": "Direcciones IPv4",
+        "descripcion": "32 bits en notación de punto decimal",
+        "hijos": [
+          {
+            "nombre": "Por clase",
+            "descripcion": "Según los primeros bits",
+            "hijos": [
+              {
+                "nombre": "Clase A",
+                "descripcion": "Empieza con 0; 1er octeto 1–127; 8 bits de red",
+                "hijos": []
+              },
+              {
+                "nombre": "Clase B",
+                "descripcion": "Empieza con 10; 128–191; 16 bits de red",
+                "hijos": []
+              },
+              {
+                "nombre": "Clase C",
+                "descripcion": "Empieza con 110; 192–223; 24 bits de red",
+                "hijos": []
+              },
+              {
+                "nombre": "Clase D",
+                "descripcion": "Empieza con 1110; 224–239; multicast",
+                "hijos": []
+              },
+              {
+                "nombre": "Clase E",
+                "descripcion": "Empieza con 11110; desde 240; investigación",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Por tipo de comunicación",
+            "hijos": [
+              {
+                "nombre": "Unicast",
+                "descripcion": "Uno a uno (clases A, B y C). Ej.: 192.168.1.1",
+                "hijos": []
+              },
+              {
+                "nombre": "Broadcast",
+                "descripcion": "Uno a todos los hosts de la red. Ej.: 192.168.1.255",
+                "hijos": []
+              },
+              {
+                "nombre": "Multicast",
+                "descripcion": "Uno a un grupo (clase D)",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Por alcance",
+            "hijos": [
+              {
+                "nombre": "Privadas (RFC 1918)",
+                "descripcion": "Solo redes internas",
+                "hijos": [
+                  {
+                    "nombre": "10.0.0.0 – 10.255.255.255",
+                    "hijos": []
+                  },
+                  {
+                    "nombre": "172.16.0.0 – 172.31.255.255",
+                    "hijos": []
+                  },
+                  {
+                    "nombre": "192.168.0.0 – 192.168.255.255",
+                    "hijos": []
+                  }
+                ]
+              },
+              {
+                "nombre": "Enlace local (RFC 3927)",
+                "descripcion": "169.254.0.0 – 169.254.255.255",
+                "hijos": []
+              },
+              {
+                "nombre": "Públicas",
+                "descripcion": "Visibles y accesibles desde todo Internet; las distribuyen IANA y los RIR",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Reservadas en cada red",
+            "hijos": [
+              {
+                "nombre": "Dirección de red",
+                "descripcion": "Primera; bits de host en 0",
+                "hijos": []
+              },
+              {
+                "nombre": "Dirección de broadcast",
+                "descripcion": "Última; bits de host en 1",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "ip-tax-escasez",
+      "nombre": "Soluciones a la escasez de direcciones IPv4",
+      "unidad": "u6-ip",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Retomando el problema de la escasez de direcciones IP…"
+      },
+      "raiz": {
+        "nombre": "Escasez de direcciones IPv4",
+        "descripcion": "Todas las clases A y varias B se asignaron rápido en EE. UU.",
+        "hijos": [
+          {
+            "nombre": "Subnetting y CIDR",
+            "descripcion": "Ruteo sin clases, asignación eficiente de prefijos",
+            "hijos": [
+              {
+                "nombre": "Subnetting",
+                "descripcion": "Divide una red en subredes iguales (local)",
+                "hijos": []
+              },
+              {
+                "nombre": "VLSM",
+                "descripcion": "Subredes de tamaño variable (local)",
+                "hijos": []
+              },
+              {
+                "nombre": "CIDR / supernetting",
+                "descripcion": "Prefijos sin clases a escala global; agrega rutas",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "NAT",
+            "descripcion": "Reutiliza rangos privados mapeándolos a IP públicas",
+            "hijos": [
+              {
+                "nombre": "NAT básico",
+                "descripcion": "1 a 1, estático o dinámico; admite conexiones entrantes",
+                "hijos": []
+              },
+              {
+                "nombre": "PAT",
+                "descripcion": "Muchos a uno, diferencia sesiones por puerto",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "ip-tax-tareas",
+      "nombre": "Tareas de la capa de red y arquitectura del router",
+      "unidad": "u6-ip",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Tareas de la capa de red"
+      },
+      "raiz": {
+        "nombre": "Capa de red",
+        "hijos": [
+          {
+            "nombre": "Tareas",
+            "hijos": [
+              {
+                "nombre": "Direccionamiento",
+                "descripcion": "Identificadores únicos para localizar dispositivos",
+                "hijos": []
+              },
+              {
+                "nombre": "Enrutamiento",
+                "descripcion": "Determinar la ruta óptima hacia el destino",
+                "hijos": []
+              },
+              {
+                "nombre": "Forwarding",
+                "descripcion": "Pasar el paquete de la interfaz de entrada a la de salida",
+                "hijos": []
+              },
+              {
+                "nombre": "Fragmentación",
+                "descripcion": "Dividir paquetes para adaptarse a la MTU",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Arquitectura genérica del router",
+            "hijos": [
+              {
+                "nombre": "Plano de datos (hardware)",
+                "descripcion": "Reenvía los paquetes",
+                "hijos": [
+                  {
+                    "nombre": "Interfaces de entrada",
+                    "descripcion": "Capa física y enlace, consulta de la tabla, colas",
+                    "hijos": []
+                  },
+                  {
+                    "nombre": "Switch fabric",
+                    "descripcion": "Por memoria, por bus o crossbar",
+                    "hijos": []
+                  },
+                  {
+                    "nombre": "Interfaces de salida",
+                    "descripcion": "Encolamiento y encapsulamiento",
+                    "hijos": []
+                  }
+                ]
+              },
+              {
+                "nombre": "Plano de control (software)",
+                "descripcion": "Routing processor: calcula rutas y mantiene la tabla de forwarding",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "procesos": [
+    {
+      "id": "ip-pr-fragmentacion",
+      "nombre": "Fragmentación de un datagrama de 4028 bytes (MTU 1500)",
+      "unidad": "u6-ip",
+      "descripcion": "Cómo se divide un datagrama IP con ICMP de 4028 B para atravesar un enlace Ethernet con MTU de 1500 B, y cómo se reensambla.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Fragmentación de Paquetes IP – Ejemplo práctico"
+      },
+      "pasos": [
+        {
+          "actor": "Host origen",
+          "accion": "Arma el datagrama: 20 B de cabecera IP + 8 B de cabecera ICMP + 4000 B de datos.",
+          "por_que": "La cabecera ICMP viaja dentro de los datos IP, así que la carga útil IP es 4008 B.",
+          "valores": [
+            {
+              "nombre": "Tamaño total",
+              "valor": "4028 B"
+            },
+            {
+              "nombre": "Carga útil IP",
+              "valor": "4008 B"
+            }
+          ]
+        },
+        {
+          "actor": "Origen / router del trayecto",
+          "accion": "Compara el tamaño con la MTU del enlace y decide fragmentar.",
+          "por_que": "4028 B supera la MTU de 1500 B; cada fragmento lleva su propia cabecera de 20 B, así que entran como máximo 1480 B de datos (múltiplo de 8).",
+          "valores": [
+            {
+              "nombre": "MTU",
+              "valor": "1500 B"
+            },
+            {
+              "nombre": "Datos máx. por fragmento",
+              "valor": "1480 B"
+            }
+          ]
+        },
+        {
+          "actor": "Fragmento 1",
+          "accion": "Lleva 20 B (IP) + 8 B (ICMP) + 1472 B de datos, ID 98765, MF = 1, offset 0.",
+          "por_que": "Es el comienzo del datagrama y quedan más fragmentos. Su tamaño total es 20 + 1480 = 1500 B; la tabla del material dice 1480 B, pero ese valor es solo la parte de datos.",
+          "valores": [
+            {
+              "nombre": "ID",
+              "valor": "98765"
+            },
+            {
+              "nombre": "MF",
+              "valor": "1"
+            },
+            {
+              "nombre": "Offset",
+              "valor": "0"
+            },
+            {
+              "nombre": "Tamaño total",
+              "valor": "1500 B"
+            }
+          ]
+        },
+        {
+          "actor": "Fragmento 2",
+          "accion": "Lleva 20 B (IP) + 1480 B de datos, ID 98765, MF = 1, offset 185.",
+          "por_que": "Sus datos empiezan en el byte 1480 y el offset se mide en unidades de 8 bytes: 1480 / 8 = 185. Tamaño total 1500 B (el material indica 1480 B).",
+          "valores": [
+            {
+              "nombre": "ID",
+              "valor": "98765"
+            },
+            {
+              "nombre": "MF",
+              "valor": "1"
+            },
+            {
+              "nombre": "Offset",
+              "valor": "185 (1480 B)"
+            },
+            {
+              "nombre": "Tamaño total",
+              "valor": "1500 B"
+            }
+          ]
+        },
+        {
+          "actor": "Fragmento final",
+          "accion": "Lleva 20 B (IP) + 1048 B de datos, ID 98765, MF = 0, offset 370.",
+          "por_que": "Quedan 4008 − 2960 = 1048 B; empieza en el byte 2960 (2960 / 8 = 370) y MF = 0 marca el último. Tamaño total 1068 B (el material indica 1048 B).",
+          "valores": [
+            {
+              "nombre": "ID",
+              "valor": "98765"
+            },
+            {
+              "nombre": "MF",
+              "valor": "0"
+            },
+            {
+              "nombre": "Offset",
+              "valor": "370 (2960 B)"
+            },
+            {
+              "nombre": "Tamaño total",
+              "valor": "1068 B"
+            }
+          ]
+        },
+        {
+          "actor": "Host destino",
+          "accion": "Agrupa los fragmentos por ID, los ordena por offset y reensambla al recibir el que tiene MF = 0 y todos los anteriores.",
+          "por_que": "El reensamblado se hace solo en el destino final; el ID asocia los fragmentos y el offset ubica cada uno.",
+          "valores": [
+            {
+              "nombre": "Datos reensamblados",
+              "valor": "1480 + 1480 + 1048 = 4008 B"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ip-pr-nat-basico",
+      "nombre": "NAT básico: ida y vuelta 192.168.1.2 ↔ 200.10.0.5",
+      "unidad": "u6-ip",
+      "descripcion": "Traducción 1 a 1 entre una PC privada y un servidor web en Internet.",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Diagrama de Traducción de Direcciones (1:1)"
+      },
+      "pasos": [
+        {
+          "actor": "PC 192.168.1.2",
+          "accion": "Envía un paquete al servidor web con origen 192.168.1.2 y destino 99.12.1.36.",
+          "por_que": "Dentro de la LAN el equipo usa su dirección interior (privada).",
+          "valores": [
+            {
+              "nombre": "Origen",
+              "valor": "192.168.1.2"
+            },
+            {
+              "nombre": "Destino",
+              "valor": "99.12.1.36"
+            }
+          ]
+        },
+        {
+          "actor": "Router NAT",
+          "accion": "Toma una IP del pool público y reemplaza la IP de origen por 200.10.0.5, guardando la asociación.",
+          "por_que": "Una dirección privada no puede circular por Internet; a la ida se traduce el origen.",
+          "valores": [
+            {
+              "nombre": "Pool",
+              "valor": "200.10.0.4 – 200.10.0.10"
+            },
+            {
+              "nombre": "Asociación",
+              "valor": "192.168.1.2 ↔ 200.10.0.5"
+            },
+            {
+              "nombre": "Origen traducido",
+              "valor": "200.10.0.5"
+            }
+          ]
+        },
+        {
+          "actor": "Servidor web 99.12.1.36",
+          "accion": "Responde con origen 99.12.1.36 y destino 200.10.0.5.",
+          "por_que": "El servidor solo conoce la dirección exterior del cliente.",
+          "valores": [
+            {
+              "nombre": "Origen",
+              "valor": "99.12.1.36"
+            },
+            {
+              "nombre": "Destino",
+              "valor": "200.10.0.5"
+            }
+          ]
+        },
+        {
+          "actor": "Router NAT",
+          "accion": "Usa la misma asociación para reemplazar el destino 200.10.0.5 por 192.168.1.2 y entrega el paquete en la LAN.",
+          "por_que": "A la vuelta se traduce la IP de destino.",
+          "valores": [
+            {
+              "nombre": "Destino traducido",
+              "valor": "192.168.1.2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ip-pr-pat",
+      "nombre": "PAT: traducción con 10.0.0.1:3345 ↔ 138.76.29.7:3345",
+      "unidad": "u6-ip",
+      "descripcion": "Los cuatro pasos de una solicitud web desde la LAN privada a través de un router NAT/PAT con una sola IP pública.",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "NAT/PAT – Traducción de direcciones y puertos"
+      },
+      "pasos": [
+        {
+          "actor": "Host 10.0.0.1",
+          "accion": "Envía la solicitud desde 10.0.0.1:3345 hacia 128.119.40.186:80.",
+          "por_que": "El host usa su IP privada y un puerto de origen propio.",
+          "valores": [
+            {
+              "nombre": "Origen",
+              "valor": "10.0.0.1:3345"
+            },
+            {
+              "nombre": "Destino",
+              "valor": "128.119.40.186:80"
+            }
+          ]
+        },
+        {
+          "actor": "Router NAT/PAT",
+          "accion": "Cambia el origen por 138.76.29.7:3345 y registra 138.76.29.7:3345 ↔ 10.0.0.1:3345 en la tabla NAT.",
+          "por_que": "Muchos hosts comparten la IP pública; el puerto distingue cada sesión. En este ejemplo el puerto 3345 se conserva.",
+          "valores": [
+            {
+              "nombre": "Origen",
+              "valor": "138.76.29.7:3345"
+            },
+            {
+              "nombre": "Destino",
+              "valor": "128.119.40.186:80"
+            }
+          ]
+        },
+        {
+          "actor": "Servidor 128.119.40.186",
+          "accion": "Responde desde 128.119.40.186:80 hacia 138.76.29.7:3345.",
+          "por_que": "El servidor solo ve la dirección y el puerto públicos.",
+          "valores": [
+            {
+              "nombre": "Origen",
+              "valor": "128.119.40.186:80"
+            },
+            {
+              "nombre": "Destino",
+              "valor": "138.76.29.7:3345"
+            }
+          ]
+        },
+        {
+          "actor": "Router NAT/PAT",
+          "accion": "Busca 138.76.29.7:3345 en la tabla NAT y cambia el destino por 10.0.0.1:3345.",
+          "por_que": "A los paquetes entrantes se les traduce el destino con la correspondencia guardada a la salida.",
+          "valores": [
+            {
+              "nombre": "Origen",
+              "valor": "128.119.40.186:80"
+            },
+            {
+              "nombre": "Destino",
+              "valor": "10.0.0.1:3345"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ip-pr-subnetting",
+      "nombre": "Procedimiento de subnetting (193.1.1.0/24 en dos subredes)",
+      "unidad": "u6-ip",
+      "descripcion": "Pasos para dividir una red: bits prestados, máscara, dirección de red, broadcast y rango de hosts.",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejemplo: Subnetting"
+      },
+      "pasos": [
+        {
+          "actor": "Diseñador de la red",
+          "accion": "Calcula cuántos bits de host tomar para las subredes con 2ⁿ ≥ cantidad de subredes.",
+          "por_que": "Cada bit prestado duplica la cantidad de subredes.",
+          "valores": [
+            {
+              "nombre": "Subredes pedidas",
+              "valor": "2"
+            },
+            {
+              "nombre": "Bits prestados",
+              "valor": "1 (2¹ = 2)"
+            }
+          ]
+        },
+        {
+          "actor": "Diseñador de la red",
+          "accion": "Calcula los hosts por subred con los bits que quedan: 2ʰ − 2.",
+          "por_que": "Se restan la dirección de red y la de broadcast.",
+          "valores": [
+            {
+              "nombre": "Bits de host",
+              "valor": "7"
+            },
+            {
+              "nombre": "Hosts por subred",
+              "valor": "2⁷ − 2 = 126"
+            }
+          ]
+        },
+        {
+          "actor": "Diseñador de la red",
+          "accion": "Escribe la nueva máscara poniendo en 1 los bits de red más los prestados.",
+          "por_que": "El prefijo pasa de /24 a /25.",
+          "valores": [
+            {
+              "nombre": "Máscara",
+              "valor": "11111111.11111111.11111111.10000000 = 255.255.255.128"
+            },
+            {
+              "nombre": "Prefijo",
+              "valor": "/25"
+            }
+          ]
+        },
+        {
+          "actor": "Diseñador de la red",
+          "accion": "Obtiene la dirección de red de cada subred (bits de host en 0).",
+          "por_que": "Es la primera dirección de cada bloque; equivale a IP AND máscara.",
+          "valores": [
+            {
+              "nombre": "Subred 1",
+              "valor": "193.1.1.0/25"
+            },
+            {
+              "nombre": "Subred 2",
+              "valor": "193.1.1.128/25"
+            }
+          ]
+        },
+        {
+          "actor": "Diseñador de la red",
+          "accion": "Obtiene la dirección de broadcast de cada subred (bits de host en 1).",
+          "por_que": "Es la última dirección del bloque.",
+          "valores": [
+            {
+              "nombre": "Broadcast subred 1",
+              "valor": "193.1.1.127"
+            },
+            {
+              "nombre": "Broadcast subred 2",
+              "valor": "193.1.1.255"
+            }
+          ]
+        },
+        {
+          "actor": "Diseñador de la red",
+          "accion": "Define el rango de hosts válidos entre red + 1 y broadcast − 1.",
+          "por_que": "Ni la dirección de red ni la de broadcast se asignan a equipos.",
+          "valores": [
+            {
+              "nombre": "Hosts subred 1",
+              "valor": "193.1.1.1 – 193.1.1.126"
+            },
+            {
+              "nombre": "Hosts subred 2",
+              "valor": "193.1.1.129 – 193.1.1.254"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "comparaciones": [
+    {
+      "id": "ip-cmp-datagramas-cv",
+      "nombre": "Redes de datagramas vs circuitos virtuales",
+      "unidad": "u6-ip",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "01 – Circuitos Virtuales y Datagramas"
+      },
+      "columnas": [
+        "Redes de datagramas",
+        "Circuitos virtuales"
+      ],
+      "filas": [
+        {
+          "criterio": "Decisión de ruteo",
+          "celdas": [
+            "Por dirección de destino del datagrama",
+            "Por identificador del CV"
+          ]
+        },
+        {
+          "criterio": "Conexión previa",
+          "celdas": [
+            "No (no orientado a conexión)",
+            "Sí: se establece el CV antes de transmitir"
+          ]
+        },
+        {
+          "criterio": "Camino de los paquetes",
+          "celdas": [
+            "Independiente para cada paquete",
+            "Todos siguen el mismo camino"
+          ]
+        },
+        {
+          "criterio": "Ante una falla",
+          "celdas": [
+            "Los paquetes siguientes eligen otro camino",
+            "Hay que restablecer todos los circuitos afectados"
+          ]
+        },
+        {
+          "criterio": "QoS y congestión",
+          "celdas": [
+            "Difícil de garantizar",
+            "Más sencillo al predefinir rutas"
+          ]
+        },
+        {
+          "criterio": "Ejemplos",
+          "celdas": [
+            "Redes IP",
+            "MPLS, ATM, Frame Relay"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ip-cmp-nat-pat",
+      "nombre": "NAT básico vs PAT",
+      "unidad": "u6-ip",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Formas de NAT"
+      },
+      "columnas": [
+        "NAT básico",
+        "PAT"
+      ],
+      "filas": [
+        {
+          "criterio": "Asociación",
+          "celdas": [
+            "1 a 1 (estática o dinámica)",
+            "Muchos a uno"
+          ]
+        },
+        {
+          "criterio": "IP públicas necesarias",
+          "celdas": [
+            "Una por equipo interno (pool)",
+            "Una sola para toda la red"
+          ]
+        },
+        {
+          "criterio": "Qué traduce",
+          "celdas": [
+            "Dirección IP",
+            "Dirección IP y puerto"
+          ]
+        },
+        {
+          "criterio": "Conexiones entrantes",
+          "celdas": [
+            "Posibles desde Internet",
+            "En general no"
+          ]
+        },
+        {
+          "criterio": "Ejemplo del material",
+          "celdas": [
+            "192.168.1.2 ↔ 200.10.0.5",
+            "10.0.0.1:3345 ↔ 138.76.29.7:3345"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ip-cmp-clases",
+      "nombre": "Clases A, B y C",
+      "unidad": "u6-ip",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Clases de Direcciones IPv4"
+      },
+      "columnas": [
+        "Clase A",
+        "Clase B",
+        "Clase C"
+      ],
+      "filas": [
+        {
+          "criterio": "Bits iniciales",
+          "celdas": [
+            "0",
+            "10",
+            "110"
+          ]
+        },
+        {
+          "criterio": "1er octeto",
+          "celdas": [
+            "1–127 (0 y 127 reservados)",
+            "128–191",
+            "192–223"
+          ]
+        },
+        {
+          "criterio": "Bits de red / host",
+          "celdas": [
+            "8 / 24",
+            "16 / 16",
+            "24 / 8"
+          ]
+        },
+        {
+          "criterio": "Rango privado (RFC 1918)",
+          "celdas": [
+            "10.0.0.0 – 10.255.255.255",
+            "172.16.0.0 – 172.31.255.255",
+            "192.168.0.0 – 192.168.255.255"
+          ]
+        },
+        {
+          "criterio": "Tipo de comunicación",
+          "celdas": [
+            "Unicast",
+            "Unicast",
+            "Unicast"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ip-cmp-subnetting-cidr",
+      "nombre": "Subnetting/VLSM vs CIDR/supernetting",
+      "unidad": "u6-ip",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Classless Inter-Domain Routing (CIDR)"
+      },
+      "columnas": [
+        "Subnetting / VLSM",
+        "CIDR / supernetting"
+      ],
+      "filas": [
+        {
+          "criterio": "Operación",
+          "celdas": [
+            "Divide una red en subredes",
+            "Agrega redes contiguas en una sola ruta"
+          ]
+        },
+        {
+          "criterio": "Ámbito",
+          "celdas": [
+            "Local, dentro de una organización",
+            "Global, escala de Internet"
+          ]
+        },
+        {
+          "criterio": "Tamaño de las partes",
+          "celdas": [
+            "Iguales (subnetting) o variables (VLSM)",
+            "Bloques flexibles por prefijo"
+          ]
+        },
+        {
+          "criterio": "Beneficio principal",
+          "celdas": [
+            "Uso eficiente de las direcciones",
+            "Tablas de ruteo más chicas"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ip-cmp-red-broadcast",
+      "nombre": "Dirección de red vs dirección de broadcast",
+      "unidad": "u6-ip",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Direcciones reservadas en cada red"
+      },
+      "columnas": [
+        "Dirección de red",
+        "Dirección de broadcast"
+      ],
+      "filas": [
+        {
+          "criterio": "Posición",
+          "celdas": [
+            "Primera de la red",
+            "Última de la red"
+          ]
+        },
+        {
+          "criterio": "Bits de host",
+          "celdas": [
+            "Todos en 0",
+            "Todos en 1"
+          ]
+        },
+        {
+          "criterio": "Cálculo",
+          "celdas": [
+            "IP AND máscara",
+            "Red con bits de host en 1"
+          ]
+        },
+        {
+          "criterio": "Uso",
+          "celdas": [
+            "Identifica a la red completa",
+            "Llega a todos los equipos de la red"
+          ]
+        },
+        {
+          "criterio": "Ejemplo 192.168.5.0/24",
+          "celdas": [
+            "192.168.5.0",
+            "192.168.5.255"
+          ]
+        }
+      ]
+    }
+  ],
+  "ejercicios": [
+    {
+      "id": "ip-e01",
+      "titulo": "Dividir 193.1.1.0/24 en dos subredes",
+      "unidad": "u6-ip",
+      "tipo": "Subnetting",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejemplo: Subnetting"
+      },
+      "enunciado": "Dividí la red 193.1.1.0/24 en dos subredes. Calculá la máscara, la dirección de red y de broadcast de cada subred, el rango de hosts y cuántos hosts admite cada una.",
+      "pasos": [
+        {
+          "consigna": "¿Cuántos bits de host tenés que tomar para obtener dos subredes?",
+          "respuesta": "1",
+          "tipo_respuesta": "numero",
+          "explicacion": "2ⁿ ≥ 2 → n = 1."
+        },
+        {
+          "consigna": "¿Cuál es la máscara de cada subred, en decimal?",
+          "respuesta": "255.255.255.128",
+          "tipo_respuesta": "ip",
+          "alternativas": [
+            "/25"
+          ],
+          "explicacion": "24 + 1 = 25 unos: 11111111.11111111.11111111.10000000 = 255.255.255.128."
+        },
+        {
+          "consigna": "¿Cuál es la dirección de red de la segunda subred (con prefijo)?",
+          "respuesta": "193.1.1.128/25",
+          "tipo_respuesta": "ip",
+          "alternativas": [
+            "193.1.1.128"
+          ],
+          "explicacion": "El bit prestado en 1 da 10000000 = 128 en el último octeto."
+        },
+        {
+          "consigna": "¿Cuál es la dirección de broadcast de la primera subred?",
+          "respuesta": "193.1.1.127",
+          "tipo_respuesta": "ip",
+          "explicacion": "Bits de host en 1 con el bit de subred en 0: 01111111 = 127."
+        },
+        {
+          "consigna": "¿Cuál es la dirección de broadcast de la segunda subred?",
+          "respuesta": "193.1.1.255",
+          "tipo_respuesta": "ip",
+          "explicacion": "11111111 = 255."
+        },
+        {
+          "consigna": "¿Cuál es el primer host válido de la segunda subred?",
+          "respuesta": "193.1.1.129",
+          "tipo_respuesta": "ip",
+          "explicacion": "Dirección de red + 1 = 193.1.1.129."
+        },
+        {
+          "consigna": "¿Cuál es el último host válido de la primera subred?",
+          "respuesta": "193.1.1.126",
+          "tipo_respuesta": "ip",
+          "explicacion": "Broadcast − 1 = 193.1.1.126."
+        },
+        {
+          "consigna": "¿Cuántos hosts se pueden direccionar en cada subred?",
+          "respuesta": "126",
+          "tipo_respuesta": "numero",
+          "explicacion": "Quedan 7 bits de host: 2⁷ − 2 = 126."
+        }
+      ],
+      "pistas": [
+        "Para 2 subredes alcanza con prestar pocos bits de la porción de host.",
+        "Con 1 bit prestado el prefijo pasa de /24 a /25 y cada subred tiene 128 direcciones.",
+        "Las subredes empiezan en .0 y .128; restá 2 direcciones (red y broadcast) para los hosts."
+      ],
+      "errores_comunes": [
+        "Decir 128 hosts por subred olvidando restar la red y el broadcast.",
+        "Tomar 2 bits para 2 subredes (2 bits dan 4 subredes).",
+        "Escribir la máscara como 255.255.255.1 en lugar de 255.255.255.128."
+      ]
+    },
+    {
+      "id": "ip-e02",
+      "titulo": "Subnetting I: 192.168.1.0/24 para 122, 61 y 61 hosts",
+      "unidad": "u6-ip",
+      "tipo": "Subnetting / VLSM",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejercicio: Subnetting I"
+      },
+      "enunciado": "Un router B tiene tres interfaces: E0 con 122 hosts, E1 con 61 hosts y E2 con 61 hosts. Partí la red clase C 192.168.1.0/24 en tres subredes, asignando primero la más grande.",
+      "pasos": [
+        {
+          "consigna": "¿Qué subred (con prefijo) le asignás a E0 (122 hosts)?",
+          "respuesta": "192.168.1.0/25",
+          "tipo_respuesta": "ip",
+          "explicacion": "122 hosts necesitan 7 bits (2⁷ − 2 = 126); una /26 daría solo 62."
+        },
+        {
+          "consigna": "¿Cuál es la máscara de la subred de E0?",
+          "respuesta": "255.255.255.128",
+          "tipo_respuesta": "ip",
+          "alternativas": [
+            "/25"
+          ],
+          "explicacion": "/25 = 255.255.255.128."
+        },
+        {
+          "consigna": "¿Qué subred le asignás a E1 (61 hosts)?",
+          "respuesta": "192.168.1.128/26",
+          "tipo_respuesta": "ip",
+          "explicacion": "61 hosts necesitan 6 bits (2⁶ − 2 = 62); empieza donde termina la /25."
+        },
+        {
+          "consigna": "¿Cuál es el broadcast de la subred de E1?",
+          "respuesta": "192.168.1.191",
+          "tipo_respuesta": "ip",
+          "explicacion": "128 + 64 − 1 = 191."
+        },
+        {
+          "consigna": "¿Qué subred le asignás a E2 (61 hosts)?",
+          "respuesta": "192.168.1.192/26",
+          "tipo_respuesta": "ip",
+          "explicacion": "La siguiente /26 libre arranca en 192."
+        },
+        {
+          "consigna": "¿Cuál es el rango de hosts válidos de E2? Escribí el primero.",
+          "respuesta": "192.168.1.193",
+          "tipo_respuesta": "ip",
+          "explicacion": "Red + 1 = .193; el último es .254 y el broadcast .255."
+        },
+        {
+          "consigna": "¿Cuántos hosts admite cada /26?",
+          "respuesta": "62",
+          "tipo_respuesta": "numero",
+          "explicacion": "2⁶ − 2 = 62, suficiente para 61."
+        }
+      ],
+      "pistas": [
+        "Para cada segmento buscá la menor cantidad de bits de host h con 2ʰ − 2 ≥ hosts.",
+        "E0 necesita una /25 y E1 y E2 necesitan /26 cada una.",
+        "Ubicá la /25 en .0 y las dos /26 en los bloques .128 y .192."
+      ],
+      "errores_comunes": [
+        "Usar tres subredes iguales /26: la de 122 hosts no entra en 62.",
+        "Asignar la /26 primero y desalinear la /25 (una /25 solo puede empezar en .0 o .128).",
+        "Olvidar restar 2 y elegir /26 para 64 hosts."
+      ]
+    },
+    {
+      "id": "ip-e03",
+      "titulo": "Subnetting II (VLSM): 10.1.1.0/24 para 58, 49, 29, 14 y 3 hosts",
+      "unidad": "u6-ip",
+      "tipo": "VLSM",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejercicio: Subnetting II"
+      },
+      "enunciado": "Dividí 10.1.1.0/24 de la forma más eficiente posible para cinco subredes de 58, 49, 29, 14 y 3 hosts. Asigná de mayor a menor, en bloques contiguos desde 10.1.1.0.",
+      "pasos": [
+        {
+          "consigna": "Subred 1 (58 hosts): ¿dirección y prefijo?",
+          "respuesta": "10.1.1.0/26",
+          "tipo_respuesta": "ip",
+          "explicacion": "58 hosts → 6 bits de host (62 hosts) → /26: 10.1.1.0 – 10.1.1.63."
+        },
+        {
+          "consigna": "Subred 2 (49 hosts): ¿dirección y prefijo?",
+          "respuesta": "10.1.1.64/26",
+          "tipo_respuesta": "ip",
+          "explicacion": "49 hosts → /26 (62): 10.1.1.64 – 10.1.1.127."
+        },
+        {
+          "consigna": "Subred 3 (29 hosts): ¿dirección y prefijo?",
+          "respuesta": "10.1.1.128/27",
+          "tipo_respuesta": "ip",
+          "explicacion": "29 hosts → 5 bits (30 hosts) → /27: 10.1.1.128 – 10.1.1.159."
+        },
+        {
+          "consigna": "¿Cuál es el broadcast de la subred 3?",
+          "respuesta": "10.1.1.159",
+          "tipo_respuesta": "ip",
+          "explicacion": "128 + 32 − 1 = 159."
+        },
+        {
+          "consigna": "Subred 4 (14 hosts): ¿dirección y prefijo?",
+          "respuesta": "10.1.1.160/28",
+          "tipo_respuesta": "ip",
+          "explicacion": "14 hosts → 4 bits (14 hosts exactos) → /28: 10.1.1.160 – 10.1.1.175."
+        },
+        {
+          "consigna": "Subred 5 (3 hosts): ¿dirección y prefijo?",
+          "respuesta": "10.1.1.176/29",
+          "tipo_respuesta": "ip",
+          "explicacion": "3 hosts → 3 bits (6 hosts) → /29; una /30 solo da 2 hosts."
+        },
+        {
+          "consigna": "¿Cuál es el broadcast de la subred 5?",
+          "respuesta": "10.1.1.183",
+          "tipo_respuesta": "ip",
+          "explicacion": "176 + 8 − 1 = 183."
+        },
+        {
+          "consigna": "¿Cuál es la primera dirección que queda libre en el bloque?",
+          "respuesta": "10.1.1.184",
+          "tipo_respuesta": "ip",
+          "explicacion": "Se usaron 64 + 64 + 32 + 16 + 8 = 184 direcciones; quedan libres 10.1.1.184 – 10.1.1.255."
+        }
+      ],
+      "pistas": [
+        "Ordená las subredes de mayor a menor y para cada una buscá el menor h con 2ʰ − 2 ≥ hosts.",
+        "Los tamaños de bloque quedan 64, 64, 32, 16 y 8 direcciones.",
+        "Cada subred empieza donde terminó la anterior: .0, .64, .128, .160 y .176."
+      ],
+      "errores_comunes": [
+        "Usar /30 para 3 hosts: 2² − 2 = 2 no alcanza.",
+        "Usar /28 para 14 hosts pensando que hace falta /27; 2⁴ − 2 = 14 alcanza justo.",
+        "Asignar de menor a mayor y dejar bloques desalineados.",
+        "Elegir /27 para 29 hosts y olvidar que 2⁵ − 2 = 30 sí alcanza, o elegir /26 desperdiciando direcciones."
+      ]
+    },
+    {
+      "id": "ip-e04",
+      "titulo": "Dirección de red y de broadcast con AND",
+      "unidad": "u6-ip",
+      "tipo": "Cálculo de direcciones",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Direcciones de red y de broadcast"
+      },
+      "enunciado": "Calculá la dirección de red y de broadcast de los hosts 193.1.1.3/24 y 193.1.1.77/27 aplicando Dirección de red = IP AND máscara.",
+      "pasos": [
+        {
+          "consigna": "¿Cuál es la dirección de red de 193.1.1.3/24?",
+          "respuesta": "193.1.1.0",
+          "tipo_respuesta": "ip",
+          "alternativas": [
+            "193.1.1.0/24"
+          ],
+          "explicacion": "Máscara 255.255.255.0: el último octeto queda en 0."
+        },
+        {
+          "consigna": "¿Cuál es la dirección de broadcast de 193.1.1.3/24?",
+          "respuesta": "193.1.1.255",
+          "tipo_respuesta": "ip",
+          "explicacion": "Los 8 bits de host en 1."
+        },
+        {
+          "consigna": "Escribí en binario el último octeto de 193.1.1.77.",
+          "respuesta": "01001101",
+          "tipo_respuesta": "binario",
+          "explicacion": "77 = 64 + 8 + 4 + 1 = 01001101."
+        },
+        {
+          "consigna": "Hacé el AND de 01001101 con el último octeto de la máscara /27 (11100000).",
+          "respuesta": "01000000",
+          "tipo_respuesta": "binario",
+          "explicacion": "Solo sobrevive el bit de 64."
+        },
+        {
+          "consigna": "¿Cuál es la dirección de red de 193.1.1.77/27?",
+          "respuesta": "193.1.1.64",
+          "tipo_respuesta": "ip",
+          "alternativas": [
+            "193.1.1.64/27"
+          ],
+          "explicacion": "01000000 = 64."
+        },
+        {
+          "consigna": "¿Cuál es la dirección de broadcast de 193.1.1.77/27?",
+          "respuesta": "193.1.1.95",
+          "tipo_respuesta": "ip",
+          "explicacion": "Bits de host en 1: 01011111 = 95 (64 + 32 − 1)."
+        },
+        {
+          "consigna": "¿Cuál es el primer host válido de esa subred?",
+          "respuesta": "193.1.1.65",
+          "tipo_respuesta": "ip",
+          "explicacion": "Red + 1."
+        }
+      ],
+      "pistas": [
+        "La máscara /27 tiene 3 unos en el último octeto: 11100000 = 224.",
+        "Hacer AND bit a bit deja solo los bits de red de la IP.",
+        "Una /27 tiene bloques de 32: 0, 32, 64, 96… ubicá 77 en su bloque."
+      ],
+      "errores_comunes": [
+        "Suponer que la red siempre termina en .0 aunque el prefijo sea /27.",
+        "Calcular el broadcast como red + 32 en lugar de red + 32 − 1.",
+        "Hacer OR en lugar de AND."
+      ]
+    },
+    {
+      "id": "ip-e05",
+      "titulo": "Prefijos, máscaras y cantidad de direcciones",
+      "unidad": "u6-ip",
+      "tipo": "Conversión",
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejemplo: Máscaras y Prefijos más usados"
+      },
+      "enunciado": "Convertí los prefijos /26, /27 y /30 a máscara decimal y calculá cuántas IPs totales tiene cada bloque.",
+      "pasos": [
+        {
+          "consigna": "Máscara decimal de /26",
+          "respuesta": "255.255.255.192",
+          "tipo_respuesta": "ip",
+          "explicacion": "11000000 = 128 + 64 = 192."
+        },
+        {
+          "consigna": "IPs totales de una /26",
+          "respuesta": "64",
+          "tipo_respuesta": "numero",
+          "explicacion": "2^(32−26) = 2⁶ = 64."
+        },
+        {
+          "consigna": "Máscara decimal de /27",
+          "respuesta": "255.255.255.224",
+          "tipo_respuesta": "ip",
+          "explicacion": "11100000 = 128 + 64 + 32 = 224."
+        },
+        {
+          "consigna": "IPs totales de una /27",
+          "respuesta": "32",
+          "tipo_respuesta": "numero",
+          "explicacion": "2⁵ = 32."
+        },
+        {
+          "consigna": "Máscara decimal de /30",
+          "respuesta": "255.255.255.252",
+          "tipo_respuesta": "ip",
+          "explicacion": "11111100 = 252."
+        },
+        {
+          "consigna": "IPs totales de una /30",
+          "respuesta": "4",
+          "tipo_respuesta": "numero",
+          "explicacion": "2² = 4."
+        },
+        {
+          "consigna": "Hosts utilizables en una /30",
+          "respuesta": "2",
+          "tipo_respuesta": "numero",
+          "explicacion": "4 − 2 (red y broadcast) = 2."
+        }
+      ],
+      "pistas": [
+        "Contá cuántos unos caen en el último octeto: prefijo − 24.",
+        "Los valores del octeto se suman de izquierda a derecha: 128, 64, 32, 16, 8, 4…",
+        "IPs totales = 2^(32 − prefijo); hosts = IPs totales − 2."
+      ],
+      "errores_comunes": [
+        "Confundir IPs totales con hosts utilizables (64 vs 62).",
+        "Escribir /27 como 255.255.255.240 (eso es /28).",
+        "Calcular 2^prefijo en lugar de 2^(32 − prefijo)."
+      ]
+    },
+    {
+      "id": "ip-e06",
+      "titulo": "Fragmentación: offsets y bit MF",
+      "unidad": "u6-ip",
+      "tipo": "Fragmentación",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Fragmentación de Paquetes IP – Ejemplo práctico"
+      },
+      "enunciado": "Un datagrama de 4028 B (20 B IP + 8 B ICMP + 4000 B de datos) debe atravesar un enlace Ethernet con MTU de 1500 B. Calculá los campos de cada fragmento.",
+      "pasos": [
+        {
+          "consigna": "¿Cuántos bytes de carga útil IP (todo lo que va después de la cabecera IP) tiene el datagrama?",
+          "respuesta": "4008",
+          "tipo_respuesta": "numero",
+          "explicacion": "4028 − 20 = 4008 (8 de ICMP + 4000 de datos)."
+        },
+        {
+          "consigna": "¿Cuántos bytes de datos entran como máximo en cada fragmento?",
+          "respuesta": "1480",
+          "tipo_respuesta": "numero",
+          "explicacion": "1500 − 20 de cabecera = 1480, que además es múltiplo de 8."
+        },
+        {
+          "consigna": "¿Qué valor lleva el campo Fragment Offset del segundo fragmento?",
+          "respuesta": "185",
+          "tipo_respuesta": "numero",
+          "explicacion": "Empieza en el byte 1480: 1480 / 8 = 185."
+        },
+        {
+          "consigna": "¿Qué valor lleva el Fragment Offset del tercer fragmento?",
+          "respuesta": "370",
+          "tipo_respuesta": "numero",
+          "explicacion": "Empieza en el byte 2960: 2960 / 8 = 370."
+        },
+        {
+          "consigna": "¿Cuántos bytes de datos lleva el último fragmento?",
+          "respuesta": "1048",
+          "tipo_respuesta": "numero",
+          "explicacion": "4008 − 2960 = 1048."
+        },
+        {
+          "consigna": "¿Cuál es el tamaño total (con cabecera) del último fragmento?",
+          "respuesta": "1068",
+          "tipo_respuesta": "numero",
+          "explicacion": "20 + 1048 = 1068 B. El material muestra 1048 B en esa columna, pero corresponde solo a los datos."
+        },
+        {
+          "consigna": "¿Qué valor tiene el bit MF en el segundo fragmento?",
+          "respuesta": "1",
+          "tipo_respuesta": "numero",
+          "explicacion": "Quedan fragmentos por recibir."
+        },
+        {
+          "consigna": "¿Qué valor tiene el bit MF en el último fragmento?",
+          "respuesta": "0",
+          "tipo_respuesta": "numero",
+          "explicacion": "MF = 0 indica el último fragmento."
+        },
+        {
+          "consigna": "¿Qué tienen en común el campo Identification de los tres fragmentos?",
+          "respuesta": "Tienen el mismo valor (98765)",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Tienen el mismo valor (98765)",
+            "Se incrementa en uno en cada fragmento",
+            "Coincide con el offset de cada fragmento",
+            "Solo lo lleva el primer fragmento"
+          ],
+          "explicacion": "El ID permite al destino asociar los fragmentos del mismo datagrama."
+        }
+      ],
+      "pistas": [
+        "Cada fragmento lleva su propia cabecera IP de 20 B; restala de la MTU.",
+        "El offset se mide en unidades de 8 bytes desde el comienzo de los datos.",
+        "El tercer fragmento empieza en el byte 1480 × 2 = 2960."
+      ],
+      "errores_comunes": [
+        "Escribir el offset en bytes (1480) en lugar de unidades de 8 (185).",
+        "Restar la cabecera ICMP en todos los fragmentos: solo viaja en el primero.",
+        "Poner MF = 1 en el último fragmento.",
+        "Darle un ID distinto a cada fragmento."
+      ]
+    },
+    {
+      "id": "ip-e07",
+      "titulo": "Identificar clase y tipo de dirección",
+      "unidad": "u6-ip",
+      "tipo": "Clasificación",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Direcciones IP privadas"
+      },
+      "enunciado": "Para cada dirección, indicá su clase (por el primer octeto) y si es privada (RFC 1918), pública o de enlace local.",
+      "pasos": [
+        {
+          "consigna": "Clase de 10.20.30.40",
+          "respuesta": "A",
+          "tipo_respuesta": "texto",
+          "alternativas": [
+            "Clase A"
+          ],
+          "explicacion": "Primer octeto 10 está entre 1 y 127."
+        },
+        {
+          "consigna": "¿Qué tipo de dirección es 10.20.30.40?",
+          "respuesta": "Privada (RFC 1918)",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Privada (RFC 1918)",
+            "Pública",
+            "Enlace local (RFC 3927)"
+          ],
+          "explicacion": "Está en 10.0.0.0 – 10.255.255.255."
+        },
+        {
+          "consigna": "Clase de 172.20.1.1",
+          "respuesta": "B",
+          "tipo_respuesta": "texto",
+          "alternativas": [
+            "Clase B"
+          ],
+          "explicacion": "172 está entre 128 y 191."
+        },
+        {
+          "consigna": "¿Qué tipo de dirección es 172.32.0.1?",
+          "respuesta": "Pública",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Privada (RFC 1918)",
+            "Pública",
+            "Enlace local (RFC 3927)"
+          ],
+          "explicacion": "El rango privado de clase B termina en 172.31.255.255; 172.32 queda afuera."
+        },
+        {
+          "consigna": "Clase de 192.168.100.5",
+          "respuesta": "C",
+          "tipo_respuesta": "texto",
+          "alternativas": [
+            "Clase C"
+          ],
+          "explicacion": "192 está entre 192 y 223."
+        },
+        {
+          "consigna": "¿Qué tipo de dirección es 169.254.10.20?",
+          "respuesta": "Enlace local (RFC 3927)",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Privada (RFC 1918)",
+            "Pública",
+            "Enlace local (RFC 3927)"
+          ],
+          "explicacion": "Está en 169.254.0.0 – 169.254.255.255, el bloque de enlace local."
+        },
+        {
+          "consigna": "Clase de 224.0.0.5",
+          "respuesta": "D",
+          "tipo_respuesta": "texto",
+          "alternativas": [
+            "Clase D"
+          ],
+          "explicacion": "224–239 es clase D, reservada para multicast."
+        }
+      ],
+      "pistas": [
+        "Mirá solo el primer octeto para la clase: A hasta 127, B hasta 191, C hasta 223, D hasta 239.",
+        "Los rangos privados son 10.x, 172.16–172.31.x y 192.168.x.",
+        "169.254.x no es RFC 1918: es otro bloque reservado."
+      ],
+      "errores_comunes": [
+        "Considerar privada toda dirección 172.x (solo 172.16 a 172.31).",
+        "Clasificar 169.254.x como privada RFC 1918.",
+        "Pensar que 192.168.x es clase B por tener el mismo largo que 172.16."
+      ]
+    }
+  ],
+  "preguntas": [
+    {
+      "id": "ip-p01",
+      "unidad": "u6-ip",
+      "enunciado": "¿Qué hace el campo TTL del encabezado IPv4?",
+      "opciones": [
+        "Se decrementa en uno en cada router y, al llegar a 0, el paquete se descarta",
+        "Indica cuántos fragmentos del mismo datagrama quedan todavía por recibir",
+        "Marca la prioridad del paquete para DiffServ mediante un código DSCP",
+        "Fija en segundos cuánto espera el destino para reensamblar fragmentos"
+      ],
+      "correcta": 0,
+      "explicacion": "El TTL lo fija el transmisor, cada router lo decrementa en uno y cuando llega a 0 el paquete se descarta, evitando que circule infinitamente.",
+      "por_que_falla": [
+        "",
+        "Eso lo indica el bit MF, no el TTL.",
+        "La prioridad se marca en el campo ToS con DSCP.",
+        "El material no define el TTL como un tiempo de reensamblado: cuenta saltos por router."
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Time To Live (TTL)"
+      }
+    },
+    {
+      "id": "ip-p02",
+      "unidad": "u6-ip",
+      "enunciado": "¿Cuál es la máscara decimal del prefijo /27?",
+      "opciones": [
+        "255.255.255.192",
+        "255.255.255.240",
+        "255.255.255.224",
+        "255.255.255.248"
+      ],
+      "correcta": 2,
+      "explicacion": "/27 deja 3 unos en el último octeto: 11100000 = 224.",
+      "por_que_falla": [
+        "Es /26 (11000000).",
+        "Es /28 (11110000).",
+        "",
+        "Es /29 (11111000)."
+      ],
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejemplo: Máscaras y Prefijos más usados"
+      }
+    },
+    {
+      "id": "ip-p03",
+      "unidad": "u6-ip",
+      "enunciado": "¿Cuántas direcciones IP totales tiene un bloque /26?",
+      "opciones": [
+        "32",
+        "128",
+        "62",
+        "64"
+      ],
+      "correcta": 3,
+      "explicacion": "2^(32 − 26) = 2⁶ = 64 direcciones totales (62 utilizables por hosts).",
+      "por_que_falla": [
+        "Son las de una /27.",
+        "Son las de una /25.",
+        "Son los hosts utilizables, no las direcciones totales.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejemplo: Máscaras y Prefijos más usados"
+      }
+    },
+    {
+      "id": "ip-p04",
+      "unidad": "u6-ip",
+      "enunciado": "¿Cuál es la dirección de red del host 193.1.1.77/27?",
+      "opciones": [
+        "193.1.1.0",
+        "193.1.1.64",
+        "193.1.1.77",
+        "193.1.1.95"
+      ],
+      "correcta": 1,
+      "explicacion": "77 = 01001101; AND con 11100000 da 01000000 = 64.",
+      "por_que_falla": [
+        "Sería la red si el prefijo fuera /24 o /25.",
+        "",
+        "Es la dirección del propio host, no la de su red.",
+        "Es la dirección de broadcast de esa subred."
+      ],
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Direcciones de red y de broadcast"
+      }
+    },
+    {
+      "id": "ip-p05",
+      "unidad": "u6-ip",
+      "enunciado": "¿Cuál es la dirección de broadcast de la subred de 10.1.1.170/28?",
+      "opciones": [
+        "10.1.1.175",
+        "10.1.1.160",
+        "10.1.1.255",
+        "10.1.1.191"
+      ],
+      "correcta": 0,
+      "explicacion": "Una /28 tiene bloques de 16: 170 cae en 160–175, así que el broadcast es 10.1.1.175.",
+      "por_que_falla": [
+        "",
+        "Es la dirección de red de la subred.",
+        "Sería el broadcast si el prefijo fuera /24.",
+        "Es el broadcast de 10.1.1.128/26, no de una /28."
+      ],
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Direcciones de red y de broadcast"
+      }
+    },
+    {
+      "id": "ip-p06",
+      "unidad": "u6-ip",
+      "enunciado": "¿Cuál de estas direcciones NO es privada según RFC 1918?",
+      "opciones": [
+        "10.200.1.1",
+        "172.20.5.5",
+        "172.32.10.1",
+        "192.168.50.1"
+      ],
+      "correcta": 2,
+      "explicacion": "El rango privado de clase B va de 172.16.0.0 a 172.31.255.255; 172.32.10.1 queda afuera.",
+      "por_que_falla": [
+        "Está en 10.0.0.0 – 10.255.255.255, es privada.",
+        "Está en 172.16 – 172.31, es privada.",
+        "",
+        "Está en 192.168.0.0 – 192.168.255.255, es privada."
+      ],
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Direcciones IP privadas"
+      }
+    },
+    {
+      "id": "ip-p07",
+      "unidad": "u6-ip",
+      "enunciado": "¿De qué clase es la dirección 191.10.2.3?",
+      "opciones": [
+        "Clase A",
+        "Clase B",
+        "Clase C",
+        "Clase D"
+      ],
+      "correcta": 1,
+      "explicacion": "El primer octeto 191 está en 128–191 (empieza con 10 en binario): clase B.",
+      "por_que_falla": [
+        "La clase A llega hasta 127.",
+        "",
+        "La clase C empieza en 192.",
+        "La clase D va de 224 a 239."
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Clases de Direcciones IPv4"
+      }
+    },
+    {
+      "id": "ip-p08",
+      "unidad": "u6-ip",
+      "enunciado": "Una PC muestra la dirección 169.254.33.7. ¿Qué tipo de dirección es?",
+      "opciones": [
+        "Privada de clase B definida en RFC 1918",
+        "Multicast de clase D para un grupo de hosts",
+        "Broadcast dirigido a todos los hosts de la red",
+        "De enlace local, del bloque reservado por RFC 3927"
+      ],
+      "correcta": 3,
+      "explicacion": "169.254.0.0 – 169.254.255.255 es el bloque de enlace local (IPv4 Link Local Address, RFC 3927).",
+      "por_que_falla": [
+        "El rango privado de clase B es 172.16 – 172.31, no 169.254.",
+        "Clase D empieza en 224.",
+        "Una dirección de broadcast tiene todos unos en la porción de host.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Dirección de Enlace Local (RFC 3927)"
+      }
+    },
+    {
+      "id": "ip-p09",
+      "unidad": "u6-ip",
+      "enunciado": "Al dividir 193.1.1.0/24 en dos subredes, ¿cuántos hosts se pueden direccionar en cada una?",
+      "opciones": [
+        "126",
+        "128",
+        "254",
+        "127"
+      ],
+      "correcta": 0,
+      "explicacion": "Queda 1 bit prestado y 7 de host: 2⁷ − 2 = 126.",
+      "por_que_falla": [
+        "",
+        "Son las direcciones totales; falta restar red y broadcast.",
+        "Son los hosts de la /24 sin dividir.",
+        "Solo resta una de las dos direcciones reservadas."
+      ],
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejemplo: Subnetting (cont.)"
+      }
+    },
+    {
+      "id": "ip-p10",
+      "unidad": "u6-ip",
+      "enunciado": "Con VLSM, ¿qué prefijo es el más eficiente para una subred de 29 hosts?",
+      "opciones": [
+        "/26",
+        "/27",
+        "/28",
+        "/25"
+      ],
+      "correcta": 1,
+      "explicacion": "/27 da 2⁵ − 2 = 30 hosts, el mínimo que alcanza para 29.",
+      "por_que_falla": [
+        "Alcanza (62 hosts) pero desperdicia direcciones.",
+        "",
+        "Da solo 14 hosts, no alcanza.",
+        "Da 126 hosts: desperdicia mucho."
+      ],
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejercicio: Subnetting II"
+      }
+    },
+    {
+      "id": "ip-p11",
+      "unidad": "u6-ip",
+      "enunciado": "En el ejercicio Subnetting I, ¿cuál es el prefijo más largo que alcanza para el segmento E0 de 122 hosts?",
+      "opciones": [
+        "/24",
+        "/26",
+        "/25",
+        "/27"
+      ],
+      "correcta": 2,
+      "explicacion": "/25 da 126 hosts; /26 da 62, que no alcanza.",
+      "por_que_falla": [
+        "Alcanza, pero no es el más largo y ocuparía toda la red.",
+        "Solo da 62 hosts.",
+        "",
+        "Solo da 30 hosts."
+      ],
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejercicio: Subnetting I"
+      }
+    },
+    {
+      "id": "ip-p12",
+      "unidad": "u6-ip",
+      "enunciado": "En la solución VLSM de 10.1.1.0/24 (58, 49, 29, 14 y 3 hosts, contiguas de mayor a menor), ¿qué subred corresponde a los 3 hosts?",
+      "opciones": [
+        "10.1.1.176/30",
+        "10.1.1.168/29",
+        "10.1.1.192/29",
+        "10.1.1.176/29"
+      ],
+      "correcta": 3,
+      "explicacion": "Tras .0/26, .64/26, .128/27 y .160/28 la siguiente dirección libre es .176; 3 hosts necesitan /29 (6 hosts).",
+      "por_que_falla": [
+        "Una /30 solo admite 2 hosts.",
+        "Se superpone con 10.1.1.160/28 (160–175).",
+        "No es contigua: deja libre el bloque 176–191.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Ejercicio: Subnetting II"
+      }
+    },
+    {
+      "id": "ip-p13",
+      "unidad": "u6-ip",
+      "enunciado": "En el ejemplo de fragmentación del datagrama de 4028 B, ¿qué valor tiene el Fragment Offset del segundo fragmento?",
+      "opciones": [
+        "185",
+        "1480",
+        "1500",
+        "370"
+      ],
+      "correcta": 0,
+      "explicacion": "Sus datos empiezan en el byte 1480 y el offset se mide en unidades de 8 bytes: 1480 / 8 = 185.",
+      "por_que_falla": [
+        "",
+        "Es la posición en bytes, no el valor del campo.",
+        "Es la MTU, no un offset.",
+        "Es el offset del tercer fragmento."
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Fragmentación de Paquetes IP – Ejemplo práctico"
+      }
+    },
+    {
+      "id": "ip-p14",
+      "unidad": "u6-ip",
+      "enunciado": "¿Qué valores llevan el bit MF y el offset del fragmento final en ese mismo ejemplo?",
+      "opciones": [
+        "MF = 1 y offset 370",
+        "MF = 0 y offset 370",
+        "MF = 0 y offset 2960",
+        "DF = 1 y offset 370"
+      ],
+      "correcta": 1,
+      "explicacion": "Es el último fragmento (MF = 0) y empieza en el byte 2960, es decir 2960 / 8 = 370 unidades.",
+      "por_que_falla": [
+        "MF = 1 indicaría que quedan más fragmentos.",
+        "",
+        "2960 es la posición en bytes; el campo va en unidades de 8.",
+        "DF impide fragmentar; no marca el último fragmento."
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Fragmentación de Paquetes IP – Ejemplo práctico"
+      }
+    },
+    {
+      "id": "ip-p15",
+      "unidad": "u6-ip",
+      "enunciado": "¿Qué indica el bit DF en 1 en el encabezado IPv4?",
+      "opciones": [
+        "Que quedan fragmentos del datagrama por recibir",
+        "Que el paquete es el primer fragmento del datagrama",
+        "Que el paquete no debe fragmentarse",
+        "Que cada router debe reensamblar el paquete antes de reenviarlo"
+      ],
+      "correcta": 2,
+      "explicacion": "DF (Don't Fragment) impide la fragmentación.",
+      "por_que_falla": [
+        "Eso lo indica MF (More Fragments).",
+        "El primer fragmento se reconoce por offset 0, no por DF.",
+        "",
+        "El reensamblado se hace solo en el destino final."
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Fragmentación – Campos involucrados"
+      }
+    },
+    {
+      "id": "ip-p16",
+      "unidad": "u6-ip",
+      "enunciado": "Un paquete IPv4 tiene el campo Protocol en 17. ¿Qué lleva encapsulado?",
+      "opciones": [
+        "Un segmento TCP",
+        "Un datagrama UDP",
+        "Un mensaje ICMP",
+        "Un mensaje IGMP"
+      ],
+      "correcta": 1,
+      "explicacion": "El valor 17 corresponde a UDP.",
+      "por_que_falla": [
+        "TCP es el valor 6.",
+        "",
+        "ICMP es el valor 1.",
+        "IGMP es el valor 2."
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Protocol (Protocolo)"
+      }
+    },
+    {
+      "id": "ip-p17",
+      "unidad": "u6-ip",
+      "enunciado": "¿Qué campo del encabezado IPv4 se usa para marcar la calidad de servicio con DiffServ?",
+      "opciones": [
+        "Identification, porque agrupa los paquetes de un mismo flujo",
+        "Time To Live, porque limita la vida de los paquetes menos prioritarios",
+        "Protocol, porque indica el tipo de tráfico de la capa superior",
+        "Type of Service, a través del código DSCP"
+      ],
+      "correcta": 3,
+      "explicacion": "El campo ToS se usa para DiffServ mediante el DSCP.",
+      "por_que_falla": [
+        "Identification asocia fragmentos del mismo datagrama.",
+        "El TTL evita bucles infinitos; no marca prioridad.",
+        "Protocol identifica el protocolo encapsulado, no la QoS.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "ToS (Type of Service)"
+      }
+    },
+    {
+      "id": "ip-p18",
+      "unidad": "u6-ip",
+      "enunciado": "En una red de circuitos virtuales, ¿con qué decide cada nodo el próximo salto?",
+      "opciones": [
+        "Con el identificador del CV y su tabla de conmutación de CV",
+        "Con la dirección IP de destino que lleva cada datagrama",
+        "Con la dirección de origen y el valor del TTL del paquete",
+        "Con el código DSCP marcado en el campo Type of Service"
+      ],
+      "correcta": 0,
+      "explicacion": "Cada nodo cruza el ID del circuito virtual con su tabla de conmutación de CV para elegir el puerto de salida.",
+      "por_que_falla": [
+        "",
+        "Así decide una red de datagramas.",
+        "Ni el origen ni el TTL determinan el próximo salto.",
+        "El DSCP marca prioridad, no el camino."
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Decisión y Conmutación"
+      }
+    },
+    {
+      "id": "ip-p19",
+      "unidad": "u6-ip",
+      "enunciado": "¿Qué registro regional coordina la distribución de direcciones IP en América Latina y el Caribe?",
+      "opciones": [
+        "ARIN",
+        "IANA",
+        "LACNIC",
+        "RIPE NCC"
+      ],
+      "correcta": 2,
+      "explicacion": "LACNIC es el RIR de América Latina y el Caribe.",
+      "por_que_falla": [
+        "ARIN atiende América del Norte.",
+        "IANA asigna bloques globales a los RIR; no es un registro regional.",
+        "",
+        "RIPE NCC atiende Eurasia y Medio Oriente."
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Registros Regionales (RIR)"
+      }
+    },
+    {
+      "id": "ip-p20",
+      "unidad": "u6-ip",
+      "enunciado": "En una red de datagramas, ¿qué pasa con los paquetes siguientes cuando falla un router del camino?",
+      "opciones": [
+        "Hay que restablecer todos los circuitos que pasaban por ese router",
+        "Eligen de manera autónoma un camino alternativo",
+        "Se descartan hasta que el origen establezca una nueva conexión",
+        "Esperan en el router anterior hasta que el enlace se recupere"
+      ],
+      "correcta": 1,
+      "explicacion": "Como cada datagrama se rutea de forma independiente, los siguientes toman otro camino sin restablecer nada.",
+      "por_que_falla": [
+        "Eso ocurre en redes de circuitos virtuales.",
+        "",
+        "Una red de datagramas no establece conexiones.",
+        "No hay mecanismo de espera: cada paquete se encamina de forma independiente."
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Servicio de Red No Orientado a Conexión"
+      }
+    },
+    {
+      "id": "ip-p21",
+      "unidad": "u6-ip",
+      "enunciado": "Según el modelo best effort, ¿qué hace IP cuando se pierde un paquete?",
+      "opciones": [
+        "Lo retransmite desde el último router que lo reenvió",
+        "Envía un aviso al origen para que reduzca la velocidad",
+        "Reserva un camino fijo para los paquetes siguientes",
+        "Nada: resolver la pérdida queda a cargo de las capas superiores"
+      ],
+      "correcta": 3,
+      "explicacion": "IP no realiza ninguna acción ante la pérdida; la confiabilidad recae en las capas superiores.",
+      "por_que_falla": [
+        "IP no retransmite paquetes.",
+        "IP no garantiza ni controla el throughput.",
+        "Reservar caminos es propio de los circuitos virtuales.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Protocolo IP – Características del Servicio y Confiabilidad"
+      }
+    },
+    {
+      "id": "ip-p22",
+      "unidad": "u6-ip",
+      "enunciado": "En el ejemplo de NAT básico (PC 192.168.1.2, asociación con 200.10.0.5, servidor 99.12.1.36), ¿qué hace el router a la ida?",
+      "opciones": [
+        "Cambia la IP de origen 192.168.1.2 por 200.10.0.5",
+        "Cambia la IP de destino 99.12.1.36 por 200.10.0.5",
+        "Cambia la IP de origen 192.168.1.2 por 200.10.0.3",
+        "Cambia la IP de origen y el puerto por los de la interfaz S_0"
+      ],
+      "correcta": 0,
+      "explicacion": "A la ida se traduce la IP de origen usando la IP del pool asociada: 200.10.0.5.",
+      "por_que_falla": [
+        "",
+        "A la ida el destino no cambia; a la vuelta se traduce el destino.",
+        "200.10.0.3 es la interfaz externa del router, no la IP asociada a la PC.",
+        "Traducir puertos es propio de PAT, no de NAT básico."
+      ],
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Diagrama de Traducción de Direcciones (1:1)"
+      }
+    },
+    {
+      "id": "ip-p23",
+      "unidad": "u6-ip",
+      "enunciado": "En el ejemplo de PAT, en el paso 3 (respuesta desde Internet), ¿cuál es la dirección de destino del paquete?",
+      "opciones": [
+        "10.0.0.1:3345",
+        "10.0.0.4:3345",
+        "138.76.29.7:3345",
+        "128.119.40.186:80"
+      ],
+      "correcta": 2,
+      "explicacion": "El servidor responde a la dirección pública que vio: 138.76.29.7:3345. El router la traduce recién en el paso 4.",
+      "por_que_falla": [
+        "Es el destino del paso 4, ya traducido hacia la LAN.",
+        "10.0.0.4 es la interfaz privada del router.",
+        "",
+        "Es el origen de la respuesta (el servidor)."
+      ],
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "NAT/PAT – Traducción de direcciones y puertos"
+      }
+    },
+    {
+      "id": "ip-p24",
+      "unidad": "u6-ip",
+      "enunciado": "¿Cuál de las dos formas de NAT permite iniciar conexiones desde Internet hacia los equipos internos?",
+      "opciones": [
+        "PAT, porque registra los puertos en la tabla NAT",
+        "NAT básico, porque la asociación es 1 a 1",
+        "Ambas por igual, porque las dos usan la tabla NAT",
+        "Ninguna, porque NAT solo traduce el tráfico saliente"
+      ],
+      "correcta": 1,
+      "explicacion": "En NAT básico cada interno tiene una IP externa exclusiva, así que se puede llegar desde afuera; PAT en general no lo permite.",
+      "por_que_falla": [
+        "PAT en general no admite conexiones entrantes.",
+        "",
+        "Solo NAT básico lo permite.",
+        "NAT también traduce el tráfico entrante (la vuelta)."
+      ],
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Formas de NAT"
+      }
+    },
+    {
+      "id": "ip-p25",
+      "unidad": "u6-ip",
+      "enunciado": "¿Qué logra el supernetting con CIDR?",
+      "opciones": [
+        "Dividir una red en subredes iguales dentro de una organización",
+        "Traducir direcciones privadas a una única IP pública",
+        "Crear subredes de distinto tamaño dentro de un mismo bloque",
+        "Agregar rutas contiguas en una sola y achicar las tablas de ruteo"
+      ],
+      "correcta": 3,
+      "explicacion": "Supernetting es el camino inverso al subnetting: agrega múltiples rutas continuas en una sola declaración.",
+      "por_que_falla": [
+        "Eso es subnetting.",
+        "Eso es PAT.",
+        "Eso es VLSM.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa3_subnetting.md",
+        "seccion": "Supernetting: el camino inverso"
+      }
+    },
+    {
+      "id": "ip-p26",
+      "unidad": "u6-ip",
+      "enunciado": "¿Cuál de estas NO es una de las cuatro tareas de la capa de red?",
+      "opciones": [
+        "Direccionamiento",
+        "Forwarding",
+        "Control de acceso al medio",
+        "Fragmentación"
+      ],
+      "correcta": 2,
+      "explicacion": "Las tareas son direccionamiento, enrutamiento, forwarding y fragmentación; el acceso al medio es de la capa de enlace.",
+      "por_que_falla": [
+        "Es una tarea de la capa de red.",
+        "Es una tarea de la capa de red.",
+        "",
+        "Es una tarea de la capa de red."
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Tareas de la capa de red"
+      }
+    },
+    {
+      "id": "ip-p27",
+      "unidad": "u6-ip",
+      "enunciado": "ipconfig muestra Dirección IP 192.168.1.2 y Máscara 255.255.255.0. ¿A qué red pertenece y qué tipo de dirección es?",
+      "opciones": [
+        "Red 192.168.1.0/24, dirección privada",
+        "Red 192.168.1.0/24, dirección pública",
+        "Red 192.168.0.0/16, dirección pública",
+        "Red 192.168.1.255/24, dirección privada"
+      ],
+      "correcta": 0,
+      "explicacion": "IP AND 255.255.255.0 = 192.168.1.0/24, y 192.168.x.x está en el rango privado de RFC 1918.",
+      "por_que_falla": [
+        "",
+        "192.168.x.x es un rango privado.",
+        "La máscara es /24, no /16, y la dirección es privada.",
+        "192.168.1.255 es la dirección de broadcast, no la de red."
+      ],
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Herramienta: ipconfig"
+      }
+    }
+  ],
+  "glosario": [
+    {
+      "termino": "IP",
+      "sigla": "Internet Protocol",
+      "definicion": "Protocolo de capa 3 de direccionamiento lógico y encaminamiento de Internet; no orientado a conexión y best effort.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "IPv4",
+      "sigla": "Internet Protocol version 4",
+      "definicion": "Versión estándar actual de IP, con direcciones de 32 bits en notación de punto decimal.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "IPv6",
+      "sigla": "Internet Protocol version 6",
+      "definicion": "Versión de IP (RFC 8200) con despliegue creciente, que coexiste con IPv4.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "TTL",
+      "sigla": "Time To Live",
+      "definicion": "Campo de 8 bits que cada router decrementa; al llegar a 0 el paquete se descarta.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "DF",
+      "sigla": "Don't Fragment",
+      "definicion": "Flag del encabezado IPv4 que impide fragmentar el paquete.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "MF",
+      "sigla": "More Fragments",
+      "definicion": "Flag que indica que quedan fragmentos por recibir; vale 0 en el último.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "ToS",
+      "sigla": "Type of Service",
+      "definicion": "Campo de 8 bits del encabezado IPv4 que se usa para DiffServ a través del DSCP.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "DSCP",
+      "sigla": "Differentiated Services Code Point",
+      "definicion": "Código marcado en el ToS que clasifica el tráfico (p. ej. EF = 46 para telefonía, CS0 = best effort).",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "DiffServ",
+      "sigla": "Differentiated Services",
+      "definicion": "Modelo de QoS que clasifica, marca, encola y prioriza el tráfico según su DSCP.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "CIDR",
+      "sigla": "Classless Inter-Domain Routing",
+      "definicion": "Direccionamiento sin clases con prefijos /n que permite asignar bloques flexibles y agregar rutas.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "VLSM",
+      "sigla": "Variable Length Subnet Mask",
+      "definicion": "Uso de máscaras de distinta longitud para crear subredes de tamaño variable.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "NAT",
+      "sigla": "Network Address Translation",
+      "definicion": "Traducción en el router entre direcciones interiores (privadas) y exteriores.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "PAT",
+      "sigla": "Port Address Translation",
+      "definicion": "NAT muchos a uno que comparte una IP pública diferenciando sesiones por puerto.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "RFC 1918",
+      "definicion": "Estándar que reserva los bloques privados 10.0.0.0/8, 172.16.0.0–172.31.255.255 y 192.168.0.0–192.168.255.255.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "IANA",
+      "sigla": "Internet Assigned Numbers Authority",
+      "definicion": "Autoridad, parte de ICANN, que asigna globalmente bloques de direcciones IP a los registros regionales.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "ICANN",
+      "sigla": "Internet Corporation for Assigned Names and Numbers",
+      "definicion": "Organización de gestión global de Internet de la que forma parte IANA.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "LACNIC",
+      "sigla": "Latin America and Caribbean Network Information Centre",
+      "definicion": "Registro regional que distribuye recursos de Internet en América Latina y el Caribe.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "RIR",
+      "sigla": "Regional Internet Registry",
+      "definicion": "Registro regional en el que IANA delega la distribución de direcciones: LACNIC, ARIN, RIPE NCC, AFRINIC y APNIC.",
+      "unidad": "u6-ip"
+    },
+    {
+      "termino": "ipcalc",
+      "definicion": "Herramienta de Linux que calcula red, broadcast, rango de hosts y subredes a partir de una IP y su máscara.",
+      "unidad": "u6-ip"
+    }
+  ],
+  "dudas": [
+    {
+      "texto": "La tabla de RFC 1918 indica \"sufijo /16\" para 172.16.0.0 y \"sufijo /24\" para 192.168.0.0, pero los rangos que muestra (172.16.0.0–172.31.255.255 y 192.168.0.0–192.168.255.255) abarcan más que una /16 y una /24. La columna parece indicar la máscara por defecto de la clase, no el tamaño del bloque reservado.",
+      "fuente": {
+        "archivo": "capa3_nat_pat.md",
+        "seccion": "Direcciones IP privadas"
+      }
+    },
+    {
+      "texto": "El campo Protocol se describe como el que identifica \"al protocolo de la capa de transporte\", pero la tabla incluye ICMP (1), IGMP (2) e IP-in-IP (4), que no son protocolos de transporte.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Protocol (Protocolo)"
+      }
+    },
+    {
+      "texto": "Se dice que las clases IPv4 dependen \"de los primeros 4 bits\", pero la clase E se identifica con 5 bits iniciales (11110) en las tablas del propio material.",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Clases de Direcciones IPv4"
+      }
+    }
+  ]
+}

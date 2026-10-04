@@ -1,0 +1,913 @@
+{
+  "conceptos": [
+    {
+      "id": "modelo-en-capas",
+      "nombre": "Modelo en capas",
+      "unidad": "u1-intro",
+      "definicion": "Forma de organizar la comunicación en red dividiéndola en capas, cada una con una función y servicios bien definidos.",
+      "definicion_extendida": "Divide un problema complejo en bloques constructivos más sencillos. Cada capa se comunica horizontalmente con su entidad par mediante un protocolo común y verticalmente con las capas adyacentes mediante el intercambio de servicios. Una capa puede evolucionar de forma autónoma siempre que mantenga los mismos servicios.",
+      "ejemplo": "En el modelo híbrido, la capa de red rutea la información hasta el destino usando los servicios de la capa de enlace, que comunica equipos adyacentes.",
+      "por_que_importa": "Reduce la complejidad, permite definir arquitecturas estándar compatibles entre fabricantes y deja que cada capa evolucione sin romper a las demás.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "01 – ¿Por qué un modelo en Capas?" }
+    },
+    {
+      "id": "modelo-osi",
+      "nombre": "Modelo OSI",
+      "unidad": "u1-intro",
+      "definicion": "Modelo de referencia teórico de 7 capas (Open Systems Interconnection) publicado por la ISO en 1984.",
+      "definicion_extendida": "Fue creado en 1980 y publicado como estándar en 1984 por la ISO. Sus capas son Física, Enlace de datos, Red, Transporte, Sesión, Presentación y Aplicación. Como los fabricantes de chips no participaron de los comités, se separó estrictamente la capa 1 (Física) de la capa 2 (Enlace) para aislar la falta de hardware unificado.",
+      "ejemplo": "La capa 7 (Aplicación), la 6 (Presentación) y la 5 (Sesión) del OSI quedan agrupadas en una sola capa de Aplicación en el modelo híbrido.",
+      "por_que_importa": "Es la referencia clásica para nombrar capas («capa 2», «capa 3») y sus principios de diseño explican dónde conviene poner los límites entre capas.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "02 – Modelo OSI" }
+    },
+    {
+      "id": "modelo-hibrido",
+      "nombre": "Modelo híbrido",
+      "unidad": "u1-intro",
+      "definicion": "Modelo de referencia práctico de 5 capas: Aplicación, Transporte, Red, Enlace de datos y Física.",
+      "definicion_extendida": "Combina la flexibilidad de la capa de aplicación del modelo TCP/IP con la clara división física y de enlace del modelo OSI. Su capa de Aplicación equivale a las capas 5, 6 y 7 del OSI. Es la arquitectura de referencia más usada para estudiar el flujo real de PDUs y protocolos.",
+      "ejemplo": "Capa 5 Aplicación (soporte a las aplicaciones), 4 Transporte (extremo a extremo), 3 Red (ruteo), 2 Enlace (equipos adyacentes y acceso al medio), 1 Física (pone los bits en el medio).",
+      "por_que_importa": "Es el modelo que se usa en el curso para seguir el camino de los datos desde la aplicación del usuario hasta el cable o el medio inalámbrico.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "03 – Modelo híbrido" }
+    },
+    {
+      "id": "protocolo",
+      "nombre": "Protocolo",
+      "unidad": "u1-intro",
+      "definicion": "Acuerdo formal que define el formato y el orden de los mensajes entre entidades y las acciones a tomar al enviarlos o recibirlos.",
+      "definicion_extendida": "Según Kurose y Ross, un protocolo define el formato y el orden de los mensajes intercambiados entre dos o más entidades, así como las acciones tomadas en la transmisión o recepción de un mensaje. Para comunicarse con éxito, las entidades deben hablar obligatoriamente el mismo protocolo. La lista de protocolos usados por las capas es la pila de protocolos, y el conjunto de capas y protocolos es la arquitectura de red.",
+      "ejemplo": "FTP, HTTP, SMTP y DNS en aplicación; TCP y UDP en transporte; IP en red; Ethernet en enlace.",
+      "por_que_importa": "Sin un protocolo común dos equipos no pueden interpretar los mensajes del otro; los organismos (ITU, IETF, IEEE, ISO) los estandarizan para que haya interoperabilidad.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "04 – Protocolo, pila y arquitectura" }
+    },
+    {
+      "id": "pdu",
+      "nombre": "PDU (Protocol Data Unit)",
+      "unidad": "u1-intro",
+      "definicion": "Unidad de datos que se intercambia entre capas pares.",
+      "definicion_extendida": "Cada capa tiene su propia PDU, formada por los datos de la capa superior más el encabezado de control de esa capa. Recibe un nombre distinto según la capa: mensajes (aplicación), segmentos (transporte), paquetes (red), tramas (enlace) y bits y bytes (física).",
+      "ejemplo": "Un paquete de capa 3 viaja dentro de una trama de capa 2, que el router abre para leer el encabezado de red.",
+      "por_que_importa": "Saber el nombre de la PDU indica en qué capa se está trabajando y qué encabezado se está mirando.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "08 – Encapsulamiento y PDUs" }
+    },
+    {
+      "id": "encapsulamiento",
+      "nombre": "Encapsulamiento",
+      "unidad": "u1-intro",
+      "definicion": "Proceso por el cual la PDU de cada capa se aloja dentro de la capa inferior, que le agrega su propio encabezado de control.",
+      "definicion_extendida": "En el host origen cada capa agrega un encabezado (H5, H4, H3, H2) y la capa 2 agrega además un terminador (T2); la capa 1 transmite la secuencia de bits por el medio. En el destino ocurre el desencapsulado: cada capa procesa su encabezado y entrega el contenido limpio a la capa superior.",
+      "ejemplo": "Analogía postal: la carta (datos) va en un sobre (encabezado del protocolo de correo) y el sobre en una caja (encabezado entre oficinas): carta → sobre → caja → caja → sobre → carta.",
+      "por_que_importa": "Permite que cada capa agregue la información de control que necesita sin conocer el contenido de las demás.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "08 – Encapsulamiento y PDUs" }
+    },
+    {
+      "id": "conmutacion-de-paquetes",
+      "nombre": "Conmutación de paquetes",
+      "unidad": "u1-intro",
+      "definicion": "Modelo de intercambio de datos en el que los recursos se comparten mediante multiplexado estadístico.",
+      "definicion_extendida": "Permite que la suma de las velocidades de los canales de entrada supere la del canal de salida, con mejor aprovechamiento del ancho de banda. Como contrapartida aparecen el retardo variable y la pérdida de paquetes: los paquetes esperan en una cola o buffer y se descartan si el buffer se llena. La ruta es variable.",
+      "ejemplo": "Internet y las redes Ethernet; dos notebooks a 200 Mbps comparten un router con salida de 50 Mbps a Internet.",
+      "por_que_importa": "Es el modelo de Internet: aprovecha mejor los enlaces, pero obliga a lidiar con colas, retardos y pérdidas.",
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Conmutación de paquetes" }
+    },
+    {
+      "id": "conmutacion-de-circuitos",
+      "nombre": "Conmutación de circuitos",
+      "unidad": "u1-intro",
+      "definicion": "Modelo de intercambio de datos en el que cada flujo usa un circuito reservado en exclusiva mientras dura la comunicación.",
+      "definicion_extendida": "La capacidad de cada circuito es fija y garantizada, y el camino en la red es fijo, por lo que el retardo es predecible y estable. Los flujos se combinan sobre un mismo medio con un multiplexor y se separan con un demultiplexor.",
+      "ejemplo": "La telefonía convencional y ATM (Asynchronous Transfer Mode); un sistema de 3 circuitos multiplexados en un mismo enlace.",
+      "por_que_importa": "Garantiza capacidad y retardo estable, a costa de reservar recursos aunque no se usen.",
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Conmutación de circuitos" }
+    },
+    {
+      "id": "multiplexacion",
+      "nombre": "Multiplexación",
+      "unidad": "u1-intro",
+      "definicion": "Técnica de combinar varias señales o flujos de datos para transmitirlos simultáneamente por un mismo medio.",
+      "definicion_extendida": "Un multiplexor (MUX) combina los flujos y un demultiplexor (DEMUX) los separa en el otro extremo. En conmutación de circuitos cada flujo tiene su canal fijo; en conmutación de paquetes se usa multiplexado estadístico, donde la suma de las entradas puede superar la capacidad de la salida y el exceso espera en una cola.",
+      "ejemplo": "Tres flujos (■ ● ▲) comparten un enlace de 3 canales entre un MUX y un DEMUX.",
+      "por_que_importa": "Permite compartir un medio costoso entre muchos flujos en lugar de tender un enlace por cada uno.",
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Conmutación de circuitos" }
+    },
+    {
+      "id": "topologia-estrella",
+      "nombre": "Topología en estrella",
+      "unidad": "u1-intro",
+      "definicion": "Topología en la que todos los nodos se conectan a un nodo central.",
+      "definicion_extendida": "Usa un enlace por nodo hacia el centro; cada nodo tiene una interfaz y el central tiene n. Es fácil agregar o quitar nodos, tolera la falla de un nodo o su cable y es más barata que la malla. Su desventaja principal es el punto único de falla: si cae el elemento central (switch o hub), toda la red queda incomunicada.",
+      "ejemplo": "Varias PCs conectadas por cable a un mismo switch.",
+      "por_que_importa": "Es la topología típica de las LAN cableadas por su bajo costo y fácil gestión.",
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Topología en Estrella" }
+    },
+    {
+      "id": "topologia-malla",
+      "nombre": "Topología en malla",
+      "unidad": "u1-intro",
+      "definicion": "Topología en la que los nodos se interconectan entre sí con múltiples enlaces (en malla completa, todos con todos).",
+      "definicion_extendida": "Es robusta ante fallas múltiples y ofrece el camino más corto entre nodos adyacentes. Requiere n(n-1)/2 enlaces en total y n-1 interfaces por nodo, puede desperdiciar ancho de banda en algunos enlaces y no escala al crecer la cantidad de nodos.",
+      "ejemplo": "Con 5 nodos hacen falta 5·4/2 = 10 enlaces y 4 interfaces por nodo.",
+      "por_que_importa": "Da la máxima redundancia, pero su costo crece rápidamente con la cantidad de nodos.",
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Topología en Malla" }
+    },
+    {
+      "id": "intro-topologia-anillo",
+      "nombre": "Topología en anillo",
+      "unidad": "u1-intro",
+      "definicion": "Topología en la que cada nodo se conecta con otros dos, formando un círculo cerrado.",
+      "definicion_extendida": "Requiere n enlaces y 2 interfaces por nodo, y ofrece un camino alternativo ante la caída de un enlace. Para agregar o quitar un nodo hay que abrir físicamente el anillo, interrumpiendo el servicio, y los nodos de paso cargan con el tráfico de los demás pares.",
+      "ejemplo": "Con 8 nodos se necesitan 8 enlaces, frente a 28 en una malla completa.",
+      "por_que_importa": "Es un punto intermedio de costo y tolerancia a fallos entre la estrella y la malla.",
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Topología en Anillo" }
+    },
+    {
+      "id": "lan",
+      "nombre": "LAN (Local Area Network)",
+      "unidad": "u1-intro",
+      "definicion": "Red de alcance local, dentro de un edificio o un campus, cuya infraestructura pertenece a una persona o empresa.",
+      "definicion_extendida": "En la clasificación por tamaño se ubica entre la PAN y la MAN (PAN ⊂ LAN ⊂ MAN ⊂ WAN). Se arma típicamente con switches y WiFi, y su dueño es el mismo usuario u organización, a diferencia de la WAN que usa infraestructura de un proveedor.",
+      "ejemplo": "Redes hogareñas, de oficinas, de un laboratorio o de una facultad.",
+      "por_que_importa": "Es el ámbito donde trabajan Ethernet, los switches y las VLAN que se ven en las unidades siguientes.",
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "LAN vs WAN" }
+    },
+    {
+      "id": "intro-wan",
+      "nombre": "WAN (Wide Area Network)",
+      "unidad": "u1-intro",
+      "definicion": "Red de alcance nacional o internacional que se extiende por una región usando redes públicas de proveedores.",
+      "definicion_extendida": "Es la categoría de mayor tamaño (PAN ⊂ LAN ⊂ MAN ⊂ WAN). Su infraestructura pertenece a un proveedor de servicio y puede interconectar redes MAN y LAN.",
+      "ejemplo": "Redes privadas de empresas entre sedes o redes montadas sobre Internet.",
+      "por_que_importa": "Conecta redes locales distantes; al depender de un proveedor cambian el costo y el control sobre la infraestructura.",
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "LAN vs WAN" }
+    },
+    {
+      "id": "unicast",
+      "nombre": "Unicast",
+      "unidad": "u1-intro",
+      "definicion": "Envío uno a uno, unidireccional o bidireccional, entre dos nodos específicos.",
+      "definicion_extendida": "Es uno de los tres métodos de intercambio de información. Solo el nodo destino indicado recibe los datos, a diferencia del multicast (varios suscriptos) y del broadcast (todos).",
+      "ejemplo": "Un cliente que descarga una página de un servidor web.",
+      "por_que_importa": "Es la forma más habitual de comunicación entre dos equipos y no molesta al resto de la red.",
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Intercambio de información" }
+    },
+    {
+      "id": "multicast",
+      "nombre": "Multicast",
+      "unidad": "u1-intro",
+      "definicion": "Envío de uno a varios receptores específicos, que requiere una suscripción previa del host.",
+      "definicion_extendida": "Solo los hosts que se suscribieron previamente reciben la información. Se ubica entre el unicast (uno a uno) y el broadcast (a todos).",
+      "ejemplo": "Un emisor que envía el mismo flujo solo a los equipos suscriptos a ese grupo.",
+      "por_que_importa": "Permite llegar a varios receptores con un solo envío sin inundar a toda la red.",
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Intercambio de información" }
+    },
+    {
+      "id": "broadcast",
+      "nombre": "Broadcast",
+      "unidad": "u1-intro",
+      "definicion": "Envío masivo y simultáneo de información a todos los integrantes de la red.",
+      "definicion_extendida": "No requiere suscripción: todos los nodos de la red reciben y procesan el mensaje. Es el opuesto del unicast, que tiene un único destinatario.",
+      "ejemplo": "Un equipo que envía un mensaje que deben recibir todas las máquinas de su red local.",
+      "por_que_importa": "Es útil para descubrir equipos, pero consume recursos en todos los nodos, por eso más adelante se limita su alcance.",
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Intercambio de información" }
+    },
+    {
+      "id": "servicio-confiable",
+      "nombre": "Servicio confiable",
+      "unidad": "u1-intro",
+      "definicion": "Servicio que confirma y retransmite cada PDU, e incluye control de flujo y de congestión.",
+      "definicion_extendida": "Se opone al servicio no confiable, que no confirma ni retransmite y simplemente entrega los mensajes. La confiabilidad es una dimensión distinta de la orientación a conexión.",
+      "ejemplo": "En la capa de transporte, TCP (capa 4 confiable); UDP se usa para voz en tiempo real sin retransmisión.",
+      "por_que_importa": "Garantiza que los datos lleguen, a costa de más control y posibles demoras por retransmisiones.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Tipo de servicios – Confiable" }
+    },
+    {
+      "id": "servicio-orientado-a-conexion",
+      "nombre": "Servicio orientado a conexión",
+      "unidad": "u1-intro",
+      "definicion": "Servicio que establece una conexión (handshake) antes de transferir datos y la libera al terminar.",
+      "definicion_extendida": "Su paradigma es la red de telefonía tradicional. El servicio no orientado a conexión, en cambio, sigue el paradigma del correo postal: cada mensaje se envía sin establecer ni liberar conexión.",
+      "ejemplo": "En el chat con sockets: el cliente se conecta con REQUEST (SYN) → INDICATION → RESPONSE (SYN-ACK) → CONFIRM (ACK), intercambia mensajes y luego cierra con close().",
+      "por_que_importa": "Permite que ambos extremos acuerden la comunicación y reserven estado antes de intercambiar datos.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Tipo de servicios – Conexión" }
+    },
+    {
+      "id": "intro-sap",
+      "nombre": "SAP (Service Access Point)",
+      "unidad": "u1-intro",
+      "definicion": "Punto de acceso donde una entidad de una capa superior solicita y obtiene un servicio de la capa inferior.",
+      "definicion_extendida": "La entidad de capa N+1 es el usuario del servicio (service user) y la de capa N el proveedor (service provider); se comunican verticalmente a través del SAP. Los SAP de la capa de transporte permiten distinguir distintas aplicaciones o procesos dentro de un mismo equipo.",
+      "ejemplo": "En un mismo servidor, los SAP de transporte separan el tráfico de www, ftp y mail.",
+      "por_que_importa": "Permite que varias aplicaciones compartan la misma pila de protocolos sin mezclar sus datos.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "06 – SAP y tipos de servicio" }
+    },
+    {
+      "id": "intro-primitivas-de-servicio",
+      "nombre": "Primitivas de servicio",
+      "unidad": "u1-intro",
+      "definicion": "Conjunto de operaciones que los procesos de una capa disponen para comunicarse con la entidad par.",
+      "definicion_extendida": "Las primitivas genéricas son REQUEST (solicita un servicio o conexión), INDICATION (notifica al receptor), RESPONSE (el receptor responde) y CONFIRM (notifica al iniciador que la respuesta fue procesada). TCP las implementa con LISTEN, CONNECT, RECEIVE, SEND y DISCONNECT.",
+      "ejemplo": "En Python: socket.connect((host, port)) es REQUEST y conn, addr = socket.accept() es INDICATION.",
+      "por_que_importa": "Son la interfaz concreta con la que una aplicación usa los servicios de la capa inferior, como los sockets.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "05 – Servicios y primitivas" }
+    }
+  ],
+  "relaciones": [
+    { "origen": "modelo-osi", "destino": "modelo-en-capas", "verbo": "es un tipo de", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "02 – Modelo OSI" } },
+    { "origen": "modelo-hibrido", "destino": "modelo-en-capas", "verbo": "es un tipo de", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "03 – Modelo híbrido" } },
+    { "origen": "modelo-hibrido", "destino": "modelo-osi", "verbo": "agrupa las capas 5, 6 y 7 de", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Modelos de Referencia: Híbrido vs OSI" } },
+    { "origen": "modelo-hibrido", "destino": "capa-fisica", "verbo": "incluye como capa 1 a la", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Capas – Modelo de referencia" } },
+    { "origen": "modelo-hibrido", "destino": "capa-de-enlace", "verbo": "incluye como capa 2 a la", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Capas – Modelo de referencia" } },
+    { "origen": "modelo-hibrido", "destino": "capa-de-red", "verbo": "incluye como capa 3 a la", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Capas – Modelo de referencia" } },
+    { "origen": "protocolo", "destino": "pdu", "verbo": "define el formato de la", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "04 – Protocolo, pila y arquitectura" } },
+    { "origen": "protocolo", "destino": "modelo-en-capas", "verbo": "comunica entidades pares en el", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "07 – Comunicación entre capas" } },
+    { "origen": "encapsulamiento", "destino": "pdu", "verbo": "agrega un encabezado a cada", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "08 – Encapsulamiento y PDUs" } },
+    { "origen": "trama", "destino": "pdu", "verbo": "es el nombre en la capa de enlace de la", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Flujo de datos y nombre de PDUs" } },
+    { "origen": "encapsulamiento", "destino": "trama", "verbo": "agrega encabezado H2 y terminador T2 a la", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Encapsulamiento" } },
+    { "origen": "encapsulamiento", "destino": "modelo-en-capas", "verbo": "depende de", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "08 – Encapsulamiento y PDUs" } },
+    { "origen": "capa-fisica", "destino": "encapsulamiento", "verbo": "transmite como bits el resultado del", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Encapsulamiento" } },
+    { "origen": "pdu", "destino": "modelo-hibrido", "verbo": "recibe un nombre distinto en cada capa del", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Flujo de datos y nombre de PDUs" } },
+    { "origen": "conmutacion-de-paquetes", "destino": "conmutacion-de-circuitos", "verbo": "contrasta con", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Circuitos vs. paquetes" } },
+    { "origen": "conmutacion-de-paquetes", "destino": "multiplexacion", "verbo": "usa la variante estadística de la", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Conmutación de paquetes" } },
+    { "origen": "conmutacion-de-circuitos", "destino": "multiplexacion", "verbo": "usa canales fijos de", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Conmutación de circuitos" } },
+    { "origen": "protocolo-ip", "destino": "conmutacion-de-paquetes", "verbo": "transporta datos mediante", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Modelos de intercambio de datos" } },
+    { "origen": "ethernet", "destino": "conmutacion-de-paquetes", "verbo": "es un ejemplo de", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Modelos de intercambio de datos" } },
+    { "origen": "conmutacion-de-paquetes", "destino": "router", "verbo": "encola paquetes en el buffer del", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Multiplexación estadística" } },
+    { "origen": "topologia-estrella", "destino": "topologia-malla", "verbo": "contrasta con", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Resumen comparativo" } },
+    { "origen": "topologia-estrella", "destino": "switch", "verbo": "puede tener como nodo central un", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Topología en Estrella" } },
+    { "origen": "topologia-estrella", "destino": "hub", "verbo": "puede tener como nodo central un", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Topología en Estrella" } },
+    { "origen": "intro-topologia-anillo", "destino": "topologia-malla", "verbo": "requiere menos enlaces que", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Topología en Anillo" } },
+    { "origen": "lan", "destino": "intro-wan", "verbo": "contrasta con", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "LAN vs WAN" } },
+    { "origen": "lan", "destino": "switch", "verbo": "se arma típicamente con", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Clasificación de redes – según el tamaño" } },
+    { "origen": "lan", "destino": "topologia-estrella", "verbo": "suele usar", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Topología en Estrella" } },
+    { "origen": "broadcast", "destino": "dominio-de-broadcast", "verbo": "alcanza a todos los nodos del", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Intercambio de información" } },
+    { "origen": "multicast", "destino": "broadcast", "verbo": "contrasta con", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Intercambio de información" } },
+    { "origen": "unicast", "destino": "multicast", "verbo": "contrasta con", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Intercambio de información" } },
+    { "origen": "broadcast", "destino": "unicast", "verbo": "contrasta con", "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Intercambio de información" } },
+    { "origen": "servicio-confiable", "destino": "control-de-flujo", "verbo": "usa", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Tipo de servicios – Confiable" } },
+    { "origen": "servicio-confiable", "destino": "pdu", "verbo": "confirma y retransmite cada", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Tipo de servicios – Confiable" } },
+    { "origen": "intro-primitivas-de-servicio", "destino": "servicio-orientado-a-conexion", "verbo": "establecen y liberan la conexión del", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Flujo de Conexión en un Chat" } },
+    { "origen": "intro-primitivas-de-servicio", "destino": "intro-sap", "verbo": "se invocan a través del", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "06 – SAP y tipos de servicio" } },
+    { "origen": "intro-sap", "destino": "modelo-en-capas", "verbo": "conecta capas adyacentes en el", "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "06 – SAP y tipos de servicio" } }
+  ],
+  "taxonomias": [
+    {
+      "id": "intro-tax-clasificacion-redes",
+      "nombre": "Clasificación de redes",
+      "unidad": "u1-intro",
+      "raiz": {
+        "nombre": "Redes de datos",
+        "hijos": [
+          {
+            "nombre": "Según topología",
+            "hijos": [
+              { "nombre": "Estrella", "descripcion": "Todos los nodos a un nodo central; punto único de falla en el centro.", "hijos": [] },
+              { "nombre": "Malla", "descripcion": "Nodos interconectados entre sí: n(n-1)/2 enlaces, n-1 interfaces por nodo.", "hijos": [] },
+              { "nombre": "Anillo", "descripcion": "Cada nodo con dos vecinos: n enlaces, 2 interfaces por nodo.", "hijos": [] }
+            ]
+          },
+          {
+            "nombre": "Según tamaño (PAN ⊂ LAN ⊂ MAN ⊂ WAN)",
+            "hijos": [
+              { "nombre": "PAN", "descripcion": "Dispositivos personales: Bluetooth, USB, infrarrojo.", "hijos": [] },
+              { "nombre": "LAN", "descripcion": "Dentro de un edificio: switches, WiFi.", "hijos": [] },
+              { "nombre": "MAN", "descripcion": "Extensión de LAN a campus, complejo o ciudad.", "hijos": [] },
+              { "nombre": "WAN", "descripcion": "Nivel nacional o internacional, sobre redes de proveedores.", "hijos": [] }
+            ]
+          }
+        ]
+      },
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "02 – Clasificación de Redes" }
+    },
+    {
+      "id": "intro-tax-componentes-red",
+      "nombre": "Componentes de una red",
+      "unidad": "u1-intro",
+      "raiz": {
+        "nombre": "Componentes de una red",
+        "descripcion": "Hardware, software, medios de transmisión y protocolos.",
+        "hijos": [
+          {
+            "nombre": "Hosts o sistemas finales",
+            "hijos": [
+              { "nombre": "Hardware", "descripcion": "Dispositivos de usuario, servidores dedicados y adaptadores de red.", "hijos": [] },
+              { "nombre": "Software", "descripcion": "Sistema operativo con el software de red base e integración con aplicaciones.", "hijos": [] },
+              { "nombre": "Modelos de aplicación", "descripcion": "Cliente–servidor (email, web, FTP) y peer-to-peer (BitTorrent).", "hijos": [] }
+            ]
+          },
+          {
+            "nombre": "Redes de acceso",
+            "descripcion": "Conectan los sistemas finales con la red.",
+            "hijos": [
+              { "nombre": "Par de cobre", "descripcion": "DSL / ADSL.", "hijos": [] },
+              { "nombre": "Cable coaxial", "hijos": [] },
+              { "nombre": "Fibra óptica", "descripcion": "FTTH, PON, GPON.", "hijos": [] },
+              { "nombre": "Radioenlaces", "hijos": [] }
+            ]
+          },
+          {
+            "nombre": "Núcleo de la red",
+            "descripcion": "Routers, equipos de transmisión, redes ópticas terrestres y submarinas, sistemas inalámbricos.",
+            "hijos": [
+              { "nombre": "Conmutación de circuitos", "descripcion": "Telefonía convencional, ATM.", "hijos": [] },
+              { "nombre": "Conmutación de paquetes", "descripcion": "Internet, Ethernet.", "hijos": [] }
+            ]
+          },
+          {
+            "nombre": "Protocolos",
+            "descripcion": "Control, gestión y transporte de datos.",
+            "hijos": []
+          }
+        ]
+      },
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "03 – Componentes de una Red" }
+    },
+    {
+      "id": "intro-tax-tipos-servicio",
+      "nombre": "Tipos de servicio",
+      "unidad": "u1-intro",
+      "raiz": {
+        "nombre": "Tipos de servicio",
+        "hijos": [
+          {
+            "nombre": "Según la conexión",
+            "hijos": [
+              { "nombre": "Orientado a conexión", "descripcion": "Paradigma de la telefonía: handshake y liberación de la conexión.", "hijos": [] },
+              { "nombre": "No orientado a conexión", "descripcion": "Paradigma del correo postal: sin establecimiento ni liberación.", "hijos": [] }
+            ]
+          },
+          {
+            "nombre": "Según la confiabilidad",
+            "hijos": [
+              { "nombre": "Confiable", "descripcion": "Confirmación y retransmisión de cada PDU, control de flujo y de congestión.", "hijos": [] },
+              { "nombre": "No confiable", "descripcion": "Sin confirmación ni retransmisión; simple entrega de mensajes.", "hijos": [] }
+            ]
+          }
+        ]
+      },
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "06 – SAP y tipos de servicio" }
+    }
+  ],
+  "procesos": [
+    {
+      "id": "intro-proc-encapsulamiento",
+      "nombre": "Encapsulamiento y desencapsulamiento",
+      "unidad": "u1-intro",
+      "descripcion": "Cómo viajan los datos desde la aplicación del host origen hasta la aplicación del host destino en el modelo híbrido de 5 capas.",
+      "pasos": [
+        { "actor": "Capa 5 (Aplicación) del host origen", "accion": "Genera los datos y agrega el encabezado H5, formando el mensaje.", "por_que": "La aplicación entrega su información a la pila con el control de su propio protocolo (HTTP, FTP, SMTP…)." },
+        { "actor": "Capa 4 (Transporte) del host origen", "accion": "Toma el mensaje como datos y agrega H4, formando el segmento.", "por_que": "Agrega el control necesario para la comunicación de extremo a extremo." },
+        { "actor": "Capa 3 (Red) del host origen", "accion": "Toma el segmento y agrega H3, formando el paquete.", "por_que": "Agrega la información para rutear los datos hasta el destino." },
+        { "actor": "Capa 2 (Enlace) del host origen", "accion": "Toma el paquete y agrega el encabezado H2 y el terminador T2, formando la trama.", "por_que": "Es la única capa que agrega encabezado y terminador, para la comunicación entre equipos adyacentes." },
+        { "actor": "Capa 1 (Física) del host origen", "accion": "Transmite la trama como una secuencia de bits (0101010…) por el medio de transmisión.", "por_que": "La capa física es la que pone los bits en el medio físico." },
+        { "actor": "Capas 1 y 2 del host destino", "accion": "Reciben los bits, reconstruyen la trama, procesan H2 y T2 y entregan el paquete a la capa de red.", "por_que": "El desencapsulado es el proceso inverso: cada capa procesa solo su propio encabezado." },
+        { "actor": "Capas 3, 4 y 5 del host destino", "accion": "Cada capa procesa su encabezado (H3, H4, H5) y entrega el contenido limpio a la capa superior hasta llegar a la aplicación.", "por_que": "Cada capa se comunica con su entidad par del origen interpretando el encabezado que esta agregó." }
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "08 – Encapsulamiento y PDUs" }
+    },
+    {
+      "id": "intro-proc-primitivas-chat",
+      "nombre": "Primitivas de servicio en un chat con sockets",
+      "unidad": "u1-intro",
+      "descripcion": "Flujo de conexión de un chat cliente–servidor en Python, mapeado a las primitivas genéricas REQUEST, INDICATION, RESPONSE y CONFIRM.",
+      "pasos": [
+        { "actor": "Servidor", "accion": "Abre la aplicación y queda en espera pasiva: servidor.listen(5) y conexion, ip = servidor.accept().", "por_que": "Debe estar esperando en la capa de transporte para poder recibir solicitudes de conexión.", "valores": [{ "nombre": "Cola de listen", "valor": "5" }] },
+        { "actor": "Cliente", "accion": "Ejecuta cliente.connect(('127.0.0.1', 9000)): primitiva REQUEST (SYN).", "por_que": "El cliente inicia de forma activa la solicitud de conexión hacia el servidor.", "valores": [{ "nombre": "IP destino", "valor": "127.0.0.1" }, { "nombre": "Puerto", "valor": "9000" }] },
+        { "actor": "Servidor", "accion": "accept() detecta la conexión entrante: primitiva INDICATION.", "por_que": "Se notifica a la entidad receptora que hay una acción solicitada." },
+        { "actor": "Servidor", "accion": "Responde a la solicitud: primitiva RESPONSE (SYN-ACK).", "por_que": "La entidad receptora debe aceptar la petición iniciada por el cliente." },
+        { "actor": "Cliente", "accion": "Recibe la respuesta: primitiva CONFIRM (ACK); las cuatro primitivas ocurren en milisegundos dentro de connect().", "por_que": "Se notifica al iniciador que la respuesta fue recibida y procesada; la conexión queda establecida." },
+        { "actor": "Cliente y servidor", "accion": "Intercambian datos: cliente.send(b\"Hola!\") y mensaje = conexion.recv(1024).", "por_que": "Es la transferencia activa de datos de la capa de aplicación sobre la conexión establecida.", "valores": [{ "nombre": "Bytes máximos por recv", "valor": "1024" }] },
+        { "actor": "Cliente y servidor", "accion": "Cierran con cliente.close() y conexion.close().", "por_que": "Un servicio orientado a conexión libera los recursos y destruye el canal al terminar." }
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Flujo de Conexión en un Chat" }
+    },
+    {
+      "id": "intro-proc-multiplexacion-estadistica",
+      "nombre": "Multiplexación estadística con cola",
+      "unidad": "u1-intro",
+      "descripcion": "Qué pasa cuando dos equipos transmiten a 200 Mbps cada uno hacia un router inalámbrico con salida de 50 Mbps a Internet.",
+      "pasos": [
+        { "actor": "Notebooks 1 y 2", "accion": "Transmiten paquetes hacia el router a 200 Mbps cada una.", "por_que": "En conmutación de paquetes la suma de las entradas puede superar la velocidad de la salida.", "valores": [{ "nombre": "Velocidad de cada notebook", "valor": "200 Mbps" }, { "nombre": "Entrada total", "valor": "400 Mbps" }] },
+        { "actor": "Router inalámbrico", "accion": "Envía paquetes por la interfaz de salida hacia Internet a 50 Mbps.", "por_que": "El enlace de salida es compartido y tiene menos capacidad que la suma de las entradas.", "valores": [{ "nombre": "Velocidad de salida", "valor": "50 Mbps" }] },
+        { "actor": "Router inalámbrico", "accion": "Guarda en la cola o buffer los paquetes que no puede enviar todavía.", "por_que": "Si llegan x1 paquetes/s y solo puede enviar x2 < x1, el exceso debe esperar su turno." },
+        { "actor": "Paquetes en la cola", "accion": "Sufren retardo en la cola y variación del retardo entre un paquete y otro.", "por_que": "Cada paquete espera un tiempo distinto según cuántos haya delante en el buffer." },
+        { "actor": "Router inalámbrico", "accion": "Descarta paquetes cuando el buffer se llena por completo.", "por_que": "La cola tiene capacidad finita: es la pérdida de paquetes propia de la conmutación de paquetes." }
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Multiplexación estadística" }
+    }
+  ],
+  "comparaciones": [
+    {
+      "id": "intro-comp-topologias",
+      "nombre": "Estrella vs malla vs anillo",
+      "unidad": "u1-intro",
+      "columnas": ["Estrella", "Malla", "Anillo"],
+      "filas": [
+        { "criterio": "Enlaces", "celdas": ["Uno por nodo hacia el centro", "n(n-1)/2", "n"] },
+        { "criterio": "Interfaces por nodo", "celdas": ["1 (el central tiene n)", "n-1", "2"] },
+        { "criterio": "Ventaja principal", "celdas": ["Fácil gestión y bajo costo", "Robustez ante fallas múltiples", "Camino alternativo ante falla de un enlace"] },
+        { "criterio": "Punto crítico", "celdas": ["Elemento central: punto único de falla", "No escala", "Agregar/quitar nodos interrumpe el servicio"] },
+        { "criterio": "Si falla un nodo o su cable", "celdas": ["Solo afecta a ese nodo", "Hay caminos alternativos", "Se usa el camino alternativo"] }
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Resumen comparativo" }
+    },
+    {
+      "id": "intro-comp-circuitos-paquetes",
+      "nombre": "Conmutación de circuitos vs de paquetes",
+      "unidad": "u1-intro",
+      "columnas": ["Conmutación de circuitos", "Conmutación de paquetes"],
+      "filas": [
+        { "criterio": "Recursos", "celdas": ["Circuito reservado (uso exclusivo)", "Compartidos (multiplexado estadístico)"] },
+        { "criterio": "Capacidad", "celdas": ["Fija y garantizada", "Mejor aprovechamiento del ancho de banda"] },
+        { "criterio": "Ruta", "celdas": ["Fija", "Variable"] },
+        { "criterio": "Retardo", "celdas": ["Predecible y estable", "Variable; posible pérdida de paquetes"] },
+        { "criterio": "Ejemplos", "celdas": ["Telefonía convencional, ATM", "Internet, Ethernet"] }
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Circuitos vs. paquetes" }
+    },
+    {
+      "id": "intro-comp-osi-hibrido",
+      "nombre": "Modelo OSI vs modelo híbrido",
+      "unidad": "u1-intro",
+      "columnas": ["Modelo OSI", "Modelo híbrido"],
+      "filas": [
+        { "criterio": "Cantidad de capas", "celdas": ["7", "5"] },
+        { "criterio": "Capas superiores", "celdas": ["Sesión, Presentación y Aplicación separadas", "Una sola capa de Aplicación (OSI 5, 6 y 7)"] },
+        { "criterio": "Capas inferiores", "celdas": ["Transporte, Red, Enlace, Física", "Transporte, Red, Enlace, Física (iguales)"] },
+        { "criterio": "Origen", "celdas": ["ISO, publicado en 1984", "Síntesis de TCP/IP (aplicación) y OSI (física y enlace)"] },
+        { "criterio": "Carácter", "celdas": ["Modelo teórico", "Referencia práctica más usada"] }
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Modelos de Referencia: Híbrido vs OSI" }
+    },
+    {
+      "id": "intro-comp-lan-wan",
+      "nombre": "LAN vs WAN",
+      "unidad": "u1-intro",
+      "columnas": ["LAN", "WAN"],
+      "filas": [
+        { "criterio": "Cobertura", "celdas": ["Edificio o campus", "Región, país o internacional"] },
+        { "criterio": "Dueño de la infraestructura", "celdas": ["Una persona o empresa", "Un proveedor de servicio"] },
+        { "criterio": "Tecnologías típicas", "celdas": ["Switches, WiFi", "Redes públicas de proveedores"] },
+        { "criterio": "Ejemplos", "celdas": ["Hogar, oficina, laboratorio, facultad", "Redes privadas de empresas, redes sobre Internet"] }
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "LAN vs WAN" }
+    },
+    {
+      "id": "intro-comp-unicast-multicast-broadcast",
+      "nombre": "Unicast vs multicast vs broadcast",
+      "unidad": "u1-intro",
+      "columnas": ["Unicast", "Multicast", "Broadcast"],
+      "filas": [
+        { "criterio": "Relación", "celdas": ["Uno a uno", "Uno a varios específicos", "Uno a todos"] },
+        { "criterio": "Destinatarios", "celdas": ["Un nodo específico", "Hosts suscriptos", "Todos los integrantes de la red"] },
+        { "criterio": "Requiere suscripción", "celdas": ["No", "Sí, previa", "No"] },
+        { "criterio": "Sentido", "celdas": ["Unidireccional o bidireccional", "Hacia el grupo", "Masivo y simultáneo"] }
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Intercambio de información" }
+    }
+  ],
+  "ejercicios": [
+    {
+      "id": "intro-ej-malla-completa",
+      "titulo": "Enlaces e interfaces en una malla completa",
+      "unidad": "u1-intro",
+      "tipo": "Cálculo de topologías",
+      "enunciado": "Una empresa evalúa interconectar sus routers en malla completa (todos con todos). Calculá los enlaces totales y las interfaces por nodo para n = 5 y para n = 8, y comparalo con un anillo de 8 nodos.",
+      "pasos": [
+        { "consigna": "¿Cuántos enlaces requiere una malla completa de 5 nodos?", "respuesta": "10", "tipo_respuesta": "numero", "explicacion": "n(n-1)/2 = 5·4/2 = 10 enlaces." },
+        { "consigna": "¿Cuántas interfaces necesita cada nodo en la malla de 5 nodos?", "respuesta": "4", "tipo_respuesta": "numero", "explicacion": "Cada nodo se conecta con todos los demás: n-1 = 4 interfaces." },
+        { "consigna": "¿Cuántas interfaces hay en total en la malla de 5 nodos?", "respuesta": "20", "tipo_respuesta": "numero", "explicacion": "5 nodos × 4 interfaces = 20; es el doble de los enlaces, porque cada enlace usa una interfaz en cada extremo." },
+        { "consigna": "¿Cuántos enlaces requiere una malla completa de 8 nodos?", "respuesta": "28", "tipo_respuesta": "numero", "explicacion": "n(n-1)/2 = 8·7/2 = 28 enlaces." },
+        { "consigna": "¿Cuántas interfaces necesita cada nodo en la malla de 8 nodos?", "respuesta": "7", "tipo_respuesta": "numero", "explicacion": "n-1 = 8-1 = 7 interfaces por nodo." },
+        { "consigna": "¿Cuántos enlaces necesitaría un anillo de 8 nodos?", "respuesta": "8", "tipo_respuesta": "numero", "explicacion": "El anillo requiere n enlaces (y 2 interfaces por nodo): 8 enlaces frente a 28 de la malla." },
+        { "consigna": "¿Qué desventaja de la malla ilustra el paso de 10 a 28 enlaces?", "respuesta": "No escala al crecer la cantidad de nodos", "tipo_respuesta": "opcion", "opciones": ["No escala al crecer la cantidad de nodos", "Tiene un punto único de falla en el nodo central", "Agregar un nodo obliga a abrir la red", "Los nodos de paso cargan con tráfico ajeno"], "explicacion": "La cantidad de enlaces crece aproximadamente con n²: no escala. El punto único de falla es de la estrella; abrir la red y el tráfico de paso son del anillo." }
+      ],
+      "pistas": [
+        "En una malla completa cada nodo se conecta con todos los demás.",
+        "Cada nodo tiene n-1 vecinos, pero cada enlace se comparte entre dos nodos.",
+        "Enlaces = n(n-1)/2; interfaces por nodo = n-1."
+      ],
+      "errores_comunes": [
+        "Usar n(n-1) sin dividir por 2, contando cada enlace dos veces (20 en vez de 10 para n = 5).",
+        "Confundir interfaces por nodo (n-1) con enlaces totales.",
+        "Aplicar la fórmula de la malla al anillo, que solo necesita n enlaces."
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Topología en Malla" }
+    },
+    {
+      "id": "intro-ej-pdu-capas",
+      "titulo": "PDU y capa correspondiente",
+      "unidad": "u1-intro",
+      "tipo": "Identificación",
+      "enunciado": "Un navegador en el host A pide una página a un servidor web en el host B. Identificá el nombre de la PDU en cada capa del modelo híbrido durante el encapsulamiento.",
+      "pasos": [
+        { "consigna": "¿Cómo se llama la PDU de la capa de aplicación?", "respuesta": "mensaje", "tipo_respuesta": "texto", "alternativas": ["mensajes"], "explicacion": "En la capa 5 (Aplicación) la PDU se llama mensaje." },
+        { "consigna": "¿Cómo se llama la PDU de la capa de transporte?", "respuesta": "segmento", "tipo_respuesta": "texto", "alternativas": ["segmentos"], "explicacion": "En la capa 4 (Transporte) la PDU se llama segmento." },
+        { "consigna": "¿Cómo se llama la PDU de la capa de red?", "respuesta": "paquete", "tipo_respuesta": "texto", "alternativas": ["paquetes"], "explicacion": "En la capa 3 (Red) la PDU se llama paquete." },
+        { "consigna": "¿Cómo se llama la PDU de la capa de enlace?", "respuesta": "trama", "tipo_respuesta": "texto", "alternativas": ["tramas"], "explicacion": "En la capa 2 (Enlace) la PDU se llama trama." },
+        { "consigna": "¿Qué capa agrega, además del encabezado, un terminador (T2)?", "respuesta": "Enlace", "tipo_respuesta": "opcion", "opciones": ["Enlace", "Red", "Transporte", "Física"], "explicacion": "Solo la capa 2 agrega encabezado H2 y terminador T2; las capas 5, 4 y 3 agregan solo encabezado y la capa 1 transmite bits." }
+      ],
+      "pistas": [
+        "Cada capa le da un nombre propio a su unidad de datos.",
+        "De arriba hacia abajo: mensajes, segmentos, … , bits y bytes.",
+        "La PDU que viaja entre equipos adyacentes es la de enlace; la que se rutea es la de red."
+      ],
+      "errores_comunes": [
+        "Intercambiar paquete (capa 3) y trama (capa 2).",
+        "Llamar «paquete» a cualquier PDU sin importar la capa.",
+        "Creer que la capa de red agrega terminador."
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Flujo de datos y nombre de PDUs" }
+    },
+    {
+      "id": "intro-ej-host-bridge-router",
+      "titulo": "Capas procesadas en Host–Bridge–Router–Host",
+      "unidad": "u1-intro",
+      "tipo": "Análisis de escenario",
+      "enunciado": "Una PC cliente (Host A, navegador web) se comunica con un servidor web (Host B) pasando por un bridge/switch y luego por un router. Indicá hasta qué capa procesa cada dispositivo.",
+      "pasos": [
+        { "consigna": "¿Hasta qué capa procesa el bridge (switch)?", "respuesta": "2", "tipo_respuesta": "numero", "explicacion": "El bridge/switch es un dispositivo de capa 2: procesa física y enlace (tramas)." },
+        { "consigna": "¿Hasta qué capa procesa el router?", "respuesta": "3", "tipo_respuesta": "numero", "explicacion": "El router es un dispositivo de capa 3: desencapsula hasta el paquete para rutearlo." },
+        { "consigna": "¿Hasta qué capa procesan los hosts A y B?", "respuesta": "5", "tipo_respuesta": "numero", "explicacion": "Los hosts recorren las 5 capas porque ahí corren las aplicaciones (navegador y servidor web)." },
+        { "consigna": "¿En cuántos de los cuatro dispositivos se procesa la capa 3?", "respuesta": "3", "tipo_respuesta": "numero", "explicacion": "Host A, Router y Host B procesan la capa 3; el bridge no." },
+        { "consigna": "¿Entre qué equipos se comunican como entidades pares las capas de transporte?", "respuesta": "Solo entre Host A y Host B", "tipo_respuesta": "opcion", "opciones": ["Solo entre Host A y Host B", "Entre Host A y el router", "Entre el bridge y el router", "Entre cada par de equipos adyacentes"], "explicacion": "Transporte es extremo a extremo: los segmentos solo los procesan los hosts; los dispositivos intermedios llegan hasta la capa 2 o 3." }
+      ],
+      "pistas": [
+        "Los dispositivos intermedios solo procesan las capas que necesitan para reenviar.",
+        "Un switch trabaja con tramas; un router, con paquetes.",
+        "Las capas 4 y 5 son extremo a extremo."
+      ],
+      "errores_comunes": [
+        "Pensar que el router procesa la capa de transporte.",
+        "Creer que el bridge procesa la capa 3 porque reenvía datos entre equipos.",
+        "Olvidar que los hosts también procesan las capas inferiores."
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Volviendo…" }
+    }
+  ],
+  "preguntas": [
+    {
+      "id": "intro-p01",
+      "unidad": "u1-intro",
+      "enunciado": "Según Kurose y Ross, ¿qué define un protocolo?",
+      "opciones": [
+        "El medio físico, la velocidad y el tipo de cable que usan las entidades",
+        "El conjunto completo de capas y protocolos de una arquitectura de red",
+        "El formato y orden de los mensajes y las acciones al enviarlos o recibirlos",
+        "La lista ordenada de protocolos que usan las distintas capas de un equipo"
+      ],
+      "correcta": 2,
+      "explicacion": "Un protocolo define el formato y el orden de los mensajes intercambiados entre entidades y las acciones que se toman en la transmisión y/o recepción.",
+      "por_que_falla": [
+        "El medio y la velocidad son aspectos de la capa física, no la definición de protocolo.",
+        "El conjunto de capas y protocolos es la arquitectura de red.",
+        "",
+        "La lista de protocolos usados por las capas es la pila de protocolos."
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "¿Qué es un protocolo?" }
+    },
+    {
+      "id": "intro-p02",
+      "unidad": "u1-intro",
+      "enunciado": "En el modelo híbrido, ¿a qué capas del modelo OSI equivale la capa de Aplicación?",
+      "opciones": [
+        "Sesión, Presentación y Aplicación (capas 5, 6 y 7)",
+        "Transporte, Sesión y Aplicación (capas 4, 5 y 7)",
+        "Red, Transporte y Aplicación (capas 3, 4 y 7)",
+        "Solo Presentación y Aplicación (capas 6 y 7)"
+      ],
+      "correcta": 0,
+      "explicacion": "La capa de Aplicación del modelo híbrido agrupa las capas 5 (Sesión), 6 (Presentación) y 7 (Aplicación) del OSI; transporte, red, enlace y física se mantienen.",
+      "por_que_falla": [
+        "",
+        "Transporte se mantiene como capa propia en el modelo híbrido.",
+        "Red y Transporte son capas propias en ambos modelos.",
+        "Deja afuera la capa de Sesión, que también se absorbe en Aplicación."
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Modelos de Referencia: Híbrido vs OSI" }
+    },
+    {
+      "id": "intro-p03",
+      "unidad": "u1-intro",
+      "enunciado": "¿Cómo se llama la PDU de la capa de transporte?",
+      "opciones": ["Trama", "Paquete", "Mensaje", "Segmento"],
+      "correcta": 3,
+      "explicacion": "Las PDUs son: mensajes (aplicación), segmentos (transporte), paquetes (red), tramas (enlace) y bits y bytes (física).",
+      "por_que_falla": [
+        "La trama es la PDU de la capa de enlace.",
+        "El paquete es la PDU de la capa de red.",
+        "El mensaje es la PDU de la capa de aplicación.",
+        ""
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Flujo de datos y nombre de PDUs" }
+    },
+    {
+      "id": "intro-p04",
+      "unidad": "u1-intro",
+      "enunciado": "Se quiere conectar 6 nodos en una malla completa. ¿Cuántos enlaces se necesitan?",
+      "opciones": ["30", "15", "6", "5"],
+      "correcta": 1,
+      "explicacion": "Enlaces = n(n-1)/2 = 6·5/2 = 15.",
+      "por_que_falla": [
+        "Es n(n-1) sin dividir por 2: cuenta cada enlace dos veces.",
+        "",
+        "Son los n enlaces de un anillo, no de una malla.",
+        "Es n-1, la cantidad de interfaces por nodo, no los enlaces totales."
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Topología en Malla" }
+    },
+    {
+      "id": "intro-p05",
+      "unidad": "u1-intro",
+      "enunciado": "¿Cuál es la desventaja principal de la topología en estrella?",
+      "opciones": [
+        "Si falla el elemento central, toda la red queda incomunicada",
+        "Agregar un nodo obliga a abrir la red e interrumpir el servicio",
+        "Requiere n(n-1)/2 enlaces y no escala al crecer la red",
+        "Si se daña el cable de un nodo, se cae el resto de la red"
+      ],
+      "correcta": 0,
+      "explicacion": "El nodo central (switch o hub) es un punto único de falla: si cae, toda la red queda fuera de servicio.",
+      "por_que_falla": [
+        "",
+        "Es la desventaja del anillo (mantenimiento disruptivo).",
+        "Es la desventaja de la malla.",
+        "En estrella, si falla un nodo o su cable solo se afecta ese equipo."
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Topología en Estrella" }
+    },
+    {
+      "id": "intro-p06",
+      "unidad": "u1-intro",
+      "enunciado": "Dos notebooks envían a 200 Mbps cada una hacia un router con salida de 50 Mbps a Internet. ¿Cuál de estos fenómenos NO es esperable?",
+      "opciones": [
+        "Retardo de los paquetes mientras esperan en la cola",
+        "Pérdida de paquetes cuando el buffer se llena",
+        "Capacidad fija garantizada para cada notebook",
+        "Variación del retardo entre un paquete y otro"
+      ],
+      "correcta": 2,
+      "explicacion": "Es conmutación de paquetes con multiplexado estadístico: los recursos se comparten, no hay capacidad garantizada. Eso es propio de la conmutación de circuitos.",
+      "por_que_falla": [
+        "El retardo en la cola sí ocurre: los paquetes esperan su turno en el buffer.",
+        "La pérdida sí ocurre cuando el buffer se llena por completo.",
+        "",
+        "La variación del retardo sí ocurre porque cada paquete espera un tiempo distinto."
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Conmutación de paquetes (cont.)" }
+    },
+    {
+      "id": "intro-p07",
+      "unidad": "u1-intro",
+      "enunciado": "¿Qué describe al método de transmisión multicast?",
+      "opciones": [
+        "Envío masivo a todos los integrantes de la red, sin suscripción",
+        "Envío de uno a varios receptores que se suscribieron previamente",
+        "Envío uno a uno entre dos nodos específicos, en uno o dos sentidos",
+        "Envío de varios emisores a un único receptor del mismo segmento"
+      ],
+      "correcta": 1,
+      "explicacion": "Multicast es uno a varios receptores específicos y requiere una suscripción previa del host.",
+      "por_que_falla": [
+        "Eso es broadcast.",
+        "",
+        "Eso es unicast.",
+        "No es ninguno de los métodos del material; multicast va de un emisor a varios receptores."
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Intercambio de información" }
+    },
+    {
+      "id": "intro-p08",
+      "unidad": "u1-intro",
+      "enunciado": "¿Qué característica corresponde a un servicio confiable?",
+      "opciones": [
+        "Simple entrega de mensajes, sin confirmación ni retransmisión",
+        "Sigue el paradigma del servicio postal de correo tradicional",
+        "Establecimiento de la conexión con handshake y su liberación",
+        "Confirmación y retransmisión de cada PDU y control de flujo"
+      ],
+      "correcta": 3,
+      "explicacion": "Un servicio confiable confirma y retransmite cada PDU, y además hace control de flujo y de congestión.",
+      "por_que_falla": [
+        "Eso describe al servicio no confiable.",
+        "El paradigma postal corresponde al servicio no orientado a conexión.",
+        "El handshake caracteriza al servicio orientado a conexión, que es otra dimensión distinta de la confiabilidad.",
+        ""
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Tipo de servicios – Confiable" }
+    },
+    {
+      "id": "intro-p09",
+      "unidad": "u1-intro",
+      "enunciado": "En el esquema Host A – Bridge – Router – Host B, ¿hasta qué capa procesa el router?",
+      "opciones": [
+        "Hasta la capa 2 (enlace), igual que el bridge",
+        "Solo la capa 1 (física), porque reenvía bits",
+        "Hasta la capa 3 (red)",
+        "Hasta la capa 5, igual que los hosts"
+      ],
+      "correcta": 2,
+      "explicacion": "El router es un dispositivo de capa 3: procesa física, enlace y red para rutear los paquetes.",
+      "por_que_falla": [
+        "El que llega hasta capa 2 es el bridge/switch.",
+        "Un dispositivo que solo trabaja con bits es de capa 1, no un router.",
+        "",
+        "Solo los hosts recorren las 5 capas."
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Volviendo…" }
+    },
+    {
+      "id": "intro-p10",
+      "unidad": "u1-intro",
+      "enunciado": "Durante el encapsulamiento en el host origen, ¿qué capa agrega además del encabezado un terminador?",
+      "opciones": [
+        "La capa de enlace, que agrega H2 y T2",
+        "La capa de red, que agrega H3 y T3",
+        "La capa de transporte, que agrega H4 y T4",
+        "La capa física, que agrega H1 y T1"
+      ],
+      "correcta": 0,
+      "explicacion": "En el encapsulamiento cada capa agrega su encabezado (H5, H4, H3, H2) y solo la capa 2 agrega además el terminador T2.",
+      "por_que_falla": [
+        "",
+        "La capa de red solo agrega el encabezado H3.",
+        "La capa de transporte solo agrega el encabezado H4.",
+        "La capa física no agrega encabezados: transmite la secuencia de bits."
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Encapsulamiento" }
+    },
+    {
+      "id": "intro-p11",
+      "unidad": "u1-intro",
+      "enunciado": "Según el material, ¿cuál de estos es un ejemplo de conmutación de circuitos?",
+      "opciones": [
+        "Internet",
+        "Las redes Ethernet",
+        "La distribución BitTorrent",
+        "La telefonía convencional"
+      ],
+      "correcta": 3,
+      "explicacion": "El material da como ejemplos de conmutación de circuitos la telefonía convencional y ATM.",
+      "por_que_falla": [
+        "Internet es el ejemplo típico de conmutación de paquetes.",
+        "Ethernet es un ejemplo de conmutación de paquetes.",
+        "BitTorrent es un modelo de aplicación P2P, no un modelo de conmutación del núcleo.",
+        ""
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Modelos de intercambio de datos" }
+    },
+    {
+      "id": "intro-p12",
+      "unidad": "u1-intro",
+      "enunciado": "¿Qué es un SAP (Service Access Point)?",
+      "opciones": [
+        "El encabezado que cada capa le agrega a la PDU de la capa superior",
+        "El punto donde una entidad de capa superior pide un servicio a la inferior",
+        "El protocolo común que usan dos entidades pares en la misma capa",
+        "La primitiva con la que se solicita iniciar una conexión (REQUEST)"
+      ],
+      "correcta": 1,
+      "explicacion": "El SAP es el punto de acceso donde una entidad de capa N+1 (service user) solicita y obtiene un servicio de la capa N (service provider).",
+      "por_que_falla": [
+        "Eso es el encabezado (header) del encapsulamiento.",
+        "",
+        "La comunicación entre entidades pares (horizontal) usa un protocolo, no un SAP.",
+        "REQUEST es una primitiva de servicio, que se invoca a través del SAP pero no es el SAP."
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "06 – SAP y tipos de servicio" }
+    },
+    {
+      "id": "intro-p13",
+      "unidad": "u1-intro",
+      "enunciado": "En el mapeo de primitivas a sockets de Python, ¿qué primitiva genérica corresponde a socket.connect((host, port))?",
+      "opciones": ["INDICATION", "CONFIRM", "REQUEST", "RESPONSE"],
+      "correcta": 2,
+      "explicacion": "connect() es la solicitud activa de conexión del cliente hacia el servidor: REQUEST.",
+      "por_que_falla": [
+        "INDICATION corresponde a accept(), cuando el servidor detecta la conexión entrante.",
+        "CONFIRM corresponde a que el cliente reciba la respuesta (socket.recv).",
+        "",
+        "RESPONSE es la respuesta del servidor (conn.sendall / conn.recv)."
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Mapeo de Primitivas a Sockets" }
+    },
+    {
+      "id": "intro-p14",
+      "unidad": "u1-intro",
+      "enunciado": "¿Qué organismo publicó el modelo OSI como estándar en 1984?",
+      "opciones": ["ISO", "IETF", "IEEE", "ITU"],
+      "correcta": 0,
+      "explicacion": "El modelo OSI fue creado en 1980 y publicado como estándar en 1984 por la ISO (International Organization for Standardization).",
+      "por_que_falla": [
+        "",
+        "La IETF define la arquitectura de Internet mediante RFC (por ejemplo, RFC 791 para IP).",
+        "El IEEE define estándares de redes locales y metropolitanas como 802.11.",
+        "La ITU coordina estándares globales de telecomunicaciones (ITU-T)."
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Open Systems Interconnection" }
+    },
+    {
+      "id": "intro-p15",
+      "unidad": "u1-intro",
+      "enunciado": "¿Qué característica distingue a una WAN de una LAN?",
+      "opciones": [
+        "Su infraestructura pertenece a una sola persona o empresa",
+        "Se extiende por una región usando redes de proveedores",
+        "Se limita a dispositivos personales como Bluetooth o USB",
+        "Su cobertura se limita a un edificio o a un campus"
+      ],
+      "correcta": 1,
+      "explicacion": "La WAN se extiende por una región usando redes públicas de proveedores, que son los dueños de la infraestructura.",
+      "por_que_falla": [
+        "Eso caracteriza a la LAN; en la WAN el dueño es un proveedor de servicio.",
+        "",
+        "Eso describe una PAN.",
+        "Esa es la cobertura de una LAN."
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "LAN vs WAN" }
+    },
+    {
+      "id": "intro-p16",
+      "unidad": "u1-intro",
+      "enunciado": "¿Cuál de estas NO es una ventaja del modelo en capas según el material?",
+      "opciones": [
+        "Dividir un problema complejo en bloques más simples",
+        "Facilitar un estándar común entre distintos sistemas",
+        "Permitir que cada capa evolucione de forma autónoma",
+        "Garantizar capacidad fija y un retardo predecible"
+      ],
+      "correcta": 3,
+      "explicacion": "Las ventajas del modelo en capas son reducir complejidad, definir una arquitectura estándar y permitir la evolución independiente de cada capa. Capacidad fija y retardo predecible son propiedades de la conmutación de circuitos.",
+      "por_que_falla": [
+        "Es la ventaja de reducir la complejidad.",
+        "Es la ventaja de la arquitectura estándar.",
+        "Es la ventaja de la evolución independiente, siempre que se mantengan los mismos servicios.",
+        ""
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Ventajas del modelo en capas" }
+    },
+    {
+      "id": "intro-p17",
+      "unidad": "u1-intro",
+      "enunciado": "¿Qué organismo desarrolla el estándar 802.11 (WiFi)?",
+      "opciones": ["IETF", "ITU", "IEEE", "ISO"],
+      "correcta": 2,
+      "explicacion": "El IEEE desarrolla estándares para redes locales, metropolitanas y otras tecnologías; el material cita 802.11 (WiFi).",
+      "por_que_falla": [
+        "La IETF publica RFC sobre la arquitectura de Internet, como RFC 791 (IP).",
+        "La ITU, a través de ITU-T, coordina estándares globales de telecomunicaciones.",
+        "",
+        "La ISO publicó el modelo OSI y el protocolo IS-IS, no 802.11."
+      ],
+      "fuente": { "archivo": "clase01a_introduccion.md", "seccion": "Organismos de estandarización" }
+    },
+    {
+      "id": "intro-p18",
+      "unidad": "u1-intro",
+      "enunciado": "¿Cuál es el paradigma del servicio orientado a conexión según el material?",
+      "opciones": [
+        "La red de telefonía tradicional",
+        "El servicio postal de correo",
+        "El intercambio P2P de BitTorrent",
+        "La difusión masiva tipo broadcast"
+      ],
+      "correcta": 0,
+      "explicacion": "El servicio orientado a conexión toma como paradigma la telefonía tradicional: se establece la conexión (handshake), se usa y se libera.",
+      "por_que_falla": [
+        "",
+        "El correo postal es el paradigma del servicio no orientado a conexión.",
+        "BitTorrent es un modelo de aplicación P2P, no un paradigma de tipo de servicio.",
+        "Broadcast es un método de intercambio de información (a todos), no un tipo de servicio."
+      ],
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Tipo de servicios – Conexión" }
+    }
+  ],
+  "glosario": [
+    { "termino": "OSI", "sigla": "Open Systems Interconnection", "definicion": "Modelo de referencia teórico de 7 capas publicado por la ISO en 1984.", "unidad": "u1-intro" },
+    { "termino": "ISO", "sigla": "International Organization for Standardization", "definicion": "Federación mundial que define estándares industriales y de interconexión; publicó el modelo OSI.", "unidad": "u1-intro" },
+    { "termino": "IETF", "sigla": "Internet Engineering Task Force", "definicion": "Comunidad abierta que define y promueve la arquitectura de Internet mediante RFC (p. ej. RFC 791, IP).", "unidad": "u1-intro" },
+    { "termino": "IEEE", "sigla": "Institute of Electrical and Electronics Engineers", "definicion": "Desarrolla estándares para redes locales, metropolitanas y otras tecnologías (p. ej. 802.11).", "unidad": "u1-intro" },
+    { "termino": "ITU", "sigla": "International Telecommunication Union", "definicion": "Organismo cuyo sector ITU-T coordina estándares globales de telecomunicaciones.", "unidad": "u1-intro" },
+    { "termino": "PDU", "sigla": "Protocol Data Unit", "definicion": "Unidad de datos que se intercambia entre capas pares: mensaje, segmento, paquete, trama o bits según la capa.", "unidad": "u1-intro" },
+    { "termino": "SAP", "sigla": "Service Access Point", "definicion": "Punto donde una entidad de capa superior solicita y obtiene un servicio de la capa inferior.", "unidad": "u1-intro" },
+    { "termino": "PAN", "sigla": "Personal Area Network", "definicion": "Red de dispositivos personales (Bluetooth, USB, infrarrojo).", "unidad": "u1-intro" },
+    { "termino": "LAN", "sigla": "Local Area Network", "definicion": "Red dentro de un edificio o campus, con infraestructura propia (switches, WiFi).", "unidad": "u1-intro" },
+    { "termino": "MAN", "sigla": "Metropolitan Area Network", "definicion": "Extensión de una LAN a un campus, complejo o ciudad.", "unidad": "u1-intro" },
+    { "termino": "WAN", "sigla": "Wide Area Network", "definicion": "Red nacional o internacional sobre infraestructura de proveedores.", "unidad": "u1-intro" },
+    { "termino": "ATM", "sigla": "Asynchronous Transfer Mode", "definicion": "Tecnología citada en el material como ejemplo de conmutación de circuitos, junto con la telefonía convencional.", "unidad": "u1-intro" },
+    { "termino": "P2P", "sigla": "Peer-to-peer", "definicion": "Modelo en el que los pares se conectan directamente entre sí sin servidor dedicado (p. ej. BitTorrent).", "unidad": "u1-intro" },
+    { "termino": "DSL", "sigla": "Digital Subscriber Line", "definicion": "Acceso sobre el par de cobre telefónico que divide el espectro en bandas de telefonía, subida y bajada.", "unidad": "u1-intro" },
+    { "termino": "FTTH", "sigla": "Fiber To The Home", "definicion": "Acceso con fibra óptica desde la central hasta el hogar del cliente.", "unidad": "u1-intro" },
+    { "termino": "GPON", "sigla": "Gigabit Passive Optical Network", "definicion": "Red óptica pasiva de acceso con 2,5 Gbps de bajada y 1,25 Gbps de subida.", "unidad": "u1-intro" },
+    { "termino": "Multiplexación estadística", "definicion": "Multiplexado en el que la suma de las velocidades de entrada puede superar la de salida; el exceso espera en una cola.", "unidad": "u1-intro" }
+  ],
+  "dudas": [
+    {
+      "texto": "Las dos tablas de primitivas no coinciden: en 'Mapeo de Primitivas a Sockets' RESPONSE es conn.sendall()/recv() y CONFIRM es socket.recv(1024) (intercambio de datos), mientras que en 'Flujo de Conexión en un Chat' las cuatro primitivas son el handshake SYN / SYN-ACK / ACK y ocurren completas dentro de connect(). Se usa la versión del chat para el proceso y solo connect()=REQUEST y accept()=INDICATION, que coinciden en ambas.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Mapeo de Primitivas a Sockets / Flujo de Conexión en un Chat" }
+    },
+    {
+      "texto": "En la analogía con el sistema postal la capa 2 (Oficina de Correos) hace el 'direccionamiento de paquetes' y la capa 3 (Funcionario) la 'atención al cliente', mientras que la tabla de capas asigna el ruteo hasta el destino a la capa 3 y la comunicación entre adyacentes a la capa 2. No se usa la analogía para preguntas sobre funciones de capa.",
+      "fuente": { "archivo": "clase01b_modelo_referencia.md", "seccion": "Analogía con Sistema Postal" }
+    }
+  ]
+}

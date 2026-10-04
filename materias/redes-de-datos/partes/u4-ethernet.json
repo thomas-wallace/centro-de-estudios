@@ -1,0 +1,2191 @@
+{
+  "conceptos": [
+    {
+      "id": "ethernet",
+      "nombre": "Ethernet",
+      "unidad": "u4-ethernet",
+      "definicion": "Estándar LAN más utilizado, definido por protocolos de la capa de enlace de datos y de la capa física.",
+      "definicion_extendida": "Ethernet interactúa directamente con el hardware para asegurar la transmisión. En la capa de enlace se divide en las subcapas LLC (IEEE 802.2) y MAC (IEEE 802.3), y la capa física también se especifica en 802.3. En medios compartidos controla el acceso con CSMA/CD.",
+      "ejemplo": "Una LAN de oficina con PCs conectadas a un switch por UTP usando 1000Base-T es una red Ethernet.",
+      "por_que_importa": "Es el protocolo dominante en redes locales por ser sumamente económico, así que casi todo el tráfico de una LAN viaja en tramas Ethernet.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Introducción – Protocolo Ethernet"
+      }
+    },
+    {
+      "id": "subcapa-llc",
+      "nombre": "Subcapa LLC (Logical Link Control)",
+      "unidad": "u4-ethernet",
+      "definicion": "Sección de software de la capa 2 (IEEE 802.2) que hace de puente entre la capa de red y el hardware de red.",
+      "definicion_extendida": "Su función central es etiquetar el paquete recibido con un código identificador (SAP o SNAP) que indica qué protocolo de capa superior lo originó. Su PDU tiene DSAP (8 bits), SSAP (8 bits), Control (8 o 16 bits) e Información. No interactúa con el medio físico ni realiza el entramado, que le corresponde a la subcapa MAC. Ofrece tres tipos de servicio: Tipo 1 (no orientado a conexión, no confirmado), Tipo 2 (orientado a conexión y confirmado) y Tipo 3 (no orientado a conexión pero confirmado).",
+      "ejemplo": "En una trama IEEE 802.3 con LLC, después del campo Length aparecen DSAP, SSAP y Control antes de los datos de red.",
+      "por_que_importa": "Permite que la capa de enlace sea independiente del medio físico y que el receptor sepa a qué entidad de capa superior entregar los datos.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "LLC – Logical Link Control"
+      }
+    },
+    {
+      "id": "subcapa-mac",
+      "nombre": "Subcapa MAC (Media Access Control)",
+      "unidad": "u4-ethernet",
+      "definicion": "Subcapa inferior de la capa 2 (IEEE 802.3), implementada en hardware en la NIC, que encapsula los datos y controla el acceso al medio.",
+      "definicion_extendida": "Sus funciones son la encapsulación de datos (delimitación de frames, direccionamiento y detección de errores) y el control de acceso a los medios mediante CSMA/CD. Agrega cabecera y cola alrededor de la PDU de LLC: [MAC | LLC | Packet | MAC].",
+      "ejemplo": "La NIC de una PC arma la trama con DA, SA y FCS y escucha el canal antes de transmitir.",
+      "por_que_importa": "Es la parte de Ethernet que efectivamente arma las tramas, las direcciona y decide cuándo se puede transmitir en el medio.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "MAC – Media Access Control"
+      }
+    },
+    {
+      "id": "direccion-mac",
+      "nombre": "Dirección MAC",
+      "unidad": "u4-ethernet",
+      "definicion": "Identificador físico de 48 bits (6 bytes), expresado en 12 dígitos hexadecimales, de cada tarjeta de red.",
+      "definicion_extendida": "Los primeros 6 dígitos hexadecimales son el OUI, propio del fabricante, y los últimos 6 identifican al aparato. Viene grabada de fábrica en la tarjeta de red, pero se puede modificar por software. Puede ser unicast (primer byte par), broadcast (ff-ff-ff-ff-ff-ff) o multicast.",
+      "ejemplo": "00-08-73-4c-9f-9b = 00000000-00001000-01110010-01001100-10011111-10011011; OUI 00-08-73, aparato 4c-9f-9b.",
+      "por_que_importa": "Es lo que va en los campos DA y SA de la trama: permite saber quién envía y a quién va dirigida, y es la base de la tabla MAC del switch.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Dirección MAC – 48 bits (6 bytes)"
+      }
+    },
+    {
+      "id": "eth-oui",
+      "nombre": "OUI (Organizationally Unique Identifier)",
+      "unidad": "u4-ethernet",
+      "definicion": "Primeros 6 dígitos hexadecimales (3 bytes) de una dirección MAC, que identifican al fabricante.",
+      "definicion_extendida": "La dirección MAC se compone de dos partes: el OUI del fabricante y los 6 dígitos restantes que identifican el aparato concreto. Wireshark mantiene un repositorio de fabricantes y una utilidad de búsqueda de OUI.",
+      "ejemplo": "En 00-08-73-4c-9f-9b el OUI es 00-08-73.",
+      "por_que_importa": "Permite saber el fabricante de una placa al analizar una captura y ayuda a garantizar la unicidad de las direcciones.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campos DA o SA"
+      }
+    },
+    {
+      "id": "trama-ethernet-ii",
+      "nombre": "Trama Ethernet II",
+      "unidad": "u4-ethernet",
+      "definicion": "Formato de trama Ethernet que no usa LLC e identifica el protocolo superior con el campo EtherType.",
+      "definicion_extendida": "Campos: Preámbulo + SOF (8 bytes), DA (6), SA (6), Type (2), Datos (46 a 1500) y FCS (4). La cabecera MAC ocupa 14 bytes y la trama mide entre 64 y 1518 bytes. Los 2 bytes que en 802.3 eran Length se usan como EtherType, y el payload puede incluir relleno que el protocolo encapsulado descarta usando su propia longitud.",
+      "ejemplo": "DA 80 00 20 7A 3F 3E, SA 80 00 20 20 3A AE, EtherType 08 00 (IP), payload de 46–1500 bytes y CRC de 4 bytes.",
+      "por_que_importa": "Es el formato que hay que saber leer campo por campo para interpretar capturas y entender cómo Ethernet entrega los datos a IP o ARP.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Trama Ethernet II (o versión 2)"
+      }
+    },
+    {
+      "id": "eth-trama-802-3-llc",
+      "nombre": "Trama IEEE 802.3 con LLC (802.2)",
+      "unidad": "u4-ethernet",
+      "definicion": "Formato de trama 802.3 que lleva un campo Length y la cabecera LLC (DSAP, SSAP, Control) antes de los datos de red.",
+      "definicion_extendida": "Campos: Preámbulo (7), SOF (1), DA (6), SA (6), Length (2), DSAP (1), SSAP (1), Control (1–2), datos de red (43 a 1497 bytes) y FCS (CRC-32 de 4 bytes). El protocolo de capa superior se identifica mediante los SAP de LLC y no mediante EtherType.",
+      "ejemplo": "Cabecera 802.2 + datos ocupan entre 46 y 1500 bytes: con 3 bytes de LLC (DSAP, SSAP, Control de 1 byte) quedan 43 a 1497 bytes de datos de red.",
+      "por_que_importa": "Contrastarla con Ethernet II muestra cómo cambia la identificación del protocolo superior (SAP vs EtherType) y el uso del campo de 2 bytes (Length vs Type).",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Trama IEEE 802.3 con LLC (802.2)"
+      }
+    },
+    {
+      "id": "eth-preambulo",
+      "nombre": "Preámbulo y SOF",
+      "unidad": "u4-ethernet",
+      "definicion": "Patrón de 0 y 1 de 7 bytes seguido de un byte SOF que marca el comienzo exacto de la trama MAC.",
+      "definicion_extendida": "El preámbulo permite detectar que comienza una transmisión, sincronizar y preparar al receptor para interpretar los bits. El SOF (Start of Frame, byte ...10101011) marca el fin del preámbulo e indica que los bits siguientes son la dirección MAC de destino. Juntos forman los primeros 8 bytes.",
+      "ejemplo": "En la recepción, la NIC detecta la portadora y espera el byte delimitador ...10101011 para sincronizarse antes de leer la DA.",
+      "por_que_importa": "Sin sincronización el receptor no sabría dónde empieza la trama ni cómo interpretar los bits.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Trama Ethernet II – Primeros 8 bytes"
+      }
+    },
+    {
+      "id": "ethertype",
+      "nombre": "EtherType",
+      "unidad": "u4-ethernet",
+      "definicion": "Campo de 2 bytes de la trama Ethernet II que indica qué protocolo de capa superior va encapsulado en el payload.",
+      "definicion_extendida": "Especifica el protocolo de capa 3 que recibe los datos una vez terminado el procesamiento Ethernet. Ocupa los 2 bytes que en 802.3 se usaban como Length y reemplaza la identificación mediante DSAP/SSAP de LLC.",
+      "ejemplo": "0x0800 = IP; 0x0806 = ARP.",
+      "por_que_importa": "Es lo que permite al receptor entregar el contenido de la trama al protocolo correcto (IP, ARP, IPv6…).",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Type → EtherType"
+      }
+    },
+    {
+      "id": "fcs",
+      "nombre": "FCS (Frame Check Sequence)",
+      "unidad": "u4-ethernet",
+      "definicion": "Campo de 4 bytes al final de la trama que contiene un CRC para detectar errores.",
+      "definicion_extendida": "El transmisor calcula el CRC (CRC-32) sobre DA, SA, Tipo y Datos y escribe el resultado de largo fijo, 4 bytes, en el FCS. El receptor vuelve a calcularlo; si no coincide, la trama se descarta y se incrementa el contador de errores.",
+      "ejemplo": "En la trama de ejemplo de Ethernet II el CRC Checksum es 00 20 20 3A (4 bytes).",
+      "por_que_importa": "Garantiza que la capa de red no reciba tramas corruptas: Ethernet detecta el error y descarta.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Frame Check Sequence → FCS"
+      }
+    },
+    {
+      "id": "mtu",
+      "nombre": "MTU (Maximum Transmission Unit)",
+      "unidad": "u4-ethernet",
+      "definicion": "Tamaño máximo de la carga útil del campo de datos de una trama; en Ethernet es 1500 bytes.",
+      "definicion_extendida": "El campo de datos de Ethernet va de 46 a 1500 bytes; 1500 es el máximo estándar de carga útil. Las tramas cuyo payload supera ese valor son giants o jumbo frames, usados con MTU como 4074, 7418 o 9000 bytes.",
+      "ejemplo": "Con MTU 1500, la trama Ethernet II máxima mide 14 + 1500 + 4 = 1518 bytes.",
+      "por_que_importa": "Limita el tamaño del paquete de capa 3 que cabe en una trama; si un paquete IP la supera, debe fragmentarse.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Data y frames especiales"
+      }
+    },
+    {
+      "id": "eth-runt-frame",
+      "nombre": "Runt frame",
+      "unidad": "u4-ethernet",
+      "definicion": "Trama que no alcanza el tamaño mínimo de 64 bytes y que el receptor descarta.",
+      "definicion_extendida": "Si la cantidad de datos no alcanza para completar una trama mínima de 64 bytes, el emisor inserta bytes de relleno (padding) hasta llegar a ese tamaño. Si no lo hiciera, el receptor descartaría la trama al validar su tamaño (64 a 1518 bytes).",
+      "ejemplo": "Con 30 bytes de payload, Ethernet II agrega 16 bytes de relleno para llegar a 46 bytes de datos y 64 bytes de trama.",
+      "por_que_importa": "Explica por qué existe el relleno en el campo de datos y por qué el payload mínimo es de 46 bytes.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Data y frames especiales"
+      }
+    },
+    {
+      "id": "eth-jumbo-frame",
+      "nombre": "Jumbo frame (giant)",
+      "unidad": "u4-ethernet",
+      "definicion": "Trama cuyo campo de datos supera el máximo estándar de 1500 bytes (MTU).",
+      "definicion_extendida": "El material las llama giants o jumbo frames. Se usan configurando una MTU mayor a la estándar en los equipos del enlace.",
+      "ejemplo": "MTU = 4074, 7418 o 9000 bytes.",
+      "por_que_importa": "Permite transportar más datos por trama, pero rompe el límite estándar de 1518 bytes que valida un receptor común.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Data y frames especiales"
+      }
+    },
+    {
+      "id": "half-duplex",
+      "nombre": "Half duplex",
+      "unidad": "u4-ethernet",
+      "definicion": "Modo de funcionamiento en el que se transmite en un solo sentido a la vez y se usa CSMA/CD para resolver la contención.",
+      "definicion_extendida": "Es el modo de los medios compartidos, como un hub: canal bidireccional no simultáneo. Como puede haber colisiones, se usa CSMA/CD. En un switch, CSMA/CD solo debe implementarse si el puerto de salida está en half duplex.",
+      "ejemplo": "Varias PCs conectadas a un hub trabajan en half duplex y comparten un único dominio de colisión.",
+      "por_que_importa": "Determina si hay colisiones posibles y, por lo tanto, si hace falta CSMA/CD y backoff.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Modos de funcionamiento"
+      }
+    },
+    {
+      "id": "full-duplex",
+      "nombre": "Full duplex",
+      "unidad": "u4-ethernet",
+      "definicion": "Modo en el que ambas estaciones transmiten simultáneamente, sin colisiones.",
+      "definicion_extendida": "Se usa principalmente en enlaces punto a punto. Al no haber colisiones se optimiza el ancho de banda. Si el puerto del switch y el host están en full duplex se deshabilita la detección de colisiones. La auto-negociación permite que ambos extremos elijan automáticamente la velocidad y el mejor modo duplex soportado.",
+      "ejemplo": "Una PC conectada directamente a un puerto de switch, ambos configurados en full duplex: red libre de colisiones.",
+      "por_que_importa": "Es la configuración recomendada para lograr un entorno de alto rendimiento y totalmente libre de colisiones.",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Switches y las colisiones"
+      }
+    },
+    {
+      "id": "hub",
+      "nombre": "Hub",
+      "unidad": "u4-ethernet",
+      "definicion": "Repetidor multipuerto de capa 1 que regenera la señal y la reenvía por todos sus puertos.",
+      "definicion_extendida": "Opera exclusivamente en la capa física: recibe un frame en un puerto, amplifica la señal y la envía por todos los puertos. Funciona en half duplex, es plug & play y económico. Sus desventajas: un único dominio de colisión, difusión ineficiente de todos los frames y ausencia de buffer, por lo que no puede unir segmentos de distintas velocidades.",
+      "ejemplo": "El centro de una LAN en estrella física que lógicamente funciona como medio compartido, todos contra todos.",
+      "por_que_importa": "Sirve de contraste para entender qué mejora el switch: separación de dominios de colisión y envío inteligente.",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "02 – Dispositivo 01: Hub"
+      }
+    },
+    {
+      "id": "switch",
+      "nombre": "Switch",
+      "unidad": "u4-ethernet",
+      "definicion": "Dispositivo activo de capa 2 que aprende direcciones MAC y conmuta cada frame solo hacia el puerto necesario.",
+      "definicion_extendida": "Construye una tabla dinámica de MACs, reenvía a un único puerto cuando conoce la DA y hace flooding ante broadcast o direcciones desconocidas. Trabaja en modo store and forward y cada puerto es un dominio de colisión independiente. Arquitectura: puertos con buffers, matriz de conmutación, CPU y memorias (RAM, Flash, ROM), sistema operativo y archivos de configuración. Usa STP para evitar loops.",
+      "ejemplo": "Red de una empresa: un switch de acceso por piso concentra las PCs locales y un switch core interconecta los pisos.",
+      "por_que_importa": "Optimiza la red enviando los unicast conocidos solo donde corresponde, permite redes escalables y conecta segmentos de distintas velocidades.",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Dispositivo Switch"
+      }
+    },
+    {
+      "id": "tabla-mac",
+      "nombre": "Tabla de MACs",
+      "unidad": "u4-ethernet",
+      "definicion": "Tabla dinámica del switch que asocia cada dirección MAC de origen con el puerto por el que se aprendió.",
+      "definicion_extendida": "Al encender el switch está vacía y se llena a medida que procesa frames, registrando la SA de cada uno. Sus campos son Dirección, Puerto, Tiempo (aging time) y, en switches que la soportan, VLAN. Las entradas de hosts sin actividad expiran automáticamente.",
+      "ejemplo": "62-FE-F7-11-89-A3 → interfaz 1 (9:32); 7C-BA-B2-B4-91-10 → interfaz 3 (9:36).",
+      "por_que_importa": "Es el criterio de conmutación: con ella el switch decide si descarta, reenvía a un puerto o inunda.",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Campos de la Tabla de MACs"
+      }
+    },
+    {
+      "id": "eth-aging-time",
+      "nombre": "Aging time",
+      "unidad": "u4-ethernet",
+      "definicion": "Tiempo de envejecimiento que determina la vigencia de una entrada en la tabla de MACs.",
+      "definicion_extendida": "Si un host no registra actividad durante cierto tiempo, su entrada expira automáticamente. El campo Tiempo de la tabla evita que el registro quede activo indefinidamente.",
+      "ejemplo": "La entrada 7C-BA-B2-B4-91-10 en la interfaz 3 tiene tiempo 9:36; si el host deja de transmitir, la entrada se elimina al vencer.",
+      "por_que_importa": "Mantiene la tabla actualizada y optimizada cuando los equipos se desconectan o cambian de puerto.",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Aprender direcciones MAC – Tabla Dinámica"
+      }
+    },
+    {
+      "id": "flooding",
+      "nombre": "Flooding (inundación)",
+      "unidad": "u4-ethernet",
+      "definicion": "Reenvío de un frame por todos los puertos del switch excepto el de llegada.",
+      "definicion_extendida": "El switch inunda cuando la dirección de destino es desconocida (no está en la tabla de MACs) o especial: broadcast (ff-ff-ff-ff-ff-ff) o multicast.",
+      "ejemplo": "Con la tabla vacía, PC-A envía a PC-C: el switch aprende A y reenvía la trama por todos los puertos salvo el de A.",
+      "por_que_importa": "Garantiza que el frame llegue al destino aunque el switch todavía no lo conozca, y es como se distribuyen los broadcasts.",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Conmutación Ethernet – Inspección de trama"
+      }
+    },
+    {
+      "id": "bridge",
+      "nombre": "Bridge (puente)",
+      "unidad": "u4-ethernet",
+      "definicion": "Dispositivo de capa 2 con pocos puertos que puede conmutar entre medios distintos.",
+      "definicion_extendida": "Tiene el mismo funcionamiento que un switch, pero como une medios diferentes debe adaptar el encabezado de capa 2.",
+      "ejemplo": "Bridge inalámbrico WiFi y bridge ADSL.",
+      "por_que_importa": "Permite unir segmentos de tecnologías diferentes manteniendo la lógica de conmutación de capa 2.",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Bridge o puente"
+      }
+    },
+    {
+      "id": "dominio-de-colision",
+      "nombre": "Dominio de colisión",
+      "unidad": "u4-ethernet",
+      "definicion": "Segmento físico de una red donde los frames de un equipo pueden colisionar con los de otros.",
+      "definicion_extendida": "Un hub forma un único dominio de colisión para todos sus puertos, lo que limita la cantidad de dispositivos. En un switch cada puerto es un dominio de colisión independiente; con full duplex en el puerto y el host no hay colisiones.",
+      "ejemplo": "Dos PCs y un servidor sobre un medio compartido: si dos PCs transmiten a la vez, sus datos colisionan.",
+      "por_que_importa": "Cuantos más equipos comparten un dominio de colisión, más colisiones y menor rendimiento.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Dominio de Colisión"
+      }
+    },
+    {
+      "id": "dominio-de-broadcast",
+      "nombre": "Dominio de broadcast",
+      "unidad": "u4-ethernet",
+      "definicion": "Área lógica de la red donde todos los nodos pueden transmitir directamente a cualquier otro y reciben los broadcasts.",
+      "definicion_extendida": "Un switch reenvía los mensajes de broadcast a todos los equipos, por lo que no separa dominios de broadcast. En una LAN de empresa con switches de acceso y core, toda la red comparte un único dominio de broadcast; las VLAN y los routers lo segmentan.",
+      "ejemplo": "Seis laptops conectadas a un switch: un broadcast de una de ellas llega a las otras cinco.",
+      "por_que_importa": "Facilita localizar dispositivos, pero un dominio muy grande genera tráfico innecesario y exige un diseño eficiente.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Dominio de Broadcast (Difusión)"
+      }
+    }
+  ],
+  "relaciones": [
+    {
+      "origen": "ethernet",
+      "destino": "capa-de-enlace",
+      "verbo": "opera en",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Introducción – Protocolo Ethernet"
+      }
+    },
+    {
+      "origen": "ethernet",
+      "destino": "capa-fisica",
+      "verbo": "también se define en",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Introducción – Protocolo Ethernet"
+      }
+    },
+    {
+      "origen": "ethernet",
+      "destino": "csma-cd",
+      "verbo": "usa",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "MAC – Media Access Control"
+      }
+    },
+    {
+      "origen": "subcapa-llc",
+      "destino": "ethernet",
+      "verbo": "es parte de",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Introducción – Protocolo Ethernet"
+      }
+    },
+    {
+      "origen": "subcapa-mac",
+      "destino": "ethernet",
+      "verbo": "es parte de",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Introducción – Protocolo Ethernet"
+      }
+    },
+    {
+      "origen": "subcapa-llc",
+      "destino": "protocolo",
+      "verbo": "identifica mediante SAP el",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "LLC – Logical Link Control"
+      }
+    },
+    {
+      "origen": "subcapa-llc",
+      "destino": "subcapa-mac",
+      "verbo": "delega el entramado en",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "LLC – Logical Link Control"
+      }
+    },
+    {
+      "origen": "subcapa-mac",
+      "destino": "entramado",
+      "verbo": "realiza",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "MAC – Media Access Control"
+      }
+    },
+    {
+      "origen": "subcapa-mac",
+      "destino": "direccion-mac",
+      "verbo": "usa",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "MAC – Media Access Control"
+      }
+    },
+    {
+      "origen": "eth-oui",
+      "destino": "direccion-mac",
+      "verbo": "es parte de",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campos DA o SA"
+      }
+    },
+    {
+      "origen": "direccion-mac",
+      "destino": "broadcast",
+      "verbo": "puede ser",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Dirección MAC – 48 bits (6 bytes)"
+      }
+    },
+    {
+      "origen": "direccion-mac",
+      "destino": "trama-ethernet-ii",
+      "verbo": "ocupa los campos DA y SA de",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Trama Ethernet II – Campos DA y SA"
+      }
+    },
+    {
+      "origen": "trama-ethernet-ii",
+      "destino": "trama",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Trama Ethernet II (o versión 2)"
+      }
+    },
+    {
+      "origen": "eth-trama-802-3-llc",
+      "destino": "trama-ethernet-ii",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Comparación de estructuras (IEEE 802.3 vs Ethernet II)"
+      }
+    },
+    {
+      "origen": "eth-trama-802-3-llc",
+      "destino": "subcapa-llc",
+      "verbo": "lleva la cabecera de",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Trama IEEE 802.3 con LLC (802.2)"
+      }
+    },
+    {
+      "origen": "ethertype",
+      "destino": "trama-ethernet-ii",
+      "verbo": "es parte de",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Trama Ethernet II (o versión 2)"
+      }
+    },
+    {
+      "origen": "ethertype",
+      "destino": "protocolo-ip",
+      "verbo": "identifica con 0x0800 a",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Type → EtherType"
+      }
+    },
+    {
+      "origen": "ethertype",
+      "destino": "arp",
+      "verbo": "identifica con 0x0806 a",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Type → EtherType"
+      }
+    },
+    {
+      "origen": "fcs",
+      "destino": "crc",
+      "verbo": "se calcula con",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Frame Check Sequence → FCS"
+      }
+    },
+    {
+      "origen": "fcs",
+      "destino": "deteccion-de-errores",
+      "verbo": "implementa",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Frame Check Sequence → FCS"
+      }
+    },
+    {
+      "origen": "eth-preambulo",
+      "destino": "trama-ethernet-ii",
+      "verbo": "sincroniza el inicio de",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Trama Ethernet II – Primeros 8 bytes"
+      }
+    },
+    {
+      "origen": "mtu",
+      "destino": "fragmentacion",
+      "verbo": "determina la necesidad de",
+      "fuente": {
+        "archivo": "capa3_red_ip.md",
+        "seccion": "Límite de Transmisión (MTU)"
+      }
+    },
+    {
+      "origen": "eth-jumbo-frame",
+      "destino": "mtu",
+      "verbo": "supera la",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Data y frames especiales"
+      }
+    },
+    {
+      "origen": "eth-runt-frame",
+      "destino": "eth-jumbo-frame",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Data y frames especiales"
+      }
+    },
+    {
+      "origen": "eth-runt-frame",
+      "destino": "trama-ethernet-ii",
+      "verbo": "no alcanza el tamaño mínimo de",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Data y frames especiales"
+      }
+    },
+    {
+      "origen": "half-duplex",
+      "destino": "csma-cd",
+      "verbo": "requiere",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Modos de funcionamiento"
+      }
+    },
+    {
+      "origen": "full-duplex",
+      "destino": "half-duplex",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Modos de funcionamiento"
+      }
+    },
+    {
+      "origen": "full-duplex",
+      "destino": "colision",
+      "verbo": "elimina",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Modos de funcionamiento"
+      }
+    },
+    {
+      "origen": "hub",
+      "destino": "repetidor",
+      "verbo": "es un tipo de",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Redes LAN cableadas – Ejemplo"
+      }
+    },
+    {
+      "origen": "hub",
+      "destino": "capa-fisica",
+      "verbo": "opera en",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "02 – Dispositivo 01: Hub"
+      }
+    },
+    {
+      "origen": "hub",
+      "destino": "half-duplex",
+      "verbo": "funciona en",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Dispositivo HUB"
+      }
+    },
+    {
+      "origen": "hub",
+      "destino": "dominio-de-colision",
+      "verbo": "forma un único",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Desventajas de los Hubs"
+      }
+    },
+    {
+      "origen": "switch",
+      "destino": "hub",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Switches y las colisiones"
+      }
+    },
+    {
+      "origen": "switch",
+      "destino": "tabla-mac",
+      "verbo": "mantiene",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Aprender direcciones MAC"
+      }
+    },
+    {
+      "origen": "switch",
+      "destino": "flooding",
+      "verbo": "aplica",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Conmutación Ethernet – Inspección de trama"
+      }
+    },
+    {
+      "origen": "switch",
+      "destino": "dominio-de-colision",
+      "verbo": "separa por puerto el",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Switches y las colisiones"
+      }
+    },
+    {
+      "origen": "switch",
+      "destino": "stp",
+      "verbo": "usa para evitar loops",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Dispositivo Switch"
+      }
+    },
+    {
+      "origen": "bridge",
+      "destino": "switch",
+      "verbo": "funciona igual que",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Bridge o puente"
+      }
+    },
+    {
+      "origen": "tabla-mac",
+      "destino": "direccion-mac",
+      "verbo": "asocia a un puerto cada",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Campos de la Tabla de MACs"
+      }
+    },
+    {
+      "origen": "eth-aging-time",
+      "destino": "tabla-mac",
+      "verbo": "hace expirar entradas de",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Campos de la Tabla de MACs"
+      }
+    },
+    {
+      "origen": "flooding",
+      "destino": "broadcast",
+      "verbo": "se aplica a",
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Conmutación Ethernet – Inspección de trama"
+      }
+    },
+    {
+      "origen": "dominio-de-broadcast",
+      "destino": "dominio-de-colision",
+      "verbo": "contrasta con",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "02 – Otros conceptos"
+      }
+    },
+    {
+      "origen": "dominio-de-broadcast",
+      "destino": "vlan",
+      "verbo": "se segmenta con",
+      "fuente": {
+        "archivo": "capa2_vlan_stp.md",
+        "seccion": "Dominios de broadcast"
+      }
+    },
+    {
+      "origen": "dominio-de-broadcast",
+      "destino": "router",
+      "verbo": "es delimitado por",
+      "fuente": {
+        "archivo": "capa3_enrutamiento.md",
+        "seccion": "Routers y dominios de broadcast"
+      }
+    },
+    {
+      "origen": "dominio-de-colision",
+      "destino": "colision",
+      "verbo": "es el ámbito donde puede ocurrir una",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Dominio de Colisión"
+      }
+    }
+  ],
+  "taxonomias": [
+    {
+      "id": "eth-tax-dispositivos",
+      "nombre": "Dispositivos de conmutación Ethernet",
+      "unidad": "u4-ethernet",
+      "raiz": {
+        "nombre": "Dispositivos de conmutación",
+        "descripcion": "Mueven un frame desde un puerto de origen al o los puertos de destino.",
+        "hijos": [
+          {
+            "nombre": "Hub",
+            "descripcion": "Capa 1: repetidor multipuerto.",
+            "hijos": [
+              {
+                "nombre": "Regenera y amplifica la señal",
+                "hijos": []
+              },
+              {
+                "nombre": "Reenvía por todos los puertos",
+                "hijos": []
+              },
+              {
+                "nombre": "Half duplex, un único dominio de colisión, sin buffer",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Switch",
+            "descripcion": "Capa 2: conmutación inteligente.",
+            "hijos": [
+              {
+                "nombre": "Aprende MACs en una tabla dinámica",
+                "hijos": []
+              },
+              {
+                "nombre": "Forward a un puerto o flooding",
+                "hijos": []
+              },
+              {
+                "nombre": "Un dominio de colisión por puerto; usa STP",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Bridge",
+            "descripcion": "Capa 2: pocos puertos, medios distintos.",
+            "hijos": [
+              {
+                "nombre": "Bridge inalámbrico WiFi",
+                "hijos": []
+              },
+              {
+                "nombre": "Bridge ADSL",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      },
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Dispositivos de Conmutación"
+      }
+    },
+    {
+      "id": "eth-tax-direcciones-mac",
+      "nombre": "Tipos de direcciones MAC",
+      "unidad": "u4-ethernet",
+      "raiz": {
+        "nombre": "Dirección MAC (48 bits)",
+        "hijos": [
+          {
+            "nombre": "Unicast",
+            "descripcion": "Identifica un solo equipo; primer byte par.",
+            "hijos": [
+              {
+                "nombre": "Ej.: 00-08-73-4c-9f-9b",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Broadcast",
+            "descripcion": "La reciben todos los equipos de la LAN.",
+            "hijos": [
+              {
+                "nombre": "ff-ff-ff-ff-ff-ff",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Multicast",
+            "descripcion": "Dirigida a un grupo de equipos suscritos.",
+            "hijos": [
+              {
+                "nombre": "IPv4: prefijo IANA 01-00-5E + últimos 23 bits de la IP multicast",
+                "hijos": []
+              },
+              {
+                "nombre": "IPv6: prefijo 33-33 + últimos 32 bits de la IPv6 multicast",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      },
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Dirección MAC – 48 bits (6 bytes)"
+      }
+    },
+    {
+      "id": "eth-tax-nomenclatura",
+      "nombre": "Nomenclatura IEEE 802.3",
+      "unidad": "u4-ethernet",
+      "raiz": {
+        "nombre": "Identificador IEEE (ej. 10BaseT)",
+        "hijos": [
+          {
+            "nombre": "Velocidad",
+            "descripcion": "Rapidez de transmisión.",
+            "hijos": [
+              {
+                "nombre": "10 → 10 Mbps",
+                "hijos": []
+              },
+              {
+                "nombre": "100 → 100 Mbps (Fast Ethernet)",
+                "hijos": []
+              },
+              {
+                "nombre": "1000 → 1 Gbps",
+                "hijos": []
+              },
+              {
+                "nombre": "10G / 100G → 10 / 100 Gbps",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Tipo de señalización",
+            "hijos": [
+              {
+                "nombre": "Base: banda base (el medio solo transporta señales Ethernet)",
+                "hijos": []
+              }
+            ]
+          },
+          {
+            "nombre": "Sufijo: medio y codificación",
+            "hijos": [
+              {
+                "nombre": "T: par trenzado (cobre)",
+                "hijos": []
+              },
+              {
+                "nombre": "S: láser de onda corta sobre fibra multimodo",
+                "hijos": []
+              },
+              {
+                "nombre": "L: láser de onda larga sobre fibra monomodo",
+                "hijos": []
+              },
+              {
+                "nombre": "LR / ER4: Long Reach / Extended Reach",
+                "hijos": []
+              },
+              {
+                "nombre": "X: codificación de línea 4B/5B",
+                "hijos": []
+              }
+            ]
+          }
+        ]
+      },
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Nemotécnica – Identificador IEEE"
+      }
+    }
+  ],
+  "procesos": [
+    {
+      "id": "eth-proc-envio",
+      "nombre": "Envío de frames Ethernet",
+      "unidad": "u4-ethernet",
+      "descripcion": "Las cuatro etapas que sigue una estación para transmitir una trama Ethernet en un medio compartido.",
+      "pasos": [
+        {
+          "actor": "NIC emisora",
+          "accion": "Preparación: si el frame tiene menos de 60 bytes lo completa con relleno (padding) y calcula y agrega el CRC en el FCS.",
+          "por_que": "La trama debe alcanzar el tamaño mínimo (64 bytes con FCS) para no ser descartada, y el CRC permite al receptor detectar errores.",
+          "valores": [
+            {
+              "nombre": "Mínimo antes del FCS",
+              "valor": "60 bytes"
+            },
+            {
+              "nombre": "FCS",
+              "valor": "4 bytes"
+            }
+          ]
+        },
+        {
+          "actor": "NIC emisora",
+          "accion": "Acceso al medio: monitorea el canal (carrier sense); si está ocupado espera 96 bit times y vuelve a intentar.",
+          "por_que": "Solo se transmite con el canal libre para evitar colisiones.",
+          "valores": [
+            {
+              "nombre": "Espera si el medio está ocupado",
+              "valor": "96 bit times"
+            }
+          ]
+        },
+        {
+          "actor": "NIC emisora",
+          "accion": "Transmisión: con el canal libre envía los bits y, mientras transmite, sigue escuchando el medio para detectar colisiones.",
+          "por_que": "En half duplex otra estación pudo empezar al mismo tiempo; la escucha permite detectar la colisión (CSMA/CD)."
+        },
+        {
+          "actor": "NIC emisora",
+          "accion": "Colisiones: si detecta una colisión envía la señal Jam y calcula un retraso aleatorio (backoff) antes de volver al paso 2.",
+          "por_que": "El Jam avisa a toda la red de la colisión y el backoff aleatorio reduce la probabilidad de que las mismas estaciones vuelvan a chocar."
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Envío de frames Ethernet"
+      }
+    },
+    {
+      "id": "eth-proc-recepcion",
+      "nombre": "Recepción de frames Ethernet",
+      "unidad": "u4-ethernet",
+      "descripcion": "Las cuatro etapas con las que una estación decide si entrega o descarta una trama recibida.",
+      "pasos": [
+        {
+          "actor": "NIC receptora",
+          "accion": "Sincronización: detecta la portadora en el medio y espera el byte delimitador ...10101011 (SOF).",
+          "por_que": "Necesita saber dónde empieza exactamente la trama para interpretar los bits.",
+          "valores": [
+            {
+              "nombre": "Delimitador de inicio",
+              "valor": "...10101011"
+            }
+          ]
+        },
+        {
+          "actor": "NIC receptora",
+          "accion": "Validación: verifica que la trama mida entre 64 y 1518 bytes, que tenga un número entero de bytes y que el CRC sea correcto; si falla, incrementa el contador de errores.",
+          "por_que": "Descarta runts, tramas demasiado grandes o corruptas antes de procesarlas.",
+          "valores": [
+            {
+              "nombre": "Tamaño válido",
+              "valor": "64 a 1518 bytes"
+            }
+          ]
+        },
+        {
+          "actor": "NIC receptora",
+          "accion": "Destinatario: analiza la MAC de destino y la acepta solo si coincide con la local, con broadcast o con una multicast activa.",
+          "por_que": "Filtra las tramas que no son para esta estación."
+        },
+        {
+          "actor": "NIC receptora",
+          "accion": "Procesamiento: si la trama es válida y para esta estación la entrega a la capa de red; si no, la descarta.",
+          "por_que": "Solo los datos correctos y propios deben subir a la capa superior."
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Recepción de frames Ethernet"
+      }
+    },
+    {
+      "id": "eth-proc-conmutacion",
+      "nombre": "Aprendizaje de MAC y conmutación en el switch",
+      "unidad": "u4-ethernet",
+      "descripcion": "Cómo un switch aprende direcciones y decide si descarta, reenvía o inunda cada frame (modo store and forward).",
+      "pasos": [
+        {
+          "actor": "Switch",
+          "accion": "Recibe el frame en una interfaz y lo guarda en un buffer (store and forward).",
+          "por_que": "Necesita tener el frame almacenado para inspeccionar sus direcciones antes de reenviarlo."
+        },
+        {
+          "actor": "Switch",
+          "accion": "Inspecciona la dirección MAC de origen (SA) del frame.",
+          "por_que": "La SA indica qué equipo está conectado detrás del puerto de llegada."
+        },
+        {
+          "actor": "Switch",
+          "accion": "Registra en la tabla de MACs la asociación SA ↔ puerto, con su aging time.",
+          "por_que": "La tabla arranca vacía y se llena dinámicamente; el aging time hace expirar entradas de hosts inactivos."
+        },
+        {
+          "actor": "Switch",
+          "accion": "Inspecciona la MAC de destino (DA) y la busca en la tabla de MACs.",
+          "por_que": "La DA es el criterio principal de conmutación; por eso va al inicio de la trama."
+        },
+        {
+          "actor": "Switch",
+          "accion": "Decide: descarta si el destino está en el mismo puerto de llegada; reenvía solo por el puerto indicado si la DA es conocida; hace flooding por todos los puertos menos el de llegada si la DA es desconocida, broadcast o multicast.",
+          "por_que": "Así los unicast conocidos van solo donde corresponde y los destinos desconocidos o especiales igual llegan a todos."
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Conmutación Ethernet – Pseudocódigo"
+      }
+    }
+  ],
+  "comparaciones": [
+    {
+      "id": "eth-comp-802-3-vs-ethernet-ii",
+      "nombre": "IEEE 802.3 con LLC vs Ethernet II",
+      "unidad": "u4-ethernet",
+      "columnas": [
+        "IEEE 802.3 (con LLC 802.2)",
+        "Ethernet II"
+      ],
+      "filas": [
+        {
+          "criterio": "Primeros bytes",
+          "celdas": [
+            "Preámbulo (7) + SOF (1)",
+            "Preámbulo de 8 bytes (incluye SOF)"
+          ]
+        },
+        {
+          "criterio": "Direcciones",
+          "celdas": [
+            "DA (6) y SA (6)",
+            "DA (6) y SA (6)"
+          ]
+        },
+        {
+          "criterio": "Campo de 2 bytes",
+          "celdas": [
+            "Length: largo de datos/LLC",
+            "Type: EtherType"
+          ]
+        },
+        {
+          "criterio": "Identifica el protocolo superior con",
+          "celdas": [
+            "DSAP/SSAP de LLC",
+            "EtherType (0x0800 IP, 0x0806 ARP)"
+          ]
+        },
+        {
+          "criterio": "Datos",
+          "celdas": [
+            "Cabecera 802.2 + datos: 46–1500 B (datos de red 43–1497 B)",
+            "46–1500 B"
+          ]
+        },
+        {
+          "criterio": "FCS",
+          "celdas": [
+            "CRC-32, 4 bytes",
+            "CRC, 4 bytes"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Comparación de estructuras (IEEE 802.3 vs Ethernet II)"
+      }
+    },
+    {
+      "id": "eth-comp-hub-switch-bridge",
+      "nombre": "Hub vs switch vs bridge",
+      "unidad": "u4-ethernet",
+      "columnas": [
+        "Hub",
+        "Switch",
+        "Bridge"
+      ],
+      "filas": [
+        {
+          "criterio": "Capa",
+          "celdas": [
+            "1 (física)",
+            "2 (enlace)",
+            "2 (enlace)"
+          ]
+        },
+        {
+          "criterio": "Reenvío",
+          "celdas": [
+            "Por todos los puertos siempre",
+            "Al puerto de la DA; flooding si es desconocida o especial",
+            "Mismo funcionamiento que el switch"
+          ]
+        },
+        {
+          "criterio": "Dominios de colisión",
+          "celdas": [
+            "Uno solo para todos los puertos",
+            "Uno por puerto",
+            "Conmuta como un switch"
+          ]
+        },
+        {
+          "criterio": "Duplex",
+          "celdas": [
+            "Half duplex",
+            "Half o full duplex por puerto",
+            "No especificado"
+          ]
+        },
+        {
+          "criterio": "Buffer / velocidades",
+          "celdas": [
+            "Sin buffer: no une velocidades distintas",
+            "Buffers: une segmentos de distinta velocidad",
+            "Adapta el encabezado L2 entre medios"
+          ]
+        },
+        {
+          "criterio": "Puertos y uso",
+          "celdas": [
+            "Plug & play, interconexión barata",
+            "Redes escalables (acceso y core)",
+            "Pocos puertos, medios distintos (WiFi, ADSL)"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Dispositivos de Conmutación"
+      }
+    },
+    {
+      "id": "eth-comp-duplex",
+      "nombre": "Half duplex vs full duplex",
+      "unidad": "u4-ethernet",
+      "columnas": [
+        "Half duplex",
+        "Full duplex"
+      ],
+      "filas": [
+        {
+          "criterio": "Sentido de transmisión",
+          "celdas": [
+            "Un sentido a la vez",
+            "Ambos sentidos simultáneamente"
+          ]
+        },
+        {
+          "criterio": "Colisiones",
+          "celdas": [
+            "Posibles",
+            "No hay colisiones"
+          ]
+        },
+        {
+          "criterio": "CSMA/CD",
+          "celdas": [
+            "Se usa para resolver la contención",
+            "Se deshabilita la detección de colisiones"
+          ]
+        },
+        {
+          "criterio": "Uso típico",
+          "celdas": [
+            "Medio compartido (hub)",
+            "Enlaces punto a punto (switch–host)"
+          ]
+        },
+        {
+          "criterio": "Rendimiento",
+          "celdas": [
+            "Menor por contención",
+            "Alto: optimiza el ancho de banda"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Modos de funcionamiento"
+      }
+    },
+    {
+      "id": "eth-comp-gigabit",
+      "nombre": "Estándares Gigabit Ethernet",
+      "unidad": "u4-ethernet",
+      "columnas": [
+        "1000Base-T",
+        "1000Base-SX",
+        "1000Base-LX"
+      ],
+      "filas": [
+        {
+          "criterio": "Medio",
+          "celdas": [
+            "UTP Cat. 5e o superior",
+            "Fibra multimodo, onda corta",
+            "Fibra monomodo, onda larga"
+          ]
+        },
+        {
+          "criterio": "Distancia",
+          "celdas": [
+            "100 m",
+            "500 m",
+            "5000 m (5 km)"
+          ]
+        },
+        {
+          "criterio": "Uso",
+          "celdas": [
+            "LAN (barato)",
+            "LAN, servidores, backbone",
+            "LAN de larga distancia"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Estándares más utilizados – Gigabit Ethernet"
+      }
+    },
+    {
+      "id": "eth-comp-denominaciones",
+      "nombre": "Denominaciones y velocidades de Ethernet",
+      "unidad": "u4-ethernet",
+      "columnas": [
+        "Ethernet",
+        "Fast Ethernet",
+        "Gigabit",
+        "10 Gigabit",
+        "25 Gigabit",
+        "40/100 Gigabit"
+      ],
+      "filas": [
+        {
+          "criterio": "Velocidad",
+          "celdas": [
+            "10 Mbps",
+            "100 Mbps",
+            "1000 Mbps",
+            "10 Gbps",
+            "25 Gbps",
+            "40 / 100 Gbps"
+          ]
+        },
+        {
+          "criterio": "Estándar IEEE",
+          "celdas": [
+            "802.3",
+            "802.3u",
+            "802.3z / ab",
+            "802.3ae",
+            "802.3bq-2016",
+            "802.3ba-2010"
+          ]
+        },
+        {
+          "criterio": "Ejemplo de identificador",
+          "celdas": [
+            "10BaseT",
+            "100BaseTx",
+            "1000BaseLx",
+            "10GBase-LR",
+            "25Base-SR / LR",
+            "100GBase-ER4"
+          ]
+        }
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Ethernet – Denominaciones y velocidades"
+      }
+    }
+  ],
+  "ejercicios": [
+    {
+      "id": "eth-ej-tabla-mac",
+      "titulo": "Simular la tabla MAC de un switch",
+      "unidad": "u4-ethernet",
+      "tipo": "Conmutación Ethernet",
+      "enunciado": "Un switch de 4 puertos acaba de encenderse (tabla de MACs vacía). En el puerto 1 hay un hub al que se conectan PC-A y PC-E; PC-B está en el puerto 2, PC-C en el puerto 3 y PC-D en el puerto 4. Llegan, en orden, estas tramas: (1) A→C, (2) C→A, (3) B→ff-ff-ff-ff-ff-ff, (4) E→A. Para cada una decidí qué hace el switch (flood, forward o drop) y cómo queda la tabla.",
+      "pasos": [
+        {
+          "consigna": "Trama 1 (A→C): ¿qué entrada agrega el switch a la tabla? Indicá el número de puerto asociado a la MAC de A.",
+          "respuesta": "1",
+          "tipo_respuesta": "numero",
+          "explicacion": "El switch aprende la MAC de origen (SA = A) y la asocia al puerto de llegada, el 1."
+        },
+        {
+          "consigna": "Trama 1 (A→C): ¿qué hace el switch con la trama?",
+          "respuesta": "Flooding por los puertos 2, 3 y 4",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Flooding por los puertos 2, 3 y 4",
+            "Forward solo por el puerto 3",
+            "Drop, porque C no está en la tabla",
+            "Flooding por los puertos 1, 2, 3 y 4"
+          ],
+          "explicacion": "La MAC de C todavía no está en la tabla (destino desconocido), así que inunda por todos los puertos excepto el de llegada."
+        },
+        {
+          "consigna": "Trama 2 (C→A): ¿qué hace el switch?",
+          "respuesta": "Aprende C en el puerto 3 y hace forward solo por el puerto 1",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Aprende C en el puerto 3 y hace forward solo por el puerto 1",
+            "Aprende C en el puerto 3 y hace flooding por 1, 2 y 4",
+            "Aprende A en el puerto 3 y hace forward por el puerto 1",
+            "No aprende nada y descarta la trama"
+          ],
+          "explicacion": "Registra la SA (C) en el puerto 3; la DA (A) ya es conocida en el puerto 1, por lo que conmuta solo hacia ese puerto."
+        },
+        {
+          "consigna": "Trama 3 (B→broadcast): ¿qué hace el switch?",
+          "respuesta": "Aprende B en el puerto 2 y hace flooding por 1, 3 y 4",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Aprende B en el puerto 2 y hace flooding por 1, 3 y 4",
+            "Aprende B en el puerto 2 y descarta la trama",
+            "Aprende ff-ff-ff-ff-ff-ff en el puerto 2 y hace forward",
+            "Aprende B en el puerto 2 y hace forward por el puerto 1"
+          ],
+          "explicacion": "La SA (B) se aprende en el puerto 2. La DA es broadcast, una dirección especial: se inunda por todos los puertos menos el de llegada. Las direcciones broadcast nunca se aprenden porque solo aparecen como DA."
+        },
+        {
+          "consigna": "Trama 4 (E→A): ¿qué hace el switch?",
+          "respuesta": "Drop",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Drop",
+            "Forward por el puerto 1",
+            "Flooding por 2, 3 y 4",
+            "Forward por el puerto 3"
+          ],
+          "explicacion": "Aprende E en el puerto 1. La DA (A) está asociada al puerto 1, el mismo por el que llegó la trama: A ya la recibió a través del hub, así que el switch la descarta."
+        },
+        {
+          "consigna": "¿Cuántas entradas tiene la tabla de MACs al final?",
+          "respuesta": "4",
+          "tipo_respuesta": "numero",
+          "explicacion": "A→1, C→3, B→2 y E→1. D nunca transmitió, así que el switch no la conoce."
+        }
+      ],
+      "pistas": [
+        "El switch aprende siempre de la MAC de origen y decide el envío con la MAC de destino.",
+        "Si la DA no está en la tabla o es especial (broadcast/multicast), se inunda por todos los puertos menos el de llegada.",
+        "Fijate en el hub: A y E quedan detrás del mismo puerto del switch."
+      ],
+      "errores_comunes": [
+        "Aprender la MAC de destino en lugar de la de origen.",
+        "Incluir el puerto de llegada al hacer flooding.",
+        "Hacer forward por el puerto 1 en la trama E→A, cuando el destino está en el mismo puerto de llegada y corresponde descartar.",
+        "Agregar ff-ff-ff-ff-ff-ff o D a la tabla."
+      ],
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Conmutación Ethernet – Pseudocódigo"
+      }
+    },
+    {
+      "id": "eth-ej-direccion-mac",
+      "titulo": "Analizar direcciones MAC",
+      "unidad": "u4-ethernet",
+      "tipo": "Direccionamiento MAC",
+      "enunciado": "Analizá la dirección MAC 00-08-73-4c-9f-9b y luego clasificá otras dos direcciones.",
+      "pasos": [
+        {
+          "consigna": "¿Cuántos bits tiene la dirección 00-08-73-4c-9f-9b?",
+          "respuesta": "48",
+          "tipo_respuesta": "numero",
+          "explicacion": "12 dígitos hexadecimales × 4 bits = 48 bits (6 bytes)."
+        },
+        {
+          "consigna": "¿Cuál es el OUI (identificador del fabricante)?",
+          "respuesta": "00-08-73",
+          "tipo_respuesta": "texto",
+          "alternativas": [
+            "00:08:73",
+            "000873",
+            "00 08 73",
+            "00.08.73"
+          ],
+          "explicacion": "El OUI son los primeros 6 dígitos hexadecimales (3 bytes)."
+        },
+        {
+          "consigna": "¿Qué parte identifica al aparato concreto?",
+          "respuesta": "4c-9f-9b",
+          "tipo_respuesta": "texto",
+          "alternativas": [
+            "4c:9f:9b",
+            "4c9f9b",
+            "4c 9f 9b",
+            "4C-9F-9B"
+          ],
+          "explicacion": "Los últimos 6 dígitos hexadecimales identifican al dispositivo dentro del fabricante."
+        },
+        {
+          "consigna": "¿De qué tipo es 00-08-73-4c-9f-9b?",
+          "respuesta": "Unicast, porque el primer byte (00) es par",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Unicast, porque el primer byte (00) es par",
+            "Multicast, porque empieza con 00",
+            "Broadcast, porque la recibe toda la LAN",
+            "Unicast, porque el último byte (9b) es impar"
+          ],
+          "explicacion": "El material indica que una unicast es identificable por tener el primer byte par; 0x00 es par."
+        },
+        {
+          "consigna": "¿De qué tipo es 01-00-5E-01-02-03?",
+          "respuesta": "Multicast",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Multicast",
+            "Unicast",
+            "Broadcast"
+          ],
+          "explicacion": "01-00-5E es el prefijo IANA de las MAC multicast de IPv4 (el primer byte, 01, es impar)."
+        },
+        {
+          "consigna": "¿De qué tipo es ff-ff-ff-ff-ff-ff?",
+          "respuesta": "Broadcast",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Broadcast",
+            "Multicast",
+            "Unicast"
+          ],
+          "explicacion": "Todos los bits en 1: la trama la reciben todos los equipos de la LAN."
+        }
+      ],
+      "pistas": [
+        "Cada dígito hexadecimal equivale a 4 bits.",
+        "La MAC se parte en dos mitades: fabricante y aparato.",
+        "Mirá el primer byte: si es par, es unicast."
+      ],
+      "errores_comunes": [
+        "Tomar como OUI los últimos 3 bytes.",
+        "Decir que la MAC tiene 12 bits o 12 bytes por contar dígitos.",
+        "Mirar la paridad del último byte en lugar del primero.",
+        "Confundir 01-00-5E (multicast) con una unicast de fabricante."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Dirección MAC – 48 bits (6 bytes)"
+      }
+    },
+    {
+      "id": "eth-ej-dominios",
+      "titulo": "Contar dominios de colisión y de broadcast",
+      "unidad": "u4-ethernet",
+      "tipo": "Dominios",
+      "enunciado": "Una LAN tiene un switch de 4 puertos sin VLAN ni router. Al puerto 1 se conecta un hub con 3 PCs; a los puertos 2, 3 y 4 se conecta una PC en cada uno.",
+      "pasos": [
+        {
+          "consigna": "¿Cuántos dominios de colisión hay?",
+          "respuesta": "4",
+          "tipo_respuesta": "numero",
+          "explicacion": "Cada puerto del switch es un dominio de colisión independiente: 4 puertos usados = 4 dominios. El hub y sus 3 PCs comparten uno solo (el del puerto 1)."
+        },
+        {
+          "consigna": "¿Cuántos dominios de broadcast hay?",
+          "respuesta": "1",
+          "tipo_respuesta": "numero",
+          "explicacion": "El switch reenvía los broadcasts por todos los puertos y el hub repite todo: toda la red es un único dominio de broadcast."
+        },
+        {
+          "consigna": "Si se reemplaza el hub por otro switch (3 PCs + 1 puerto hacia el switch original), ¿cuántos dominios de colisión hay?",
+          "respuesta": "7",
+          "tipo_respuesta": "numero",
+          "explicacion": "Los 3 enlaces del nuevo switch hacia las PCs + los 4 enlaces del switch original (uno de ellos es el enlace entre switches) = 7."
+        },
+        {
+          "consigna": "En el escenario original, ¿en qué modo trabajan las PCs del hub?",
+          "respuesta": "Half duplex con CSMA/CD",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Half duplex con CSMA/CD",
+            "Full duplex sin colisiones",
+            "Full duplex con CSMA/CD",
+            "Half duplex sin control de acceso"
+          ],
+          "explicacion": "El hub es un medio compartido half duplex: pueden ocurrir colisiones y se usa CSMA/CD."
+        }
+      ],
+      "pistas": [
+        "Un hub no separa nada: todo lo que está en él comparte medio.",
+        "Cada puerto de switch es un dominio de colisión; un switch no separa broadcasts.",
+        "Contá enlaces de switch, no PCs."
+      ],
+      "errores_comunes": [
+        "Contar un dominio de colisión por PC, incluyendo las 3 del hub por separado.",
+        "Creer que cada puerto del switch es también un dominio de broadcast.",
+        "Contar dos veces el enlace entre los dos switches."
+      ],
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Switches y las colisiones"
+      }
+    },
+    {
+      "id": "eth-ej-relleno",
+      "titulo": "Relleno y tamaño mínimo de trama",
+      "unidad": "u4-ethernet",
+      "tipo": "Cálculo de tamaños",
+      "enunciado": "Una aplicación entrega a Ethernet un payload de 30 bytes. Calculá el relleno necesario y el tamaño de la trama (sin contar preámbulo ni SOF).",
+      "pasos": [
+        {
+          "consigna": "En Ethernet II, ¿cuántos bytes de relleno se agregan?",
+          "respuesta": "16",
+          "tipo_respuesta": "numero",
+          "explicacion": "El campo de datos mínimo es de 46 bytes: 46 − 30 = 16 bytes de padding."
+        },
+        {
+          "consigna": "¿Cuál es el tamaño total de la trama Ethernet II resultante (cabecera MAC + datos + FCS)?",
+          "respuesta": "64",
+          "tipo_respuesta": "numero",
+          "explicacion": "14 (DA 6 + SA 6 + Type 2) + 46 + 4 (FCS) = 64 bytes, el mínimo válido."
+        },
+        {
+          "consigna": "Si se usara una trama IEEE 802.3 con LLC (DSAP, SSAP y Control de 1 byte), ¿cuántos bytes de relleno harían falta para los mismos 30 bytes de datos de red?",
+          "respuesta": "13",
+          "tipo_respuesta": "numero",
+          "explicacion": "Los datos de red van de 43 a 1497 bytes porque la cabecera LLC ocupa 3 bytes: 43 − 30 = 13."
+        },
+        {
+          "consigna": "¿Qué pasaría si la trama se enviara sin relleno?",
+          "respuesta": "Sería un runt frame y el receptor la descartaría",
+          "tipo_respuesta": "opcion",
+          "opciones": [
+            "Sería un runt frame y el receptor la descartaría",
+            "Sería un jumbo frame y requeriría MTU 9000",
+            "El switch la completaría con relleno al reenviarla",
+            "Se entregaría igual porque el CRC es correcto"
+          ],
+          "explicacion": "Por debajo de 64 bytes la trama no pasa la validación de tamaño del receptor (64 a 1518 bytes)."
+        }
+      ],
+      "pistas": [
+        "El campo de datos de Ethernet II va de 46 a 1500 bytes.",
+        "La cabecera MAC de Ethernet II mide 14 bytes y el FCS 4.",
+        "En 802.3 con LLC, la cabecera 802.2 ocupa parte de esos 46 bytes."
+      ],
+      "errores_comunes": [
+        "Restar 30 de 64 (34) olvidando la cabecera y el FCS.",
+        "Restar 30 de 60 (30) sin notar que 60 incluye la cabecera MAC.",
+        "Sumar el preámbulo al tamaño de 64 bytes."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Data y frames especiales"
+      }
+    }
+  ],
+  "preguntas": [
+    {
+      "id": "eth-p01",
+      "unidad": "u4-ethernet",
+      "enunciado": "¿En qué subcapas se divide Ethernet dentro de la capa de enlace y qué estándar corresponde a cada una?",
+      "opciones": [
+        "LLC (IEEE 802.3) y MAC (IEEE 802.2)",
+        "LLC (IEEE 802.2) y MAC (IEEE 802.3)",
+        "LLC (IEEE 802.2) y PHY (IEEE 802.1Q)",
+        "MAC (IEEE 802.3) y SNAP (IEEE 802.2)"
+      ],
+      "correcta": 1,
+      "explicacion": "Ethernet divide la capa de enlace en LLC, definida en 802.2, y MAC, definida en 802.3 (que también cubre la capa física).",
+      "por_que_falla": [
+        "Invierte los estándares: 802.3 es MAC y 802.2 es LLC.",
+        "",
+        "802.1Q es el estándar de VLAN, no una subcapa de Ethernet.",
+        "SNAP es un código identificador que usa LLC, no una subcapa."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Introducción – Protocolo Ethernet"
+      }
+    },
+    {
+      "id": "eth-p02",
+      "unidad": "u4-ethernet",
+      "enunciado": "¿Cuál es la función de la subcapa LLC según el material?",
+      "opciones": [
+        "Identificar con un SAP o SNAP el protocolo de capa 3 del paquete",
+        "Delimitar la trama y calcular el FCS con CRC-32 en el hardware",
+        "Controlar el acceso al medio con CSMA/CD desde la tarjeta de red",
+        "Asignar la dirección MAC de origen grabada de fábrica en la NIC"
+      ],
+      "correcta": 0,
+      "explicacion": "La LLC es software: etiqueta el paquete con un SAP o SNAP que indica qué protocolo de software lo originó. No realiza el entramado.",
+      "por_que_falla": [
+        "",
+        "El entramado y la detección de errores son funciones de la subcapa MAC.",
+        "El control de acceso al medio (CSMA/CD) lo hace la MAC en hardware.",
+        "El direccionamiento físico corresponde a la MAC/NIC, no a LLC."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "LLC – Logical Link Control"
+      }
+    },
+    {
+      "id": "eth-p03",
+      "unidad": "u4-ethernet",
+      "enunciado": "En la dirección MAC 00-08-73-4c-9f-9b, ¿cuál es el OUI?",
+      "opciones": [
+        "4c-9f-9b",
+        "00-08",
+        "00-08-73",
+        "73-4c-9f"
+      ],
+      "correcta": 2,
+      "explicacion": "El OUI son los primeros 6 dígitos hexadecimales (3 bytes), propios del fabricante: 00-08-73.",
+      "por_que_falla": [
+        "Son los últimos 6 dígitos: identifican al aparato, no al fabricante.",
+        "Son solo 4 dígitos; el OUI ocupa 6 dígitos hexadecimales.",
+        "",
+        "Mezcla un byte del OUI con dos del identificador del aparato."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campos DA o SA"
+      }
+    },
+    {
+      "id": "eth-p04",
+      "unidad": "u4-ethernet",
+      "enunciado": "Una trama llega con DA 01-00-5E-01-02-03. ¿Qué tipo de dirección es?",
+      "opciones": [
+        "Unicast de un fabricante con OUI 01-00-5E",
+        "Broadcast, porque empieza con el bit 1",
+        "Unicast, porque los últimos bytes de la dirección son pares",
+        "Multicast IPv4, por el prefijo IANA 01-00-5E"
+      ],
+      "correcta": 3,
+      "explicacion": "01-00-5E es el prefijo IANA de las MAC multicast de IPv4; los últimos 23 bits copian la IP multicast.",
+      "por_que_falla": [
+        "Una unicast tiene el primer byte par; 01 es impar y es el prefijo multicast de IANA.",
+        "Broadcast es solo ff-ff-ff-ff-ff-ff.",
+        "La paridad que importa es la del primer byte, no la de los últimos.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Dirección MAC – 48 bits (6 bytes)"
+      }
+    },
+    {
+      "id": "eth-p05",
+      "unidad": "u4-ethernet",
+      "enunciado": "En una captura, una trama Ethernet II tiene el campo Type = 0x0806. ¿Qué indica?",
+      "opciones": [
+        "Que el payload transporta un paquete IP",
+        "Que el payload transporta un mensaje ARP",
+        "Que el payload mide 2054 bytes",
+        "Que la trama lleva cabecera LLC con DSAP"
+      ],
+      "correcta": 1,
+      "explicacion": "EtherType 0x0806 identifica ARP; 0x0800 identifica IP.",
+      "por_que_falla": [
+        "IP es 0x0800.",
+        "",
+        "En Ethernet II esos 2 bytes son EtherType, no Length (y 2054 superaría la MTU de 1500).",
+        "Ethernet II no usa LLC: identifica el protocolo con EtherType."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Type → EtherType"
+      }
+    },
+    {
+      "id": "eth-p06",
+      "unidad": "u4-ethernet",
+      "enunciado": "¿Qué cambia en la trama Ethernet II respecto de IEEE 802.3 con LLC?",
+      "opciones": [
+        "Los 2 bytes de Length pasan a ser EtherType y no se usan DSAP/SSAP",
+        "Desaparece el FCS porque el control de errores lo hace la capa de red",
+        "Las direcciones DA y SA pasan de 6 a 8 bytes para incluir el OUI",
+        "El campo de datos mínimo pasa de 46 a 64 bytes por el relleno"
+      ],
+      "correcta": 0,
+      "explicacion": "Ethernet II no usa LLC: el campo Length se reutiliza como EtherType, que indica directamente el protocolo encapsulado.",
+      "por_que_falla": [
+        "",
+        "Ambos formatos tienen FCS de 4 bytes.",
+        "DA y SA miden 6 bytes en ambos; el OUI ya está dentro de esos 6.",
+        "En ambos el campo de datos va de 46 a 1500 bytes; 64 es el mínimo de toda la trama."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Trama Ethernet II (o versión 2)"
+      }
+    },
+    {
+      "id": "eth-p07",
+      "unidad": "u4-ethernet",
+      "enunciado": "¿Sobre qué campos calcula el transmisor el CRC que se escribe en el FCS de una trama Ethernet II?",
+      "opciones": [
+        "Solo sobre el campo de datos",
+        "Preámbulo, SOF, DA y SA",
+        "DA, SA, Tipo y Datos",
+        "Toda la trama, incluido el propio FCS"
+      ],
+      "correcta": 2,
+      "explicacion": "El CRC incluye dirección de destino, dirección de origen, campo Tipo y datos, y produce un resultado de 4 bytes.",
+      "por_que_falla": [
+        "También incluye las direcciones y el campo Tipo.",
+        "El preámbulo y el SOF solo sincronizan; no entran en el CRC, y faltan Tipo y Datos.",
+        "",
+        "El FCS es el resultado del cálculo; no puede incluirse a sí mismo."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Frame Check Sequence → FCS"
+      }
+    },
+    {
+      "id": "eth-p08",
+      "unidad": "u4-ethernet",
+      "enunciado": "Una estación debe enviar en Ethernet II un payload de 20 bytes. ¿Cuántos bytes de relleno se agregan?",
+      "opciones": [
+        "44",
+        "40",
+        "23",
+        "26"
+      ],
+      "correcta": 3,
+      "explicacion": "El campo de datos mínimo es 46 bytes: 46 − 20 = 26. Así la trama llega a 14 + 46 + 4 = 64 bytes.",
+      "por_que_falla": [
+        "Resta de 64, olvidando la cabecera de 14 bytes y el FCS de 4.",
+        "Resta de 60, que ya incluye la cabecera MAC.",
+        "Usa el mínimo de 43 bytes de datos de red de la trama 802.3 con LLC.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Data y frames especiales"
+      }
+    },
+    {
+      "id": "eth-p09",
+      "unidad": "u4-ethernet",
+      "enunciado": "¿Qué es un jumbo frame?",
+      "opciones": [
+        "Una trama menor a 64 bytes que se completa con relleno",
+        "Una trama con payload mayor a 1500 bytes, p. ej. MTU 9000",
+        "Una trama que colisionó y se reenvía tras la señal Jam",
+        "Una trama broadcast que el switch inunda por todos los puertos"
+      ],
+      "correcta": 1,
+      "explicacion": "Los giants o jumbo frames superan el máximo de 1500 bytes de carga útil; ejemplos de MTU: 4074, 7418 o 9000.",
+      "por_que_falla": [
+        "Eso describe un runt frame.",
+        "",
+        "La señal Jam se usa ante colisiones; no define un tamaño de trama.",
+        "Eso es flooding de un broadcast, sin relación con el tamaño."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campo Data y frames especiales"
+      }
+    },
+    {
+      "id": "eth-p10",
+      "unidad": "u4-ethernet",
+      "enunciado": "¿Para qué sirve el preámbulo de una trama Ethernet?",
+      "opciones": [
+        "Detectar el inicio de una transmisión y sincronizar al receptor",
+        "Indicar qué protocolo de capa superior va encapsulado en el payload",
+        "Detectar errores en los bits recibidos de la trama",
+        "Indicar la longitud del campo de datos y del relleno"
+      ],
+      "correcta": 0,
+      "explicacion": "El preámbulo (7 bytes de 0 y 1 alternados) permite detectar que comienza una transmisión, sincronizar y prepararse para interpretar los bits.",
+      "por_que_falla": [
+        "",
+        "Eso lo hace EtherType (o los SAP de LLC).",
+        "La detección de errores es del FCS.",
+        "La longitud la indica el campo Length de 802.3."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Trama Ethernet II – Primeros 8 bytes"
+      }
+    },
+    {
+      "id": "eth-p11",
+      "unidad": "u4-ethernet",
+      "enunciado": "Durante el envío, una estación half duplex detecta que el medio está ocupado. ¿Qué hace?",
+      "opciones": [
+        "Envía la señal Jam y aplica backoff aleatorio",
+        "Transmite igual, ya que puede detectar colisiones",
+        "Espera 96 bit times y vuelve a sensar el canal",
+        "Descarta la trama e incrementa el contador de errores"
+      ],
+      "correcta": 2,
+      "explicacion": "En la etapa de acceso al medio, si el canal está ocupado la estación espera 96 bit times y vuelve a intentar.",
+      "por_que_falla": [
+        "Jam y backoff se usan cuando ocurre una colisión, no cuando el medio está ocupado.",
+        "Carrier sense exige transmitir solo con el canal libre.",
+        "",
+        "El contador de errores es parte de la validación en la recepción."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Envío de frames Ethernet"
+      }
+    },
+    {
+      "id": "eth-p12",
+      "unidad": "u4-ethernet",
+      "enunciado": "Una NIC con MAC 00-08-73-4c-9f-9b recibe cuatro tramas de tamaño y CRC correctos. ¿Cuál descarta?",
+      "opciones": [
+        "La que tiene DA ff-ff-ff-ff-ff-ff",
+        "La que tiene DA 00-08-73-4c-9f-9b",
+        "La que tiene DA de un multicast activo en la NIC",
+        "La que tiene DA 00-08-73-4c-9f-9c"
+      ],
+      "correcta": 3,
+      "explicacion": "El filtro de entrada acepta la MAC local, broadcast o un multicast activo. 00-08-73-4c-9f-9c es otra unicast (difiere en el último dígito), así que se descarta.",
+      "por_que_falla": [
+        "Broadcast pasa el filtro de entrada.",
+        "Es la MAC local: se entrega a la capa de red.",
+        "Un multicast activo también pasa el filtro.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Recepción de frames Ethernet"
+      }
+    },
+    {
+      "id": "eth-p13",
+      "unidad": "u4-ethernet",
+      "enunciado": "Un switch recibe un frame unicast cuya MAC de destino no está en su tabla. ¿Qué hace?",
+      "opciones": [
+        "Lo descarta porque el destino es desconocido",
+        "Lo inunda por todos los puertos salvo el de llegada",
+        "Lo envía solo por el puerto donde está conectado el router",
+        "Lo devuelve al origen junto con una señal Jam"
+      ],
+      "correcta": 1,
+      "explicacion": "Ante un destino desconocido (o especial) el switch hace flooding: reenvía por todos los puertos excepto el de llegada.",
+      "por_que_falla": [
+        "El descarte se aplica solo si el destino está en el mismo puerto de llegada.",
+        "",
+        "El switch no tiene un puerto especial para destinos desconocidos.",
+        "Jam se usa ante colisiones en half duplex, no en conmutación."
+      ],
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Conmutación Ethernet – Inspección de trama"
+      }
+    },
+    {
+      "id": "eth-p14",
+      "unidad": "u4-ethernet",
+      "enunciado": "¿Qué campo de la trama usa el switch para aprender en qué puerto está cada equipo?",
+      "opciones": [
+        "La MAC de origen (SA)",
+        "La MAC de destino (DA)",
+        "El campo EtherType",
+        "El campo FCS (CRC)"
+      ],
+      "correcta": 0,
+      "explicacion": "El switch inspecciona la MAC de origen del frame y la asocia al puerto por el que llegó.",
+      "por_que_falla": [
+        "",
+        "La DA se usa para decidir el reenvío, no para aprender.",
+        "EtherType indica el protocolo superior, no la ubicación del equipo.",
+        "El FCS sirve para detectar errores."
+      ],
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Aprender direcciones MAC"
+      }
+    },
+    {
+      "id": "eth-p15",
+      "unidad": "u4-ethernet",
+      "enunciado": "Se conectan 8 PCs a un hub de 8 puertos, y en otra sala 8 PCs a un switch de 8 puertos. ¿Cuántos dominios de colisión hay en cada caso?",
+      "opciones": [
+        "Hub: 8; switch: 1",
+        "Hub: 1; switch: 1",
+        "Hub: 1; switch: 8",
+        "Hub: 8; switch: 8"
+      ],
+      "correcta": 2,
+      "explicacion": "El hub tiene un único dominio de colisión para todos sus puertos; en el switch cada puerto es un dominio independiente.",
+      "por_que_falla": [
+        "Invierte el comportamiento: el hub comparte medio y el switch separa por puerto.",
+        "El switch separa dominios de colisión por puerto.",
+        "",
+        "El hub repite todo por todos los puertos: es un solo dominio."
+      ],
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Switches y las colisiones"
+      }
+    },
+    {
+      "id": "eth-p16",
+      "unidad": "u4-ethernet",
+      "enunciado": "Una empresa tiene un switch de acceso por piso (3 pisos) conectados a un switch core, sin VLAN ni router interno. ¿Cuántos dominios de broadcast hay en la LAN?",
+      "opciones": [
+        "3, uno por cada switch de acceso",
+        "4, uno por cada switch",
+        "Tantos como puertos tenga el core",
+        "1, toda la LAN comparte el mismo"
+      ],
+      "correcta": 3,
+      "explicacion": "Los switches reenvían los broadcasts por todos sus puertos: toda la red local de la empresa comparte un único dominio de broadcast.",
+      "por_que_falla": [
+        "Los switches no separan dominios de broadcast.",
+        "Agregar switches no crea dominios de broadcast nuevos.",
+        "Cada puerto es un dominio de colisión, no de broadcast.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Ejemplo: ¿Dónde usar Switches? – Red LAN de una empresa"
+      }
+    },
+    {
+      "id": "eth-p17",
+      "unidad": "u4-ethernet",
+      "enunciado": "Si el puerto del switch y el host conectado están configurados en full duplex, ¿qué pasa con CSMA/CD?",
+      "opciones": [
+        "Se sigue usando, pero con un backoff más corto",
+        "Se deshabilita: en full duplex no hay colisiones",
+        "Se usa solo para las tramas de broadcast",
+        "Se reemplaza por CSMA/CA para evitar colisiones"
+      ],
+      "correcta": 1,
+      "explicacion": "Con ambos extremos en full duplex se deshabilita la detección de colisiones; CSMA/CD solo hace falta si el puerto está en half duplex.",
+      "por_que_falla": [
+        "Sin colisiones no hay backoff que aplicar.",
+        "",
+        "El tipo de dirección no cambia el modo duplex del enlace.",
+        "CSMA/CA no reemplaza a CSMA/CD en Ethernet cableado full duplex."
+      ],
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Switches y las colisiones"
+      }
+    },
+    {
+      "id": "eth-p18",
+      "unidad": "u4-ethernet",
+      "enunciado": "¿Qué medio y distancia corresponden a 1000Base-LX según la tabla de estándares más utilizados?",
+      "opciones": [
+        "Fibra monomodo, onda larga, hasta 5 km",
+        "Fibra multimodo, onda corta, hasta 500 m",
+        "UTP Cat. 5e o superior, hasta 100 m",
+        "UTP Cat. 6a o superior, hasta 100 m"
+      ],
+      "correcta": 0,
+      "explicacion": "La L indica láser de onda larga sobre fibra monomodo; 1000Base-Lx llega a 5000 m y se usa en LAN de larga distancia.",
+      "por_que_falla": [
+        "",
+        "Eso corresponde a 1000Base-SX.",
+        "Eso corresponde a 1000Base-T.",
+        "Eso corresponde al estándar de 10 Gb sobre cobre."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Estándares más utilizados – Gigabit Ethernet"
+      }
+    },
+    {
+      "id": "eth-p19",
+      "unidad": "u4-ethernet",
+      "enunciado": "Según la nemotécnica IEEE, ¿qué significa 100BaseTX?",
+      "opciones": [
+        "100 m de alcance, banda base, par trenzado",
+        "100 Mbps, banda ancha con varios servicios, par trenzado",
+        "100 Mbps, banda base, par trenzado y codificación 4B/5B",
+        "100 Mbps, banda base, fibra con láser de onda larga"
+      ],
+      "correcta": 2,
+      "explicacion": "100 = 100 Mbps; Base = banda base (el medio solo transporta Ethernet); T = par trenzado; X = codificación 4B/5B.",
+      "por_que_falla": [
+        "El número indica la velocidad, no la distancia.",
+        "Base significa banda base: un solo servicio en el medio.",
+        "",
+        "La fibra de onda larga se indica con L, no con T."
+      ],
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Nemotécnica – Identificador IEEE"
+      }
+    },
+    {
+      "id": "eth-p20",
+      "unidad": "u4-ethernet",
+      "enunciado": "¿Qué distingue a un bridge de un switch según el material?",
+      "opciones": [
+        "Opera en capa 1 y repite la señal por todos sus puertos",
+        "Opera en capa 3 y separa los dominios de broadcast",
+        "No aprende MACs: inunda siempre todas las tramas",
+        "Tiene pocos puertos y conmuta entre medios distintos"
+      ],
+      "correcta": 3,
+      "explicacion": "El bridge es un dispositivo de capa 2 con pocos puertos que conmuta entre medios distintos (WiFi, ADSL), adaptando el encabezado de capa 2; por lo demás funciona igual que un switch.",
+      "por_que_falla": [
+        "Eso describe al hub.",
+        "El bridge es de capa 2; separar dominios de broadcast es propio del router.",
+        "Tiene el mismo funcionamiento que el switch, incluido el aprendizaje de MACs.",
+        ""
+      ],
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Bridge o puente"
+      }
+    },
+    {
+      "id": "eth-p21",
+      "unidad": "u4-ethernet",
+      "enunciado": "¿Cuál de estas NO es una desventaja del hub?",
+      "opciones": [
+        "Tiene un único dominio de colisión para todos los puertos",
+        "Funciona sin configuración previa, en modo plug & play",
+        "No tiene buffer y no une segmentos de distinta velocidad",
+        "Reenvía todos los frames a todos los equipos por igual"
+      ],
+      "correcta": 1,
+      "explicacion": "Ser plug & play es una característica (ventaja) del hub; las otras tres son las desventajas que lista el material.",
+      "por_que_falla": [
+        "Es una desventaja: limita la cantidad de dispositivos.",
+        "",
+        "Es una desventaja: sin memoria no puede adaptar velocidades.",
+        "Es una desventaja: difusión ineficiente."
+      ],
+      "fuente": {
+        "archivo": "capa2_switches.md",
+        "seccion": "Desventajas de los Hubs"
+      }
+    }
+  ],
+  "glosario": [
+    {
+      "termino": "LLC",
+      "sigla": "Logical Link Control",
+      "definicion": "Subcapa superior de la capa 2 (IEEE 802.2), en software, que identifica el protocolo de capa 3 mediante SAP/SNAP.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "MAC",
+      "sigla": "Media Access Control",
+      "definicion": "Subcapa inferior de la capa 2 (IEEE 802.3), en hardware (NIC): entramado, direccionamiento, detección de errores y CSMA/CD.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "OUI",
+      "sigla": "Organizationally Unique Identifier",
+      "definicion": "Primeros 3 bytes de una dirección MAC, que identifican al fabricante.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "FCS",
+      "sigla": "Frame Check Sequence",
+      "definicion": "Campo de 4 bytes con el CRC calculado sobre DA, SA, Tipo y Datos para detectar errores.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "SOF",
+      "sigla": "Start of Frame",
+      "definicion": "Byte delimitador (...10101011) que marca el fin del preámbulo y el inicio de la trama MAC.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "MTU",
+      "sigla": "Maximum Transmission Unit",
+      "definicion": "Carga útil máxima del campo de datos; en Ethernet, 1500 bytes.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "SFP",
+      "sigla": "Small Form-factor Pluggable",
+      "definicion": "Transceptor enchufable en caliente para fibra (LC duplex) o cobre; 1 Gb SFP, 10 Gb SFP+.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "QSFP",
+      "sigla": "Quad Small Form-factor Pluggable",
+      "definicion": "Variante de transceptor de mayor velocidad: 40 Gb QSFP y 100 Gb QSFP+.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "DSAP",
+      "sigla": "Destination Service Access Point",
+      "definicion": "Campo de 1 byte de LLC que identifica el punto de acceso al servicio de destino.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "SSAP",
+      "sigla": "Source Service Access Point",
+      "definicion": "Campo de 1 byte de LLC que identifica el punto de acceso al servicio de origen.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "EtherType",
+      "definicion": "Campo de 2 bytes de Ethernet II que indica el protocolo encapsulado (0x0800 IP, 0x0806 ARP).",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "NIC",
+      "sigla": "Network Interface Card",
+      "definicion": "Tarjeta de red: dispositivo de capas 1 y 2 que implementa la subcapa MAC y tiene la dirección física.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "Jam",
+      "definicion": "Señal que envía una estación al detectar una colisión para notificarla a toda la red.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "Runt frame",
+      "definicion": "Trama menor a 64 bytes; el receptor la descarta, por eso se agrega relleno.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "Jumbo frame",
+      "definicion": "Trama con payload mayor a 1500 bytes (p. ej. MTU 9000); también llamada giant.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "Aging time",
+      "definicion": "Tiempo de vigencia de una entrada de la tabla de MACs antes de expirar por inactividad.",
+      "unidad": "u4-ethernet"
+    },
+    {
+      "termino": "Store and forward",
+      "definicion": "Modo de operación del switch: guarda el frame completo en un buffer antes de inspeccionarlo y reenviarlo.",
+      "unidad": "u4-ethernet"
+    }
+  ],
+  "dudas": [
+    {
+      "texto": "La MAC multicast de IPv6 se describe como prefijo '33-33-33' más los últimos 32 bits de la dirección IPv6; eso suma 56 bits y no entra en una MAC de 48 bits. El prefijo coherente con 32 bits finales es 33-33 (2 bytes). Se usa 33-33.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Dirección MAC – 48 bits (6 bytes)"
+      }
+    },
+    {
+      "texto": "En 'Dirección de origen vs. destino' se lista 'A una sola máquina (unicast/broadcast)'; el envío a una sola máquina es unicast, y broadcast aparece luego como envío a todos los nodos. Se toma unicast para una sola máquina.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Trama Ethernet II – Campos DA y SA"
+      }
+    },
+    {
+      "texto": "La tabla de 10/25 Gb Ethernet nombra los estándares '10Base-T' y '25Base-T', pero según la propia nemotécnica 10Base-T es Ethernet de 10 Mbps; para 10/25 Gbps la denominación consistente sería 10GBase-T / 25GBase-T (como 10Gbase-LR en los ejemplos).",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Estándares más utilizados – 10/25 Gb Ethernet"
+      }
+    },
+    {
+      "texto": "El flujo de envío dice que se rellena si el frame tiene menos de 60 bytes, mientras que el mínimo de trama es 64 bytes. Ambos son coherentes si los 60 bytes no incluyen el FCS (60 + 4 = 64), pero el material no lo aclara.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Envío de frames Ethernet"
+      }
+    },
+    {
+      "texto": "La sección 'Campos Length' repite el contenido de la dirección MAC y no describe el campo Length; su función (largo de datos/LLC, 2 bytes) solo aparece en la trama 802.3 con LLC.",
+      "fuente": {
+        "archivo": "capa2_ethernet.md",
+        "seccion": "Campos Length"
+      }
+    }
+  ]
+}

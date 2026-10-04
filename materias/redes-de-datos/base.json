@@ -1,0 +1,111 @@
+{
+  "materia": {
+    "nombre": "Redes de Datos",
+    "slug": "redes-de-datos",
+    "descripcion": "Modelo en capas, capa física, capa de enlace (Ethernet, switches, VLAN, STP) y capa de red (IP, subnetting, NAT, enrutamiento, ARP, ICMP, DHCP).",
+    "examen": {
+      "formato": "Cuestionario individual: opción múltiple, verdadero/falso y emparejamiento"
+    },
+    "temas_clave": [
+      "Modelo en capas, encapsulamiento y PDUs",
+      "Señales, ancho de banda y medios de transmisión",
+      "Funciones de la capa de enlace: entramado, errores, control de flujo y acceso al medio",
+      "Trama Ethernet, direcciones MAC y conmutación en switches",
+      "VLAN 802.1Q, STP, LACP y stacking",
+      "Direccionamiento IPv4, subnetting/VLSM y NAT/PAT",
+      "Tabla de ruteo, longest prefix match, RIP y gateway por defecto",
+      "ARP, ICMP (ping, traceroute) y DHCP"
+    ]
+  },
+  "unidades": [
+    {
+      "id": "u1-intro",
+      "nombre": "Introducción y modelo de referencia",
+      "archivos": ["clase00_presentacion_curso.md", "clase01a_introduccion.md", "clase01b_modelo_referencia.md"],
+      "color": "#8b5cf6",
+      "peso": 12
+    },
+    {
+      "id": "u2-fisica",
+      "nombre": "Capa física y medios de transmisión",
+      "archivos": ["capa1_fisica.md", "capa1_medios_transmision.md"],
+      "color": "#f59e0b",
+      "peso": 14
+    },
+    {
+      "id": "u3-enlace",
+      "nombre": "Capa de enlace",
+      "archivos": ["capa2_enlace.md"],
+      "color": "#10b981",
+      "peso": 14
+    },
+    {
+      "id": "u4-ethernet",
+      "nombre": "Ethernet y switches",
+      "archivos": ["capa2_ethernet.md", "capa2_switches.md"],
+      "color": "#06b6d4",
+      "peso": 14
+    },
+    {
+      "id": "u5-vlan-stp",
+      "nombre": "VLAN, STP, LACP y stacking",
+      "archivos": ["capa2_vlan_stp.md"],
+      "color": "#3b82f6",
+      "peso": 12
+    },
+    {
+      "id": "u6-ip",
+      "nombre": "IP, direccionamiento, subnetting y NAT",
+      "archivos": ["capa3_red_ip.md", "capa3_subnetting.md", "capa3_nat_pat.md"],
+      "color": "#ef4444",
+      "peso": 18
+    },
+    {
+      "id": "u7-ruteo",
+      "nombre": "Enrutamiento, ARP, ICMP y DHCP",
+      "archivos": ["capa3_enrutamiento.md", "capa3_otros_protocolos.md"],
+      "color": "#ec4899",
+      "peso": 16
+    }
+  ],
+  "conceptos": [],
+  "relaciones": [],
+  "dudas": [
+    {
+      "texto": "La introducción de Ethernet dice que implementa CSMA/CA, pero la subcapa MAC, la capa de enlace y el flujo de envío describen CSMA/CD para 802.3. Se toma CSMA/CD como correcto para Ethernet cableado.",
+      "fuente": { "archivo": "capa2_ethernet.md", "seccion": "Introducción – Protocolo Ethernet" }
+    },
+    {
+      "texto": "El primer ejemplo de CRC (D=1011, G=101) da como residuo 11, pero en módulo 2 el residuo correcto es 01. Se usa solo el ejemplo paso a paso (D=1101, G=1011, CRC=001).",
+      "fuente": { "archivo": "capa2_enlace.md", "seccion": "Detección de errores: CRC y Checksum" }
+    },
+    {
+      "texto": "En el ejemplo de fragmentación la columna 'Tamaño total' (1480, 1480 y 1048 B) no coincide con el contenido de cada fragmento (20+8+1472 = 1500, 20+1480 = 1500 y 20+1048 = 1068 B). Los offsets (0, 185 y 370 unidades de 8 bytes) sí son consistentes.",
+      "fuente": { "archivo": "capa3_red_ip.md", "seccion": "Fragmentación de Paquetes IP – Ejemplo práctico" }
+    },
+    {
+      "texto": "La tabla 'Types of Ethernet' tiene filas corridas (por ejemplo 100Base-FX sobre Cat5 UTP o 10GBase-T sobre twin-axial). No se usa como fuente.",
+      "fuente": { "archivo": "capa2_ethernet.md", "seccion": "Ethernet – Types of Ethernet" }
+    },
+    {
+      "texto": "En el ejemplo de aprendizaje de MACs el texto dice que MAC 4 se aprende en el puerto 1, pero la tabla la muestra en el puerto 2.",
+      "fuente": { "archivo": "capa2_switches.md", "seccion": "Aprender direcciones MAC" }
+    },
+    {
+      "texto": "La secuencia de DHCP marca 'DHCP discover' y 'DHCP offer' como mensajes opcionales; el resto del material presenta el intercambio de cuatro mensajes (Discover, Offer, Request, Ack) como el flujo básico.",
+      "fuente": { "archivo": "capa3_otros_protocolos.md", "seccion": "Mensajes básicos de DHCP" }
+    },
+    {
+      "texto": "En la estructura del cable de fibra se describe el 'núcleo' como refuerzo contra rotura, mientras que en el funcionamiento el núcleo es el vidrio de mayor índice por donde viaja la luz.",
+      "fuente": { "archivo": "capa1_medios_transmision.md", "seccion": "Fibra óptica – Componentes" }
+    },
+    {
+      "texto": "Hay cifras levemente distintas entre láminas: rango de clase A (1.0.0.0–126.0.0.0 vs 0.0.0.0–126.255.255.255), clase E (240–247 vs 240.0.0.0–254.255.255.255), alcance de 1000Base-SX (500 m vs 550 m) y altura GEO (36.000 km vs 35.786 km).",
+      "fuente": { "archivo": "capa3_red_ip.md", "seccion": "Clases de Direcciones IPv4" }
+    },
+    {
+      "texto": "El programa del curso incluye las unidades 4 a 7 (transporte y aplicación, seguridad, inalámbricas, corporativas), pero todavía no hay material de esas unidades.",
+      "fuente": { "archivo": "clase00_presentacion_curso.md", "seccion": "05 – Unidades temáticas" }
+    }
+  ]
+}
